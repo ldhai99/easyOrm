@@ -1,4 +1,4 @@
-package com.github.ldhai99.easyOrm.tools;
+package io.github.ldhai99.easyOrm.tools;
 
 import com.alibaba.druid.pool.DruidDataSourceFactory;
 

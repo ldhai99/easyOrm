@@ -1,6 +1,6 @@
-package com.github.ldhai99.easyOrm.executor;
+package io.github.ldhai99.easyOrm.executor;
 
-import com.github.ldhai99.easyOrm.JdbcModel;
+import io.github.ldhai99.easyOrm.JdbcModel;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;

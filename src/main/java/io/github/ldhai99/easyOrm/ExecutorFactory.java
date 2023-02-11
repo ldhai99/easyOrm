@@ -1,6 +1,6 @@
-package com.github.ldhai99.easyOrm;
+package io.github.ldhai99.easyOrm;
 
-import com.github.ldhai99.easyOrm.executor.IExecutor;
+import io.github.ldhai99.easyOrm.executor.IExecutor;
 
 public class ExecutorFactory {
     private static IExecutor executor=null ;

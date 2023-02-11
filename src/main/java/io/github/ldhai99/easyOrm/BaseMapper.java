@@ -1,4 +1,4 @@
-package com.github.ldhai99.easyOrm;
+package io.github.ldhai99.easyOrm;
 
 
 import org.springframework.dao.IncorrectResultSizeDataAccessException;

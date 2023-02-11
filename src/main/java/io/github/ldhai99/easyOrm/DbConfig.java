@@ -1,8 +1,8 @@
-package com.github.ldhai99.easyOrm;
+package io.github.ldhai99.easyOrm;
 
 
-import com.github.ldhai99.easyOrm.Dialect.Dialect;
-import com.github.ldhai99.easyOrm.Dialect.MysqlDialect;
+import io.github.ldhai99.easyOrm.Dialect.Dialect;
+import io.github.ldhai99.easyOrm.Dialect.MysqlDialect;
 
 public class DbConfig {
 

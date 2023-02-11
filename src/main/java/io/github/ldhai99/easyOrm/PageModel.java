@@ -1,6 +1,6 @@
-package com.github.ldhai99.easyOrm;
+package io.github.ldhai99.easyOrm;
 
-import com.github.ldhai99.easyOrm.Dialect.Dialect;
+import io.github.ldhai99.easyOrm.Dialect.Dialect;
 
 import java.sql.SQLException;
 import java.util.List;

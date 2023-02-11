@@ -1,7 +1,7 @@
-package com.github.ldhai99.easyOrm.Dialect;
+package io.github.ldhai99.easyOrm.Dialect;
 
-import com.github.ldhai99.easyOrm.PageModel;
-import com.github.ldhai99.easyOrm.SQL;
+import io.github.ldhai99.easyOrm.PageModel;
+import io.github.ldhai99.easyOrm.SQL;
 
 import java.io.Serializable;
 import java.sql.SQLException;

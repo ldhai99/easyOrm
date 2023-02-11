@@ -1,10 +1,10 @@
-package com.github.ldhai99.easyOrm;
+package io.github.ldhai99.easyOrm;
 
 
 
-import com.github.ldhai99.easyOrm.executor.DbUtilsExecutor;
-import com.github.ldhai99.easyOrm.executor.IExecutor;
-import com.github.ldhai99.easyOrm.executor.JdbcTemplateExecutor;
+import io.github.ldhai99.easyOrm.executor.DbUtilsExecutor;
+import io.github.ldhai99.easyOrm.executor.IExecutor;
+import io.github.ldhai99.easyOrm.executor.JdbcTemplateExecutor;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import java.math.BigDecimal;

@@ -1,4 +1,4 @@
-package com.github.ldhai99.easyOrm.Dialect;
+package io.github.ldhai99.easyOrm.Dialect;
 
 public class SqlServerDialect {
 

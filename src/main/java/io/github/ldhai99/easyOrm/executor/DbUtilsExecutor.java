@@ -1,7 +1,6 @@
-package com.github.ldhai99.easyOrm.executor;
+package io.github.ldhai99.easyOrm.executor;
 
-import com.github.ldhai99.easyOrm.JdbcModel;
-import com.github.ldhai99.easyOrm.executor.IExecutor;
+import io.github.ldhai99.easyOrm.JdbcModel;
 import org.apache.commons.dbutils.BasicRowProcessor;
 import org.apache.commons.dbutils.GenerousBeanProcessor;
 import org.apache.commons.dbutils.QueryRunner;
