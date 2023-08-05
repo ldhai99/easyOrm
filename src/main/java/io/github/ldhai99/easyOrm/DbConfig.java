@@ -9,10 +9,7 @@ public class DbConfig {
     private static String database="mysql";
     private static Dialect dialect;
 
-    /**
-     * 测试
-     * @param args
-     */
+
     public static  void main(String[] args){
         String c="userId";
         System.out.println("驼峰命名转下划线命名"+camel2under(c));
@@ -67,8 +64,7 @@ public class DbConfig {
     /**
      * 功能：下划线命名转驼峰命名
      * 将下划线替换为空格,将字符串根据空格分割成数组,再将每个单词首字母大写
-     * @param s
-     * @return
+
      */
     private static String under2camel(String s)
     {
