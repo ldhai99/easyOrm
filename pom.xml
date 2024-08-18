@@ -6,8 +6,8 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>io.github.ldhai99</groupId>
     <artifactId>easyOrm</artifactId>
-    <version>0.0.10</version>
-<!--    <version>0.0.8-SNAPSHOT</version>-->
+    <version>0.0.11</version>
+<!--    <version>0.0.9-SNAPSHOT</version>-->
 
 
 
@@ -49,9 +49,9 @@
         <!-- 用于发布的链接，用 HTTPS-->
         <connection>scm:git:git://github.com/ldhai99/easyOrm.git</connection>
         <!-- 用于指定开发者的链接，用HTTPS-->
-        <developerConnection>scm:git:ssh://git@github.com:ldhai99/easyOrm.git</developerConnection>
+        <developerConnection>scm:git:git@github.com:ldhai99/easyOrm.git</developerConnection>
         <!-- #git项目浏览器里的地址-->
-        <url>https://github.com/ldhai99/easyOrm</url>
+        <url>http://github.com/ldhai99/easyOrm</url>
     </scm>
 
 
@@ -109,22 +109,27 @@
                 <!--发布到中央SNAPSHOT仓库插件-->
                 <plugins>
 
-<!--
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-release-plugin</artifactId>
                         <version>2.5.3</version>
                         <configuration>
-                            &lt;!&ndash; 升级子模块 &ndash;&gt;
+                            <tagBase>${project.artifactId}-${project.version}</tagBase>
+                            <!-- tag分支的名称，project.version只包含版本，不包含SNAPSHOT后缀 -->
+                            <tagNameFormat>v@{project.version}</tagNameFormat>
+                            <!-- 升级子模块 -->
                             <autoVersionSubmodules>true</autoVersionSubmodules>
-                            &lt;!&ndash; 禁用父pom &ndash;&gt;
+                            <!-- 禁用父pom -->
                             <useReleaseProfile>false</useReleaseProfile>
-                            &lt;!&ndash; 可以指定配置文件 &ndash;&gt;
+                            <!-- 可以指定配置文件 -->
+                            <!-- 是否生成release-pom.xml-->
                             <releaseProfiles>release</releaseProfiles>
+                            <!-- 跳过单元测试 -->
+                            <arguments>-DskipTests</arguments>
+
                             <goals>deploy</goals>
                         </configuration>
                     </plugin>
--->
                     <plugin>
                         <groupId>org.sonatype.plugins</groupId>
                         <artifactId>nexus-staging-maven-plugin</artifactId>

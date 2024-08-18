@@ -560,8 +560,21 @@ public class SQL {
 
     //更新设置--------------------------------------------
 
+
+    //直接遍历字段，然后设置
+    public SQL setMap(String fields, Map value) {
+        String[] parts = fields.split(",\\s*");
+        for (int i = 0; i < parts.length; i++) {
+            if(value!=null )
+                set(parts[i], new DbParameter(parts[i], value.get(parts[i])));
+            else
+                set(parts[i], new DbParameter(parts[i], null));
+        }
+        return this;
+    }
     //设置字段---值
     public SQL set(String name, Object value) {
+
         set(name, new DbParameter(name, value));
         return this;
     }
@@ -596,8 +609,10 @@ public class SQL {
         }
         //增加时候，set存列与值
         else if (builder.getDoState().equals("insert")) {
-            this.builder.column(name);
-            this.builder.value(nameParamPlaceholder);
+
+
+            this.builder.insertColumn(name,nameParamPlaceholder);
+
         }
 
     }

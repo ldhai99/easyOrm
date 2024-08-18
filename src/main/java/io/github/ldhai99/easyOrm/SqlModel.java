@@ -146,6 +146,22 @@ public class SqlModel implements  Cloneable ,Serializable {
     }
     //增加更新部分
     public SqlModel set(String expr) {
+
+        //有了替换，没有添加
+        String[] parts1 =expr.split("=", 2);
+        // 要替换的name和新的value
+        String targetName = parts1[0];
+        String newValue = parts1[1];
+
+        // 遍历列表并替换
+        for (int i = 0; i < sets.size(); i++) {
+            String[] parts = sets.get(i).split("=", 2); // 使用2作为限制来确保只分割一次
+            if (parts.length > 1 && parts[0].equals(targetName)) {
+                // 重新构造字符串并替换原元素
+                sets.set(i, targetName + "=" + newValue);
+                return this;
+            }
+        }
         this.sets.add(expr);
         return this;
     }
@@ -155,6 +171,22 @@ public class SqlModel implements  Cloneable ,Serializable {
         return this;
     }
 
+
+    public SqlModel insertColumn(String name,String nameParamPlaceholder) {
+        // 遍历列表并替换
+        for (int i = 0; i < columns.size(); i++) {
+
+            if (columns.get(i).equals(name)) {
+                // 重新构造字符串并替换原元素
+                columns.set(i, name);
+                values.set(i,nameParamPlaceholder);
+                return this;
+            }
+        }
+        this.columns.add(name);
+        this.value(nameParamPlaceholder);
+        return this;
+    }
     public SqlModel column(String name) {
         this.columns.add(name);
         return this;
