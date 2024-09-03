@@ -17,43 +17,43 @@ public interface IExecutor {
 
     //代理-------------------------------------------------执行类
     //执行增加，删除，修改，返回记录个数
-    public int update()  throws SQLException ;
+    public int update()   ;
 
     //插入，返回主键
-    public Number insert()  throws SQLException ;
+    public Number insert()   ;
 
     //执行存储过程及ddl
-    public int execute()  throws SQLException ;
+    public int execute()   ;
 
     //查询数据库---------------------------------------------------------
 
     //返回单列单行数据
     //返回字符串
-    public String string ()  throws SQLException ;
+    public String string ()   ;
 
     //返回数字型
-    public Number number()  throws SQLException ;
-    public  BigDecimal bigDecimal() throws SQLException;
+    public Number number()   ;
+    public  BigDecimal bigDecimal() ;
     //返回日期型
-    public Date date () throws SQLException;
-    public < T > T value ( Class<T> requiredType)  throws SQLException ;
+    public Date date () ;
+    public < T > T value ( Class<T> requiredType)   ;
 
 
     //返回单列list数据
-    public List<String> strings ()  throws SQLException ;
-    public  List<Number> numbers () throws SQLException;
-    public  List<BigDecimal> bigDecimals () throws SQLException;
-    public  List<Date> dates ()  throws SQLException ;
-    public < T > List<T> values ( Class<T> requiredType)  throws SQLException ;
+    public List<String> strings ()   ;
+    public  List<Number> numbers () ;
+    public  List<BigDecimal> bigDecimals () ;
+    public  List<Date> dates ()   ;
+    public < T > List<T> values ( Class<T> requiredType)   ;
     //返回单行数据
 
-    public Map<String, Object> map()  throws SQLException ;
+    public Map<String, Object> map()  ;
     //返回多行数据
-    public List<Map<String, Object>> maps()  throws SQLException ;
+    public List<Map<String, Object>> maps()   ;
     //返回Bean实体
-    public <T> T bean(Class<T> T)  throws SQLException;
+    public <T> T bean(Class<T> T)  ;
 
     //返回Bean list
-    public <T> List<T> beans(Class<T> T)  throws SQLException;
+    public <T> List<T> beans(Class<T> T)  ;
 
 }

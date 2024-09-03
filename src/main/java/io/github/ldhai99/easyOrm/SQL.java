@@ -7,6 +7,7 @@ import io.github.ldhai99.easyOrm.executor.IExecutor;
 import io.github.ldhai99.easyOrm.executor.JdbcTemplateExecutor;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
+import javax.sql.DataSource;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -54,20 +55,41 @@ public class SQL {
     public SQL clone(){
         return new SQL(this);
     }
-    public SQL(IExecutor executor) {
-        this.executor = executor;
-    }
+
 
     //传入执行器
     public SQL(NamedParameterJdbcTemplate template) {
         executor = new JdbcTemplateExecutor(template);
     }
 
+    //构造函数，传入连接，传入数据源
     public SQL(Connection connection) {
-        executor = new DbUtilsExecutor(connection);
+        initSQL(connection);
     }
+    public SQL(DataSource dataSource) {
+        initSQL(dataSource);
+    }
+    public SQL initSQL(Connection connection){
+        executor = new DbUtilsExecutor(connection);
+        return  this;
+
+    }
+    public SQL initSQL(DataSource dataSource){
+        executor = new DbUtilsExecutor(dataSource);
+        return  this;
+    }
+
+    //静态构造方法，传入连接，传入数据源
     public static SQL GET(Connection connection) {
         return new SQL( connection);
+    }
+    public static SQL GET(DataSource dataSource) {
+        return new SQL( dataSource);
+    }
+
+    //构造函数，传入执行器
+    public SQL(IExecutor executor) {
+        this.executor = executor;
     }
     public static SQL GET(IExecutor executor) {
         return new SQL( executor);
@@ -262,7 +284,7 @@ public class SQL {
 
     /* public PreparedStatementCreator count(final Dialect dialect) {
           return new PreparedStatementCreator() {
-              public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
+              public PreparedStatement createPreparedStatement(Connection con)  {
                   return SelectBuilder.this.getPreparedStatementCreator().setSql(dialect.createCountSelect(SelectBuilder.this.builder.toString())).createPreparedStatement(con);
               }
           };
@@ -270,7 +292,7 @@ public class SQL {
 /*
     public PreparedStatementCreator page(final Dialect dialect, final int limit, final int offset) {
         return new PreparedStatementCreator() {
-            public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
+            public PreparedStatement createPreparedStatement(Connection con)  {
                 return SelectBuilder.this.getPreparedStatementCreator().setSql(dialect.createPageSelect(SelectBuilder.this.builder.toString(), limit, offset)).createPreparedStatement(con);
             }
         };
@@ -704,148 +726,374 @@ public class SQL {
 
 
     //更新
-    public int update() throws SQLException {
+    public int update()  {
         this.toExecutor();
         return executor.update();
     }
+    public int update(DataSource ds)  {
+        initSQL(ds);
+        return update();
+    }
+    public int update(Connection conn)  {
+        initSQL(conn);
+        return update();
+    }
 
     //增加，返回主键
-    public Number insert() throws SQLException {
+    public Number insert()  {
         this.toExecutor();
         return executor.insert();
     }
 
+    public Number insert(DataSource ds)  {
+        initSQL(ds);
+        return insert();
+    }
+    public Number insert(Connection conn)  {
+        initSQL(conn);
+        return insert();
+    }
+
     //执行存储过程
-    public int execute() throws SQLException {
+    public int execute()  {
         this.toExecutor();
         return executor.execute();
+    }
+
+    public int execute(DataSource ds)  {
+        initSQL(ds);
+        return execute();
+    }
+    public int execute(Connection conn)  {
+        initSQL(conn);
+        return execute();
     }
     //查询数据库-----------------------------------------------------------------------------------
 
     //返回单列单行数据
-    public String getString() throws SQLException {
+    public String getString()  {
         this.toExecutor();
         return executor.string();
     }
+    public String getString(DataSource ds)  {
+        initSQL(ds);
+        return getString();
+    }
+    public String getString(Connection conn)  {
+        initSQL(conn);
+        return getString();
+    }
 
-    public Integer getInteger() throws SQLException {
+    public Integer getInteger()  {
         return this.getNumber().intValue();
     }
+    public Integer getInteger(DataSource ds)  {
+        initSQL(ds);
+        return getInteger();
+    }
+    public Integer getInteger(Connection conn)  {
+        initSQL(conn);
+        return getInteger();
+    }
 
-    public Long getLong() throws SQLException {
+    public Long getLong()  {
         return this.getNumber().longValue();
     }
-
-    public Float getFloat() throws SQLException {
-        return this.getNumber().floatValue();
+    public Long getLong(DataSource ds)  {
+        initSQL(ds);
+        return getLong();
+    }
+    public Long getLong(Connection conn)  {
+        initSQL(conn);
+        return getLong();
     }
 
-    public Double getDouble() throws SQLException {
+    public Float getFloat()  {
+        return this.getNumber().floatValue();
+    }
+    public Float getFloat(DataSource ds)  {
+        initSQL(ds);
+        return getFloat();
+    }
+    public Float getFloat(Connection conn)  {
+        initSQL(conn);
+        return getFloat();
+    }
+
+    public Double getDouble()  {
 
         return this.getNumber().doubleValue();
     }
+    public Double getDouble(DataSource ds)  {
+        initSQL(ds);
+        return getDouble();
+    }
+    public Double getDouble(Connection conn)  {
+        initSQL(conn);
+        return getDouble();
+    }
 
-    public Number getNumber() throws SQLException {
+    public Number getNumber()  {
         this.toExecutor();
         return executor.number();
     }
+    public Number getNumber(Connection conn)  {
+        initSQL(conn);
+        return getNumber();
+    }
+    public Number getNumber(DataSource ds)  {
+        initSQL(ds);
+        return getNumber();
+    }
 
-    public BigDecimal getBigDecimal() throws SQLException {
+    public BigDecimal getBigDecimal()  {
         this.toExecutor();
         return executor.bigDecimal();
     }
 
-    public Date getDate() throws SQLException {
+    public BigDecimal getBigDecimal(DataSource ds)  {
+        initSQL(ds);
+        return getBigDecimal();
+    }
+    public BigDecimal getBigDecimal(Connection conn)  {
+        initSQL(conn);
+        return getBigDecimal();
+    }
+
+    public Date getDate()  {
         this.toExecutor();
         return executor.date();
     }
+    public Date getDate(DataSource ds)  {
+        initSQL(ds);
+        return getDate();
+    }
+    public Date getDate(Connection conn)  {
+        initSQL(conn);
+        return getDate();
+    }
 
-    public <T> T getValue(Class<T> requiredType) throws SQLException {
+    public <T> T getValue(Class<T> requiredType)  {
         this.toExecutor();
         return executor.value(requiredType);
     }
+    public <T> T getValue(DataSource ds,Class<T> requiredType)  {
+        initSQL(ds);
+        return getValue(requiredType);
+    }
+    public <T> T getValue(Connection conn,Class<T> requiredType)  {
+        initSQL(conn);
+        return getValue(requiredType);
+    }
 
     //返回单列list数据
-    public List<String> getStrings() throws SQLException {
+    public List<String> getStrings()  {
         this.toExecutor();
         return executor.strings();
     }
+    public List<String> getStrings(DataSource ds)  {
+        initSQL(ds);
+        return getStrings();
+    }
+    public List<String> getStrings(Connection conn)  {
+        initSQL(conn);
+        return getStrings();
+    }
 
-    public List<Integer> getIntegers() throws SQLException {
+    public List<Integer> getIntegers()  {
         return getNumbers().stream().map(s -> s.intValue()).collect(Collectors.toList());
     }
+    public List<Integer> getIntegers(DataSource ds)  {
+        initSQL(ds);
+        return getIntegers();
+    }
+    public List<Integer> getIntegers(Connection conn)  {
+        initSQL(conn);
+        return getIntegers();
+    }
 
-    public List<Long> getLongs() throws SQLException {
+    public List<Long> getLongs()  {
         return getNumbers().stream().map(s -> s.longValue()).collect(Collectors.toList());
     }
+    public List<Long> getLongs(DataSource ds)  {
+        initSQL(ds);
+        return getLongs();
+    }
+    public List<Long> getLongs(Connection conn)  {
+        initSQL(conn);
+        return getLongs();
+    }
 
-    public List<Double> getDoubles() throws SQLException {
+
+    public List<Double> getDoubles()  {
         return getNumbers().stream().map(s -> s.doubleValue()).collect(Collectors.toList());
     }
-
-    public List<Float> getFloats() throws SQLException {
-        return getNumbers().stream().map(s -> s.floatValue()).collect(Collectors.toList());
+    public List<Double> getDoubles(DataSource ds)  {
+        initSQL(ds);
+        return getDoubles();
+    }
+    public List<Double> getDoubles(Connection conn)  {
+        initSQL(conn);
+        return getDoubles();
     }
 
-    public List<Number> getNumbers() throws SQLException {
+    public List<Float> getFloats()  {
+        return getNumbers().stream().map(s -> s.floatValue()).collect(Collectors.toList());
+    }
+    public List<Float> getFloats(DataSource ds)  {
+        initSQL(ds);
+        return getFloats();
+    }
+    public List<Float> getFloats(Connection conn)  {
+        initSQL(conn);
+        return getFloats();
+    }
+
+    public List<Number> getNumbers()  {
         this.toExecutor();
         return executor.numbers();
     }
 
-    public List<BigDecimal> getBigDecimals() throws SQLException {
+    public List<Number> getNumbers(DataSource ds)  {
+        initSQL(ds);
+        return getNumbers();
+    }
+    public List<Number> getNumbers(Connection conn)  {
+        initSQL(conn);
+        return getNumbers();
+    }
+
+    public List<BigDecimal> getBigDecimals()  {
         this.toExecutor();
         return executor.bigDecimals();
     }
+    public List<BigDecimal> getBigDecimals(DataSource ds)  {
+        initSQL(ds);
+        return getBigDecimals();
+    }
+    public List<BigDecimal> getBigDecimals(Connection conn)  {
+        initSQL(conn);
+        return getBigDecimals();
+    }
 
-    public List<Date> getDates() throws SQLException {
+
+    public List<Date> getDates()  {
         this.toExecutor();
         return executor.dates();
     }
+    public List<Date> getDates(DataSource ds)  {
+        initSQL(ds);
+        return getDates();
+    }
+    public List<Date> getDates(Connection conn)  {
+        initSQL(conn);
+        return getDates();
+    }
 
-    public <T> List<T> getValues(Class<T> requiredType) throws SQLException {
+
+    public <T> List<T> getValues(Class<T> requiredType)  {
         this.toExecutor();
         return executor.values(requiredType);
     }
+    public <T> List<T> getValues(DataSource ds,Class<T> requiredType)  {
+        initSQL(ds);
+        return getValues(requiredType);
+    }
+    public <T> List<T> getValues(Connection conn,Class<T> requiredType)  {
+        initSQL(conn);
+        return getValues(requiredType);
+    }
+
+
     //返回单行数据
 
-    public Map<String, Object> getMap() throws SQLException {
+    public Map<String, Object> getMap()  {
         this.toExecutor();
         return executor.map();
     }
+    public Map<String, Object> getMap(DataSource ds)  {
+        initSQL(ds);
+        return getMap();
+    }
+    public Map<String, Object> getMap(Connection conn)  {
+        initSQL(conn);
+        return getMap();
+    }
 
     //返回多行数据
-    public List<Map<String, Object>> getMaps() throws SQLException {
+    public List<Map<String, Object>> getMaps()  {
         this.toExecutor();
         return executor.maps();
     }
+    public List<Map<String, Object>> getMaps(DataSource ds)  {
+        initSQL(ds);
+        return getMaps();
+    }
+    public List<Map<String, Object>> getMaps(Connection conn)  {
+        initSQL(conn);
+        return getMaps();
+    }
+
 
     //返回Bean实体
-    public <T> T getBean(Class<T> T) throws SQLException {
+    public <T> T getBean(Class<T> T)  {
         this.toExecutor();
         return executor.bean(T);
     }
+    public <T> T getBean(DataSource ds,Class<T> T)  {
+        initSQL(ds);
+        return getBean(T);
+    }
+    public <T> T getBean(Connection conn,Class<T> T)  {
+        initSQL(conn);
+        return getBean(T);
+    }
 
     //返回Bean list
-    public <T> List<T> getBeans(Class<T> T) throws SQLException {
+    public <T> List<T> getBeans(Class<T> T)  {
         this.toExecutor();
         return executor.beans(T);
     }
+    public <T> List<T> getBeans(DataSource ds,Class<T> T)  {
+        initSQL(ds);
+        return getBeans(T);
+    }
+    public <T> List<T> getBeans(Connection conn,Class<T> T)  {
+        initSQL(conn);
+        return getBeans(T);
+    }
 
     //查询应用-------------判断是否存在------------------------------------------------
-    public boolean isExists() throws SQLException {
+    public boolean isExists()  {
         if (new SQL(this.executor).select("dual").column("1").exists(this).getMaps().size() >= 1)
             return true;
         else
             return false;
     }
+    public boolean isExists(DataSource ds)  {
+        initSQL(ds);
+        return isExists();
+    }
+    public boolean isExists(Connection conn)  {
+        initSQL(conn);
+        return isExists();
+    }
     //对一个查询给出记录数
-    public Number getCount() throws SQLException {
+    public Number getCount()  {
         if (builder.hasGroup()) {
             return new SQL(this.executor).select(this.clone().setColumn("count(*) count"),"a")
                     .setColumn("count(*) count").getNumber();
         }else{
             return this.clone().setColumn("count(*) count").getNumber();
         }
+    }
+    public Number getCount(DataSource ds)  {
+        initSQL(ds);
+        return getCount();
+    }
+    public Number getCount(Connection conn)  {
+        initSQL(conn);
+        return getCount();
     }
 
 }
