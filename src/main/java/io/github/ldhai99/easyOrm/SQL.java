@@ -45,6 +45,7 @@ public class SQL {
     }
 
     public SQL() {
+        initSQL();
     }
 
     protected SQL(SQL sql) {
@@ -68,6 +69,10 @@ public class SQL {
     }
     public SQL(DataSource dataSource) {
         initSQL(dataSource);
+    }
+    public SQL initSQL(){
+        executor = new DbUtilsExecutor();
+        return  this;
     }
     public SQL initSQL(Connection connection){
         executor = new DbUtilsExecutor(connection);

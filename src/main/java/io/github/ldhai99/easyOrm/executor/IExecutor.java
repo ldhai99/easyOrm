@@ -2,6 +2,7 @@ package io.github.ldhai99.easyOrm.executor;
 
 import io.github.ldhai99.easyOrm.JdbcModel;
 
+import javax.sql.DataSource;
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.Date;
@@ -9,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 
 public interface IExecutor {
-
 
     public JdbcModel getJdbcDataModel() ;
 

@@ -1,5 +1,6 @@
 package io.github.ldhai99.easyOrm.executor;
 
+import io.github.ldhai99.easyOrm.DbConfig;
 import io.github.ldhai99.easyOrm.JdbcModel;
 import org.apache.commons.dbutils.BasicRowProcessor;
 import org.apache.commons.dbutils.GenerousBeanProcessor;
@@ -21,7 +22,7 @@ public class DbUtilsExecutor implements IExecutor {
     private JdbcModel jdbcModel;
     QueryRunner qr=new QueryRunner();
 
-    DbUtilsExecutor(){
+    public DbUtilsExecutor(){
 
     }
     public DbUtilsExecutor(Connection connection){
@@ -44,10 +45,22 @@ public class DbUtilsExecutor implements IExecutor {
         return this;
     }
     public Connection  getConnection(){
+
+
         if(this.connection!=null)
             return  this.connection;
-        // 从事务管理器获取当前事务的连接
-        this.connection= DataSourceUtils.getConnection(dataSource);
+        if(this.dataSource!=null){
+            // 从事务管理器获取当前事务的连接,传入数据源
+            this.connection= DataSourceUtils.getConnection(dataSource);
+            return  this.connection;
+        }
+
+        if(DbConfig.getDs()!=null){
+            // 从事务管理器获取当前事务的连接，全局数据源
+            this.connection= DataSourceUtils.getConnection(DbConfig.getDs());
+            return  this.connection;
+        }
+
         return  this.connection;
     }
     //执行增加，删除，修改，返回记录个数

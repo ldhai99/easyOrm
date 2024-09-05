@@ -18,7 +18,7 @@ public class JdbcTemplateExecutor implements IExecutor {
 
     private JdbcModel jdbcModel;
 
-    JdbcTemplateExecutor(){
+    public JdbcTemplateExecutor(){
 
     }
     public JdbcTemplateExecutor(NamedParameterJdbcTemplate template){

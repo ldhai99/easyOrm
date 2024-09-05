@@ -4,10 +4,22 @@ package io.github.ldhai99.easyOrm;
 import io.github.ldhai99.easyOrm.Dialect.Dialect;
 import io.github.ldhai99.easyOrm.Dialect.MysqlDialect;
 
+import javax.sql.DataSource;
+
 public class DbConfig {
+
+    public static DataSource ds=null;
 
     private static String database="mysql";
     private static Dialect dialect;
+
+    public static DataSource getDs() {
+        return ds;
+    }
+
+    public static void setDs(DataSource ds) {
+        DbConfig.ds = ds;
+    }
 
 
     public static  void main(String[] args){
@@ -49,7 +61,7 @@ public class DbConfig {
     }
 
     public static  void setDatabase(String database) {
-        database = database;
+        DbConfig.database = database;
     }
     /**
      * 功能：驼峰命名转下划线命名
