@@ -1,74 +1,84 @@
 package io.github.ldhai99.easyOrm.tools;
 
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import com.alibaba.druid.pool.DruidDataSourceFactory;
+import io.github.ldhai99.easyOrm.executor.IMapper;
+import io.github.ldhai99.easyOrm.executor.JdbcTemplateMapper;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+
+import javax.sql.DataSource;
+import java.io.InputStream;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Properties;
 
 public class DbTools {
-    /**
-     * 获取指定表的所有列名。
-     *
-     * @param connection 数据库连接
-     * @param tableName  表名
-     * @return 列名列表
-     * @throws SQLException 如果发生 SQL 错误
-     */
-    public static List<String> getColumnListNames(Connection connection, String tableName) throws SQLException {
-        List<String> columnNames = new ArrayList<>();
 
-        DatabaseMetaData metaData = connection.getMetaData();
-        ResultSet columns = metaData.getColumns(null, null, tableName, null);
-
-        while (columns.next()) {
-            String columnName = columns.getString("COLUMN_NAME");
-            columnNames.add(columnName);
+    private static DataSource dataSource;
+    private static NamedParameterJdbcTemplate template;
+    static {
+        Properties pro = new Properties();
+        InputStream in = DbTools.class.getClassLoader().getResourceAsStream("druid.properties");
+        try {
+            pro.load(in);
+            dataSource = DruidDataSourceFactory.createDataSource(pro);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-
-        return columnNames;
-    }
-    //用于排除主键
-    public static List<String> getColumnListNamesExcept(Connection connection, String tableName,String fieled) throws SQLException {
-        List<String> columnNames = getColumnListNames(connection,tableName);;
-
-        return listExcept(columnNames,fieled);
-
     }
 
-    public static String getColumnNames(Connection connection, String tableName) throws SQLException {
-        List<String> columnNames=getColumnListNames(connection,tableName);
-        return listToString(columnNames);
+    public static Connection getConnection(){
+        Connection conn = null;
+        try {
+            conn = dataSource.getConnection();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return conn;
     }
-    public static String getColumnNamesExcept(Connection connection, String tableName,String field) throws SQLException {
-        List<String> columnNames=getColumnListNamesExcept(connection,tableName,field);
-        return  listToString(columnNames);
-    }
-    //list转换为字符串
-    public static String listToString(List<String> columnNames) throws SQLException {
 
-        // 使用 StringBuilder 和循环将列表转换为逗号分隔的字符串
-        StringBuilder commaSeparatedStringBuilder = new StringBuilder();
-        for (int i = 0; i < columnNames.size(); i++) {
-            commaSeparatedStringBuilder.append(columnNames.get(i));
-            if (i < columnNames.size() - 1) {
-                commaSeparatedStringBuilder.append(", ");
+    public static DataSource getDataSource(){
+        return dataSource;
+    }
+    public static NamedParameterJdbcTemplate getTemplate(){
+        if(template==null)
+            template=new  NamedParameterJdbcTemplate(dataSource);
+        return template;
+    }
+    public static IMapper getMapper(){
+        return  new JdbcTemplateMapper(getTemplate());
+    }
+
+    public static void close(Connection conn, Statement stat, ResultSet res){
+        if (res != null){
+            try {
+                res.close();
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
             }
         }
-        return commaSeparatedStringBuilder.toString();
-    }
 
-    public static List<String> listExcept(List<String> columnNames, String fieled) throws SQLException {
-
-        Iterator<String> iterator = columnNames.iterator();
-        while (iterator.hasNext()) {
-            String element = iterator.next();
-            if (element.equals(fieled)) {
-                iterator.remove();
+        if (stat != null){
+            try {
+                stat.close();
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
             }
         }
-        return columnNames;
+
+        if (conn != null){
+            try {
+                conn.close();
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+        }
     }
+    public static void main(String[] args) throws Exception {
+        System.out.println(getConnection());
+    }
+
+
+
 }

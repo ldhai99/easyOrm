@@ -1,6 +1,9 @@
 package io.github.ldhai99.easyOrm;
 
 
+import io.github.ldhai99.easyOrm.tools.DbTools;
+import io.github.ldhai99.easyOrm.tools.StringTools;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -262,7 +265,7 @@ public class SqlModel implements  Cloneable ,Serializable {
 
         String lastWhere = " ";
         if (wheres1.size() != 0) {
-            lastWhere = DbConfig.rightTrim(wheres1.get(wheres1.size() - 1));
+            lastWhere = StringTools.rightTrim(wheres1.get(wheres1.size() - 1));
         }
 
         String pre = "";

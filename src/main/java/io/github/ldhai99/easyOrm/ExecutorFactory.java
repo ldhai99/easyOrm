@@ -1,14 +1,14 @@
 package io.github.ldhai99.easyOrm;
 
-import io.github.ldhai99.easyOrm.executor.IExecutor;
+import io.github.ldhai99.easyOrm.executor.IMapper;
 
 public class ExecutorFactory {
-    private static IExecutor executor=null ;
+    private static IMapper executor=null ;
 
-    public  static  IExecutor getExecutor(){
+    public  static IMapper getExecutor(){
         return executor;
     }
-    public static void   setExecutor(IExecutor iExecutor){
+    public static void   setExecutor(IMapper iExecutor){
         ExecutorFactory.executor=iExecutor;
     }
 }

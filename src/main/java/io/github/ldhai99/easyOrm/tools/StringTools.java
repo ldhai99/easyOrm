@@ -1,67 +1,12 @@
-package io.github.ldhai99.easyOrm;
+package io.github.ldhai99.easyOrm.tools;
 
-
-import io.github.ldhai99.easyOrm.Dialect.Dialect;
-import io.github.ldhai99.easyOrm.Dialect.MysqlDialect;
-
-import javax.sql.DataSource;
-
-public class DbConfig {
-
-    public static DataSource ds=null;
-
-    private static String database="mysql";
-    private static Dialect dialect;
-
-    public static DataSource getDs() {
-        return ds;
-    }
-
-    public static void setDs(DataSource ds) {
-        DbConfig.ds = ds;
-    }
-
+public class StringTools {
 
     public static  void main(String[] args){
         String c="userId";
         System.out.println("驼峰命名转下划线命名"+camel2under(c));
         String s="user_id";
         System.out.println("下划线命名转驼峰命名"+under2camel(s));
-    }
-
-//    public static void main(String[] args) {
-//        String content = " 012304560 ";
-//        char matchContent = '0';
-//        System.out.println(content.length());
-//        System.out.println(trim(content).length());
-//        System.out.println(leftTrim(content).length());
-//        System.out.println(rightTrim(content).length());
-//    }
-
-
-
-
-    public static  String getDatabase() {
-
-        return database;
-    }
-    //    public static String getUuid() {
-    //      return UUID.randomUUID().toString().replace("-", "" );
-    // }
-
-    public static Dialect getDialect() {
-
-        if(dialect==null){
-            if(database.equalsIgnoreCase("mysql")) {
-                return  new MysqlDialect();
-            }
-        }
-
-        return dialect;
-    }
-
-    public static  void setDatabase(String database) {
-        DbConfig.database = database;
     }
     /**
      * 功能：驼峰命名转下划线命名
@@ -117,5 +62,4 @@ public class DbConfig {
             return str.replaceAll("[　 ]+$", "");
         }
     }
-
 }

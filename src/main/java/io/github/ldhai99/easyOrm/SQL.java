@@ -2,17 +2,15 @@ package io.github.ldhai99.easyOrm;
 
 
 
-import io.github.ldhai99.easyOrm.executor.DbUtilsExecutor;
-import io.github.ldhai99.easyOrm.executor.IExecutor;
-import io.github.ldhai99.easyOrm.executor.JdbcTemplateExecutor;
+import io.github.ldhai99.easyOrm.executor.DbUtilsMapper;
+import io.github.ldhai99.easyOrm.executor.IMapper;
+import io.github.ldhai99.easyOrm.executor.JdbcTemplateMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import javax.sql.DataSource;
 import java.math.BigDecimal;
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class SQL {
     private static final long serialVersionUID = 1L;
@@ -20,7 +18,7 @@ public class SQL {
     protected SqlModel builder = new SqlModel();
     protected JdbcModel jdbcModel = new JdbcModel();
 
-    private IExecutor executor;
+    private IMapper executor;
 
     public static void main(String[] args) {
         SQL read = new SQL().column("*")
@@ -43,11 +41,31 @@ public class SQL {
         System.out.println(read.getParameterMap());
 
     }
-
+    //构造方法
     public SQL() {
-        initSQL();
+        createExecutor();
     }
 
+    //构造函数，传入连接，传入数据源
+    public SQL(Connection connection) {
+        createExecutor(connection);
+    }
+    //构造函数，传入数据源
+    public SQL(DataSource dataSource) {
+        createExecutor(dataSource);
+    }
+    //构造函数，传入执行器
+    public SQL(IMapper executor) {
+        createExecutor(executor);
+    }
+
+    //传入执行器
+    public SQL(NamedParameterJdbcTemplate template) {
+        executor = new JdbcTemplateMapper(template);
+    }
+
+
+    //克隆
     protected SQL(SQL sql) {
         this.builder=sql.builder.clone();
         this.jdbcModel.mergeParameterMap(sql);
@@ -57,47 +75,53 @@ public class SQL {
         return new SQL(this);
     }
 
-
-    //传入执行器
-    public SQL(NamedParameterJdbcTemplate template) {
-        executor = new JdbcTemplateExecutor(template);
-    }
-
-    //构造函数，传入连接，传入数据源
-    public SQL(Connection connection) {
-        initSQL(connection);
-    }
-    public SQL(DataSource dataSource) {
-        initSQL(dataSource);
-    }
-    public SQL initSQL(){
-        executor = new DbUtilsExecutor();
+    //默认执行器为JdbcTemplateMapper
+    public SQL createExecutor(){
+        executor =  JdbcTemplateMapper.getMapper();
         return  this;
     }
-    public SQL initSQL(Connection connection){
-        executor = new DbUtilsExecutor(connection);
+    public SQL createExecutor(Connection connection){
+
+        executor = new DbUtilsMapper(connection);
         return  this;
 
     }
-    public SQL initSQL(DataSource dataSource){
-        executor = new DbUtilsExecutor(dataSource);
+    public SQL createExecutor(DataSource dataSource){
+        executor = new DbUtilsMapper(dataSource);
+        return  this;
+    }
+    public SQL createExecutor(IMapper executor){
+        this.executor = executor;
         return  this;
     }
 
-    //静态构造方法，传入连接，传入数据源
-    public static SQL GET(Connection connection) {
+    //大学，构造，并传入执行器
+    public static SQL MAPPER(Connection connection) {
         return new SQL( connection);
     }
-    public static SQL GET(DataSource dataSource) {
+    public static SQL MAPPER(DataSource dataSource) {
         return new SQL( dataSource);
     }
 
-    //构造函数，传入执行器
-    public SQL(IExecutor executor) {
-        this.executor = executor;
-    }
-    public static SQL GET(IExecutor executor) {
+    public  static SQL MAPPER(IMapper executor) {
         return new SQL( executor);
+
+    }
+
+    //小写，设置执行器
+    public  SQL mapper(Connection connection) {
+        createExecutor(connection);
+        return this;
+    }
+    public  SQL mapper(DataSource dataSource) {
+        createExecutor(dataSource);
+        return this;
+    }
+
+    public  SQL mapper(IMapper executor) {
+        createExecutor(executor);
+
+        return this;
     }
 
     //静态工厂方法-----------------------------------------------------------------------------------
@@ -223,12 +247,16 @@ public class SQL {
 
     //代理SqlAndParameter---------------------------
     public Map<String, Object> getParameterMap() {
-
         return jdbcModel.getParameterMap();
     }
+    public    Object[] getParamsList() {
+        return jdbcModel.getParamsList().toArray();
+    }
 
-
-
+    public String getJdbcSql() {
+        this.toString();
+        return jdbcModel.getJdbcSql();
+    }
 
     public SQL distinct() {
         this.builder.distinct();
@@ -283,7 +311,7 @@ public class SQL {
     }
 
 
-    protected SqlModel getBuilder() {
+    public SqlModel getBuilder() {
         return this.builder;
     }
 
@@ -723,7 +751,6 @@ public class SQL {
     //代理-------------------------------------------------执行类
     public void toExecutor() {
         this.toString();
-        executor.setJdbcDataModel(this.jdbcModel);
     }
 
 
@@ -732,280 +759,291 @@ public class SQL {
 
     //更新
     public int update()  {
-        this.toExecutor();
-        return executor.update();
+        return executor.update(this);
     }
     public int update(DataSource ds)  {
-        initSQL(ds);
+        createExecutor(ds);
         return update();
     }
     public int update(Connection conn)  {
-        initSQL(conn);
+        createExecutor(conn);
         return update();
     }
-
+    public int update(IMapper mapper)  {
+        createExecutor(mapper);
+        return update();
+    }
     //增加，返回主键
     public Number insert()  {
-        this.toExecutor();
-        return executor.insert();
+        return executor.insert(this);
     }
 
     public Number insert(DataSource ds)  {
-        initSQL(ds);
+        createExecutor(ds);
         return insert();
     }
     public Number insert(Connection conn)  {
-        initSQL(conn);
+        createExecutor(conn);
         return insert();
     }
-
+    public Number insert(IMapper mapper)  {
+        createExecutor(mapper);
+        return insert();
+    }
     //执行存储过程
     public int execute()  {
-        this.toExecutor();
-        return executor.execute();
+
+        return executor.execute(this);
     }
 
     public int execute(DataSource ds)  {
-        initSQL(ds);
+        createExecutor(ds);
         return execute();
     }
     public int execute(Connection conn)  {
-        initSQL(conn);
+        createExecutor(conn);
+        return execute();
+    }
+
+    public int execute(IMapper mapper)  {
+        createExecutor(mapper);
         return execute();
     }
     //查询数据库-----------------------------------------------------------------------------------
 
     //返回单列单行数据
     public String getString()  {
-        this.toExecutor();
-        return executor.string();
+        return executor.getString(this);
     }
     public String getString(DataSource ds)  {
-        initSQL(ds);
+        createExecutor(ds);
         return getString();
     }
     public String getString(Connection conn)  {
-        initSQL(conn);
+        createExecutor(conn);
+        return getString();
+    }
+    public String getString(IMapper mapper)  {
+        createExecutor(mapper);
         return getString();
     }
 
     public Integer getInteger()  {
-        return this.getNumber().intValue();
+        return executor.getInteger(this);
     }
     public Integer getInteger(DataSource ds)  {
-        initSQL(ds);
+        createExecutor(ds);
         return getInteger();
     }
     public Integer getInteger(Connection conn)  {
-        initSQL(conn);
+        createExecutor(conn);
         return getInteger();
     }
 
     public Long getLong()  {
-        return this.getNumber().longValue();
+        return executor.getLong(this);
     }
     public Long getLong(DataSource ds)  {
-        initSQL(ds);
+        createExecutor(ds);
         return getLong();
     }
     public Long getLong(Connection conn)  {
-        initSQL(conn);
+        createExecutor(conn);
         return getLong();
     }
 
     public Float getFloat()  {
-        return this.getNumber().floatValue();
+        return executor.getFloat(this);
     }
     public Float getFloat(DataSource ds)  {
-        initSQL(ds);
+        createExecutor(ds);
         return getFloat();
     }
     public Float getFloat(Connection conn)  {
-        initSQL(conn);
+        createExecutor(conn);
         return getFloat();
     }
 
     public Double getDouble()  {
 
-        return this.getNumber().doubleValue();
+        return executor.getDouble(this);
     }
     public Double getDouble(DataSource ds)  {
-        initSQL(ds);
+        createExecutor(ds);
         return getDouble();
     }
     public Double getDouble(Connection conn)  {
-        initSQL(conn);
+        createExecutor(conn);
         return getDouble();
     }
 
     public Number getNumber()  {
-        this.toExecutor();
-        return executor.number();
+        return executor.getNumber(this);
     }
     public Number getNumber(Connection conn)  {
-        initSQL(conn);
+        createExecutor(conn);
         return getNumber();
     }
     public Number getNumber(DataSource ds)  {
-        initSQL(ds);
+        createExecutor(ds);
         return getNumber();
     }
 
     public BigDecimal getBigDecimal()  {
-        this.toExecutor();
-        return executor.bigDecimal();
+
+        return executor.getBigDecimal(this);
     }
 
     public BigDecimal getBigDecimal(DataSource ds)  {
-        initSQL(ds);
+        createExecutor(ds);
         return getBigDecimal();
     }
     public BigDecimal getBigDecimal(Connection conn)  {
-        initSQL(conn);
+        createExecutor(conn);
         return getBigDecimal();
     }
 
     public Date getDate()  {
-        this.toExecutor();
-        return executor.date();
+
+        return executor.getDate(this);
     }
     public Date getDate(DataSource ds)  {
-        initSQL(ds);
+        createExecutor(ds);
         return getDate();
     }
     public Date getDate(Connection conn)  {
-        initSQL(conn);
+        createExecutor(conn);
         return getDate();
     }
 
     public <T> T getValue(Class<T> requiredType)  {
-        this.toExecutor();
-        return executor.value(requiredType);
+        return executor.getValue(this,requiredType);
     }
     public <T> T getValue(DataSource ds,Class<T> requiredType)  {
-        initSQL(ds);
+        createExecutor(ds);
         return getValue(requiredType);
     }
     public <T> T getValue(Connection conn,Class<T> requiredType)  {
-        initSQL(conn);
+        createExecutor(conn);
         return getValue(requiredType);
     }
 
     //返回单列list数据
     public List<String> getStrings()  {
-        this.toExecutor();
-        return executor.strings();
+
+        return executor.getStrings(this);
     }
     public List<String> getStrings(DataSource ds)  {
-        initSQL(ds);
+        createExecutor(ds);
         return getStrings();
     }
     public List<String> getStrings(Connection conn)  {
-        initSQL(conn);
+        createExecutor(conn);
         return getStrings();
     }
 
     public List<Integer> getIntegers()  {
-        return getNumbers().stream().map(s -> s.intValue()).collect(Collectors.toList());
+        return executor.getIntegers(this);
     }
     public List<Integer> getIntegers(DataSource ds)  {
-        initSQL(ds);
+        createExecutor(ds);
         return getIntegers();
     }
     public List<Integer> getIntegers(Connection conn)  {
-        initSQL(conn);
+        createExecutor(conn);
         return getIntegers();
     }
 
     public List<Long> getLongs()  {
-        return getNumbers().stream().map(s -> s.longValue()).collect(Collectors.toList());
+
+        return executor.getLongs(this);
     }
     public List<Long> getLongs(DataSource ds)  {
-        initSQL(ds);
+        createExecutor(ds);
         return getLongs();
     }
     public List<Long> getLongs(Connection conn)  {
-        initSQL(conn);
+        createExecutor(conn);
         return getLongs();
     }
 
 
     public List<Double> getDoubles()  {
-        return getNumbers().stream().map(s -> s.doubleValue()).collect(Collectors.toList());
+        return executor.getDoubles(this);
     }
     public List<Double> getDoubles(DataSource ds)  {
-        initSQL(ds);
+        createExecutor(ds);
         return getDoubles();
     }
     public List<Double> getDoubles(Connection conn)  {
-        initSQL(conn);
+        createExecutor(conn);
         return getDoubles();
     }
 
     public List<Float> getFloats()  {
-        return getNumbers().stream().map(s -> s.floatValue()).collect(Collectors.toList());
+        return executor.getFloats(this);
     }
     public List<Float> getFloats(DataSource ds)  {
-        initSQL(ds);
+        createExecutor(ds);
         return getFloats();
     }
     public List<Float> getFloats(Connection conn)  {
-        initSQL(conn);
+        createExecutor(conn);
         return getFloats();
     }
 
     public List<Number> getNumbers()  {
-        this.toExecutor();
-        return executor.numbers();
+
+        return executor.getNumbers(this);
     }
 
     public List<Number> getNumbers(DataSource ds)  {
-        initSQL(ds);
+        createExecutor(ds);
         return getNumbers();
     }
     public List<Number> getNumbers(Connection conn)  {
-        initSQL(conn);
+        createExecutor(conn);
         return getNumbers();
     }
 
     public List<BigDecimal> getBigDecimals()  {
-        this.toExecutor();
-        return executor.bigDecimals();
+
+        return executor.getBigDecimals(this);
     }
     public List<BigDecimal> getBigDecimals(DataSource ds)  {
-        initSQL(ds);
+        createExecutor(ds);
         return getBigDecimals();
     }
     public List<BigDecimal> getBigDecimals(Connection conn)  {
-        initSQL(conn);
+        createExecutor(conn);
         return getBigDecimals();
     }
 
 
     public List<Date> getDates()  {
-        this.toExecutor();
-        return executor.dates();
+
+        return executor.getDates(this);
     }
     public List<Date> getDates(DataSource ds)  {
-        initSQL(ds);
+        createExecutor(ds);
         return getDates();
     }
     public List<Date> getDates(Connection conn)  {
-        initSQL(conn);
+        createExecutor(conn);
         return getDates();
     }
 
 
     public <T> List<T> getValues(Class<T> requiredType)  {
-        this.toExecutor();
-        return executor.values(requiredType);
+
+        return executor.getValues(this,requiredType);
     }
     public <T> List<T> getValues(DataSource ds,Class<T> requiredType)  {
-        initSQL(ds);
+        createExecutor(ds);
         return getValues(requiredType);
     }
     public <T> List<T> getValues(Connection conn,Class<T> requiredType)  {
-        initSQL(conn);
+        createExecutor(conn);
         return getValues(requiredType);
     }
 
@@ -1013,91 +1051,83 @@ public class SQL {
     //返回单行数据
 
     public Map<String, Object> getMap()  {
-        this.toExecutor();
-        return executor.map();
+
+        return executor.getMap(this);
     }
     public Map<String, Object> getMap(DataSource ds)  {
-        initSQL(ds);
+        createExecutor(ds);
         return getMap();
     }
     public Map<String, Object> getMap(Connection conn)  {
-        initSQL(conn);
+        createExecutor(conn);
         return getMap();
     }
 
     //返回多行数据
     public List<Map<String, Object>> getMaps()  {
-        this.toExecutor();
-        return executor.maps();
+
+        return executor.getMaps(this);
     }
     public List<Map<String, Object>> getMaps(DataSource ds)  {
-        initSQL(ds);
+        createExecutor(ds);
         return getMaps();
     }
     public List<Map<String, Object>> getMaps(Connection conn)  {
-        initSQL(conn);
+        createExecutor(conn);
         return getMaps();
     }
 
 
     //返回Bean实体
     public <T> T getBean(Class<T> T)  {
-        this.toExecutor();
-        return executor.bean(T);
+
+        return executor.getBean(this,T);
     }
     public <T> T getBean(DataSource ds,Class<T> T)  {
-        initSQL(ds);
+        createExecutor(ds);
         return getBean(T);
     }
     public <T> T getBean(Connection conn,Class<T> T)  {
-        initSQL(conn);
+        createExecutor(conn);
         return getBean(T);
     }
 
     //返回Bean list
     public <T> List<T> getBeans(Class<T> T)  {
-        this.toExecutor();
-        return executor.beans(T);
+
+        return executor.getBeans(this,T);
     }
     public <T> List<T> getBeans(DataSource ds,Class<T> T)  {
-        initSQL(ds);
+        createExecutor(ds);
         return getBeans(T);
     }
     public <T> List<T> getBeans(Connection conn,Class<T> T)  {
-        initSQL(conn);
+        createExecutor(conn);
         return getBeans(T);
     }
 
     //查询应用-------------判断是否存在------------------------------------------------
     public boolean isExists()  {
-        if (new SQL(this.executor).select("dual").column("1").exists(this).getMaps().size() >= 1)
-            return true;
-        else
-            return false;
+       return this.executor.isExists(this);
     }
     public boolean isExists(DataSource ds)  {
-        initSQL(ds);
+        createExecutor(ds);
         return isExists();
     }
     public boolean isExists(Connection conn)  {
-        initSQL(conn);
+        createExecutor(conn);
         return isExists();
     }
     //对一个查询给出记录数
     public Number getCount()  {
-        if (builder.hasGroup()) {
-            return new SQL(this.executor).select(this.clone().setColumn("count(*) count"),"a")
-                    .setColumn("count(*) count").getNumber();
-        }else{
-            return this.clone().setColumn("count(*) count").getNumber();
-        }
+        return this.executor.getCount(this);
     }
     public Number getCount(DataSource ds)  {
-        initSQL(ds);
+        createExecutor(ds);
         return getCount();
     }
     public Number getCount(Connection conn)  {
-        initSQL(conn);
+        createExecutor(conn);
         return getCount();
     }
 
