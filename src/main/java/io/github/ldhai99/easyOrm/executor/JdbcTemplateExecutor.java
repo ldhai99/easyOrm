@@ -10,33 +10,33 @@ import javax.sql.DataSource;
 import java.util.List;
 import java.util.Map;
 
-public class JdbcTemplateMapper extends AbstractMapper {
+public class JdbcTemplateExecutor extends AbstractExecutor {
 
     private NamedParameterJdbcTemplate template;
 
-    public JdbcTemplateMapper(){
+    public JdbcTemplateExecutor(){
 
         template=new NamedParameterJdbcTemplate(EasyOrmProperties.getDs());
 
     }
-    public JdbcTemplateMapper(DataSource dataSource){
+    public JdbcTemplateExecutor(DataSource dataSource){
 
         template=new NamedParameterJdbcTemplate(dataSource);
 
     }
-    public JdbcTemplateMapper(NamedParameterJdbcTemplate template){
+    public JdbcTemplateExecutor(NamedParameterJdbcTemplate template){
         this.template=template;
 
     }
     //全局执行器
-    public  static JdbcTemplateMapper getMapper(){
+    public  static JdbcTemplateExecutor getMapper(){
         //存在返回
-        if(EasyOrmProperties.mapper!=null)
-            return  EasyOrmProperties.mapper;
+        if(EasyOrmProperties.executor!=null)
+            return  EasyOrmProperties.executor;
 
         //不存在，但存在数据源，生成全局执行器，并保存
         if(EasyOrmProperties.ds!=null)
-           EasyOrmProperties.mapper= new JdbcTemplateMapper();
+           EasyOrmProperties.executor= new JdbcTemplateExecutor();
         return  null;
 
     }

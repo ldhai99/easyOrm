@@ -16,24 +16,24 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
-public class DbUtilsMapper extends AbstractMapper {
+public class DbUtilsExecutor extends AbstractExecutor {
     private Connection connection;
     private DataSource dataSource;
 
     QueryRunner qr;
 
-    public DbUtilsMapper(){
+    public DbUtilsExecutor(){
         if(EasyOrmProperties.getDs()!=null){
             // 从事务管理器获取当前事务的连接，全局数据源
             this.connection= DataSourceUtils.getConnection(EasyOrmProperties.getDs());
             qr=new QueryRunner();
         }
     }
-    public DbUtilsMapper(Connection connection){
+    public DbUtilsExecutor(Connection connection){
         this.connection=connection;
         qr=new QueryRunner();
    }
-   public DbUtilsMapper(DataSource dataSource){
+   public DbUtilsExecutor(DataSource dataSource){
         qr=new QueryRunner();
         this.dataSource=dataSource;
        // 从事务管理器获取当前事务的连接,传入数据源

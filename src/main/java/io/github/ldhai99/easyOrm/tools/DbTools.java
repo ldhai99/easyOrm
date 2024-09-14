@@ -1,16 +1,14 @@
 package io.github.ldhai99.easyOrm.tools;
 
 import com.alibaba.druid.pool.DruidDataSourceFactory;
-import io.github.ldhai99.easyOrm.executor.IMapper;
-import io.github.ldhai99.easyOrm.executor.JdbcTemplateMapper;
+import io.github.ldhai99.easyOrm.executor.Executor;
+import io.github.ldhai99.easyOrm.executor.JdbcTemplateExecutor;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.datasource.DataSourceUtils;
 
 import javax.sql.DataSource;
 import java.io.InputStream;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Properties;
 
 public class DbTools {
@@ -37,17 +35,25 @@ public class DbTools {
         }
         return conn;
     }
+    public static Connection getConnection(DataSource dataSource) {
+       return DataSourceUtils.getConnection(dataSource);
+    }
+    public static void close(Connection conn,DataSource dataSource){
+        DataSourceUtils.releaseConnection(conn, dataSource);
+    }
 
     public static DataSource getDataSource(){
         return dataSource;
     }
+    //获取jdbcTemplate
     public static NamedParameterJdbcTemplate getTemplate(){
         if(template==null)
             template=new  NamedParameterJdbcTemplate(dataSource);
         return template;
     }
-    public static IMapper getMapper(){
-        return  new JdbcTemplateMapper(getTemplate());
+    //执行器
+    public static Executor getExecutor(){
+        return  new JdbcTemplateExecutor(getTemplate());
     }
 
     public static void close(Connection conn, Statement stat, ResultSet res){

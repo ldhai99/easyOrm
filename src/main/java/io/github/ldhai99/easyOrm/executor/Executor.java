@@ -7,7 +7,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-public interface IMapper {
+public interface Executor {
 
     //代理-------------------------------------------------执行类
     //执行增加，删除，修改，返回记录个数

@@ -6,7 +6,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
-public abstract class AbstractMapper implements IMapper {
+public abstract class AbstractExecutor implements Executor {
     //返回单列单行数据---------------------
     public String getString (SQL sql) {
         return   getValue(sql,String.class);

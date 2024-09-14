@@ -2,9 +2,9 @@ package io.github.ldhai99.easyOrm;
 
 
 
-import io.github.ldhai99.easyOrm.executor.DbUtilsMapper;
-import io.github.ldhai99.easyOrm.executor.IMapper;
-import io.github.ldhai99.easyOrm.executor.JdbcTemplateMapper;
+import io.github.ldhai99.easyOrm.executor.DbUtilsExecutor;
+import io.github.ldhai99.easyOrm.executor.Executor;
+import io.github.ldhai99.easyOrm.executor.JdbcTemplateExecutor;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import javax.sql.DataSource;
@@ -12,13 +12,14 @@ import java.math.BigDecimal;
 import java.sql.Connection;
 import java.util.*;
 
+
 public class SQL {
     private static final long serialVersionUID = 1L;
 
     protected SqlModel builder = new SqlModel();
     protected JdbcModel jdbcModel = new JdbcModel();
 
-    private IMapper executor;
+    private Executor executor;
 
     public static void main(String[] args) {
         SQL read = new SQL().column("*")
@@ -55,13 +56,13 @@ public class SQL {
         createExecutor(dataSource);
     }
     //构造函数，传入执行器
-    public SQL(IMapper executor) {
+    public SQL(Executor executor) {
         createExecutor(executor);
     }
 
     //传入执行器
     public SQL(NamedParameterJdbcTemplate template) {
-        executor = new JdbcTemplateMapper(template);
+        executor = new JdbcTemplateExecutor(template);
     }
 
 
@@ -77,20 +78,20 @@ public class SQL {
 
     //默认执行器为JdbcTemplateMapper
     public SQL createExecutor(){
-        executor =  JdbcTemplateMapper.getMapper();
+        executor =  JdbcTemplateExecutor.getMapper();
         return  this;
     }
     public SQL createExecutor(Connection connection){
 
-        executor = new DbUtilsMapper(connection);
+        executor = new DbUtilsExecutor(connection);
         return  this;
 
     }
     public SQL createExecutor(DataSource dataSource){
-        executor = new DbUtilsMapper(dataSource);
+        executor = new DbUtilsExecutor(dataSource);
         return  this;
     }
-    public SQL createExecutor(IMapper executor){
+    public SQL createExecutor(Executor executor){
         this.executor = executor;
         return  this;
     }
@@ -103,7 +104,7 @@ public class SQL {
         return new SQL( dataSource);
     }
 
-    public  static SQL MAPPER(IMapper executor) {
+    public  static SQL MAPPER(Executor executor) {
         return new SQL( executor);
 
     }
@@ -118,7 +119,7 @@ public class SQL {
         return this;
     }
 
-    public  SQL mapper(IMapper executor) {
+    public  SQL mapper(Executor executor) {
         createExecutor(executor);
 
         return this;
@@ -212,6 +213,8 @@ public class SQL {
         return this;
     }
     public SQL where(SQL subSql) {
+        if (subSql==null)
+            return this;
 
         this.builder.where(jdbcModel.processSqlName(subSql));
         return this;
@@ -430,6 +433,14 @@ public class SQL {
     }
 
 
+    public SQL eqMap(Map<String, Object> columnMap) {
+        if(columnMap==null)
+            return  this;
+        for (String key:columnMap.keySet()   ) {
+            eq(key,columnMap.get(key));
+        }
+        return this;
+    }
     public SQL eq(Object name, Object value) {
         return nameOperatorValue(name, "=", value);
     }
@@ -618,12 +629,29 @@ public class SQL {
 
     //直接遍历字段，然后设置
     public SQL setMap(String fields, Map value) {
-        String[] parts = fields.split(",\\s*");
-        for (int i = 0; i < parts.length; i++) {
-            if(value!=null )
-                set(parts[i], new DbParameter(parts[i], value.get(parts[i])));
-            else
-                set(parts[i], new DbParameter(parts[i], null));
+
+        //表示不通过fields来过滤字段，直接用Map中的key，vaule的值都是有用的
+        if(fields==null || fields.equals("")||fields.equals("*")){
+            return setMap(value);
+        }
+        //通过fields来过滤Map的key,value中包含没用的key
+        else
+        {
+            String[] parts = fields.split(",\\s*");
+            for (int i = 0; i < parts.length; i++) {
+                    //通过值过滤，存在值就更新，不存在不更新，双过滤
+                    if(value.containsKey(parts[i]))
+                        set(parts[i], new DbParameter(parts[i], value.get(parts[i])));
+            }
+            return this;
+        }
+
+    }
+    //直接用Map中的key，vaule的值都是有用的
+    public SQL setMap(Map<String, Object> columnMap) {
+        for (String key:columnMap.keySet()             ) {
+            set(key, new DbParameter(key,columnMap.get(key), null));
+
         }
         return this;
     }
@@ -769,7 +797,7 @@ public class SQL {
         createExecutor(conn);
         return update();
     }
-    public int update(IMapper mapper)  {
+    public int update(Executor mapper)  {
         createExecutor(mapper);
         return update();
     }
@@ -786,7 +814,7 @@ public class SQL {
         createExecutor(conn);
         return insert();
     }
-    public Number insert(IMapper mapper)  {
+    public Number insert(Executor mapper)  {
         createExecutor(mapper);
         return insert();
     }
@@ -805,7 +833,7 @@ public class SQL {
         return execute();
     }
 
-    public int execute(IMapper mapper)  {
+    public int execute(Executor mapper)  {
         createExecutor(mapper);
         return execute();
     }
@@ -823,7 +851,7 @@ public class SQL {
         createExecutor(conn);
         return getString();
     }
-    public String getString(IMapper mapper)  {
+    public String getString(Executor mapper)  {
         createExecutor(mapper);
         return getString();
     }
