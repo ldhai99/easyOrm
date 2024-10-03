@@ -4,6 +4,7 @@ package io.github.ldhai99.easyOrm.autoConfig;
 import io.github.ldhai99.easyOrm.executor.Executor;
 import io.github.ldhai99.easyOrm.executor.JdbcTemplateExecutor;
 
+import io.github.ldhai99.easyOrm.tools.DbTools;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,8 +23,8 @@ public class EasyOrmConfig {
         //保存全局数据源
         EasyOrmProperties.setDs(dataSource);
         //保存全局执行器
-        EasyOrmProperties.executor= new JdbcTemplateExecutor(npjt);
-        return EasyOrmProperties.executor;
+        DbTools.createExecutor(npjt);
+        return DbTools.getExecutor();
     }
 
 }

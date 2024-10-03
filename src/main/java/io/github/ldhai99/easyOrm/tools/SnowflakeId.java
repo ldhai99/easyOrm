@@ -1,4 +1,4 @@
-package io.github.ldhai99.easyOrm.base;
+package io.github.ldhai99.easyOrm.tools;
 
 import com.github.yitter.contract.IdGeneratorOptions;
 import com.github.yitter.idgen.YitIdHelper;

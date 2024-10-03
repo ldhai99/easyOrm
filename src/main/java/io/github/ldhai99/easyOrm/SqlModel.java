@@ -194,6 +194,10 @@ public class SqlModel implements  Cloneable ,Serializable {
         this.columns.add(name);
         return this;
     }
+    public SqlModel column(String name,String alias) {
+        this.columns.add(name+" as "+alias);
+        return this;
+    }
 
     public SqlModel column(String name, boolean groupBy) {
         this.columns.add(name);
@@ -269,21 +273,31 @@ public class SqlModel implements  Cloneable ,Serializable {
         }
 
         String pre = "";
-        //判断是否是重新开始,有开始
+        //前面有连接（、 or、 and，就是最后部分是否有连接
         if ((wheres1.size() == 0) ||
+                //判断字符串最后部分是不是连接，加空格前缀比较与避免or（doctor）和and后缀的字段名称，判断最好完全匹配
                 (lastWhere.lastIndexOf("(") != -1 && lastWhere.lastIndexOf("(") == lastWhere.length() - 1) ||
                 (lastWhere.lastIndexOf(" or") != -1 && lastWhere.lastIndexOf(" or") == lastWhere.length() - 3) ||
-                (lastWhere.lastIndexOf(" and") != -1 && lastWhere.lastIndexOf(" and") == lastWhere.length() - 4)
+                (lastWhere.lastIndexOf(" and") != -1 && lastWhere.lastIndexOf(" and") == lastWhere.length() - 4)) {
 
-        ) {
-            wheres1.add(expr);
-        } else {
-            //是否有连接
-            if (expr.trim().indexOf("or") == 0 || expr.trim().indexOf("and") == 0
-                    || expr.trim().equals(")")
-            ) {
+            //自己有连接，重复，加空格后缀，避免or（org）和and开头的字段名称
+            if (((expr.trim()+" ").indexOf("or ") == 0 ) || ((expr.trim()+" ").indexOf("and ") == 0)){
+                //前面是开始（‘（’，'or','and'），不能再有开始符号，即(or、(and、 or or、 or and 等都是非法，但((是合法的。
+            }
+            //自己没有连接，直接加
+            else{
+                 wheres1.add(expr);
+            }
+        }
+        //前面没有连接
+        else {
+            //自己有连接，直接加，）属于连接结束，加空格后缀，避免or（org）和and开头的字段名称
+            if (((expr.trim()+" ").indexOf("or ") == 0 ) || ((expr.trim()+" ").indexOf("and ") == 0)
+                    || expr.trim().equals(")")            ) {
                 wheres1.add(expr);
-            } else {
+            }
+            //自己没有连接，添加默认连接and
+            else {
                 wheres1.add(" and " + expr);
             }
 

@@ -1,8 +1,9 @@
 package io.github.ldhai99.easyOrm.dao;
 
-import io.github.ldhai99.easyOrm.base.SnowflakeId;
+import io.github.ldhai99.easyOrm.page.MysqlPageSqlByStartId;
+import io.github.ldhai99.easyOrm.page.PAGE;
+import io.github.ldhai99.easyOrm.tools.SnowflakeId;
 import io.github.ldhai99.easyOrm.datamodel.BaseDm;
-import io.github.ldhai99.easyOrm.page.MysqlPageData;
 import io.github.ldhai99.easyOrm.SQL;
 import io.github.ldhai99.easyOrm.page.PageModel;
 
@@ -13,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class BaseDao<T extends BaseDm> {
+public class BaseDao<T extends BaseDm > {
 
     public T dm;
 
@@ -122,12 +123,25 @@ public class BaseDao<T extends BaseDm> {
                 .eq(dm.table_id, id)
                 .getMap();
     }
+
+    public  <E>E getBeanById(Serializable id,Class <E>E) {
+        return SQL.SELECT(dm.select_table)
+                .column(dm.select_fields)
+                .eq(dm.table_id, id)
+                .getBean(E);
+    }
     //通过一组id列表，获取多条记录为maps
     public List<Map<String, Object>> getMapsByIds(ArrayList ids) {
         return SQL.SELECT(dm.select_table)
                 .column(dm.select_fields)
                 .in(dm.table_id, ids)
                 .getMaps();
+    }
+    public <E>List<E> getBeansByIds(ArrayList ids,Class<E> E) {
+        return SQL.SELECT(dm.select_table)
+                .column(dm.select_fields)
+                .in(dm.table_id, ids)
+                .getBeans(E);
     }
     //通过一组id数组，获取多条记录为maps
     public List<Map<String, Object>> getMapsByIds(Object... ids) {
@@ -136,12 +150,24 @@ public class BaseDao<T extends BaseDm> {
                 .in(dm.table_id, ids)
                 .getMaps();
     }
+    public <E>List<E> getBeansByIds(Class<E> E,Serializable... ids) {
+        return SQL.SELECT(dm.select_table)
+                .column(dm.select_fields)
+                .in(dm.table_id, ids)
+                .getBeans(E);
+    }
     //通过map条件，获取一条记录为map
     public Map<String, Object> getMapByMap(Map<String, Object> columnMap) {
         return SQL.SELECT(dm.select_table)
                 .column(dm.select_fields)
                 .eqMap(columnMap)
                 .getMap();
+    }
+    public <E>E getBeanByMap(Map<String, Object> columnMap,Class<E> E) {
+        return SQL.SELECT(dm.select_table)
+                .column(dm.select_fields)
+                .eqMap(columnMap)
+                .getBean(E);
     }
     //通过map条件，获取多条记录为maps
     public List<Map<String, Object>> getMapsByMap(Map<String, Object> columnMap) {
@@ -150,12 +176,25 @@ public class BaseDao<T extends BaseDm> {
                 .eqMap(columnMap)
                 .getMaps();
     }
+
+    public <E>List<E>  getBeansByMap(Map<String, Object> columnMap,Class<E> E) {
+        return SQL.SELECT(dm.select_table)
+                .column(dm.select_fields)
+                .eqMap(columnMap)
+                .getBeans(E);
+    }
     //通过条件构造器，获取多条记录为maps
     public List<Map<String, Object>> getMapsByWhere(SQL sql) {
         return SQL.SELECT(dm.select_table)
                 .column(dm.select_fields)
                 .where(sql)
                 .getMaps();
+    }
+    public <E>List<E>  getBeansByWhere(SQL sql,Class<E> E) {
+        return SQL.SELECT(dm.select_table)
+                .column(dm.select_fields)
+                .where(sql)
+                .getBeans(E);
     }
     //存在--------------
     //通过id判断存在
@@ -198,44 +237,27 @@ public class BaseDao<T extends BaseDm> {
     }
 
     //获取页面数据
-    public PageModel getPageBySQL(PageModel page, SQL sql) {
-        return page.setPageData(new MysqlPageData(sql) {
-            public List<Map<String, Object>> getPageData()  {
-                //具体哪一种可以翻页可以更换
-                return getPageData(sql, page.getPageStartRow(), page.getPageRecorders());
+    public List<Map<String, Object>> getPageBySQL(PageModel pageModel, SQL sql) {
+        return PAGE.of(pageModel,sql).getPageMaps();
 
-            }
 
-        }).execute();
     }
     //page传入翻页条件，传入条件构造器，普通的翻页
-    public PageModel getPageByWhere(PageModel page, SQL sqlWhere) {
-        return page.setPageData(new MysqlPageData(SQL.SELECT(dm.select_table)
-                .column(dm.select_fields)
-                .where(sqlWhere)) {
-            public List<Map<String, Object>> getPageData() {
+    public List<Map<String, Object>>  getPageByWhere(PageModel pageModel, SQL sqlWhere) {
+        return  PAGE.of(pageModel).setSql(
+                    SQL.SELECT(dm.select_table)
+                    .column(dm.select_fields)
+                    .where(sqlWhere))
+                .getPageMaps();
 
-                //具体哪一种可以翻页可以更换
-                return getPageData(sql , page.getPageStartRow(), page.getPageRecorders());
-            }
-
-        }).execute();
     }
 
     //   page传入翻页条件，传入条件构造器，翻页条件要加上页的起始行id
+    public List<Map<String, Object>>  getPageByStartId(PageModel pageModel, SQL sql) {
+        return  PAGE.of(pageModel).setSql(sql)
+                .setPageSqlGenerator(new MysqlPageSqlByStartId())
+                .getPageMaps();
 
-    public PageModel getPageByStartId(PageModel page, SQL sql) {
-        return page.setPageData(new MysqlPageData(sql) {
-            public List<Map<String, Object>> getPageData()  {
-                //具体哪一种可以翻页可以更换
-                return sql.clone().gt(page.getId(), page.getPageStartId())
-                        .last(" limit :records")
-                        .setValue$("records", page.getPageRecorders())
-                        .getMaps();
-
-            }
-
-        }).execute();
     }
 
 

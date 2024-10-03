@@ -1,96 +1,120 @@
 package io.github.ldhai99.easyOrm.page;
 
 
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
-public  class PageModel {
+public class PageModel <T>{
+    //记录信息
+    protected long total = 0; // 总记录数
+    protected long size = 10;// 每页5条数据
 
     //页面信息
-    private int currentPage = 1; // 当前页
-    private int totalPages = 0; // 总页数
+    protected long current = 1; // 当前页
+    protected long pages = 0l;//总页数
 
 
-    private int pageRecorders = 10;// 每页5条数据
-    private int totalRows = 0; // 总数据数
-    private int pageStartRow = 0;;// 每页的起始数
-    private int pageEndRow = 0;; // 每页显示数据的终止数
-    private boolean hasNextPage = false; // 是否有下一页
-    private boolean hasPreviousPage = false; // 是否有前一页
-    private int nextPage = 0;// 下一页的页码
+    protected boolean hasNext = false; // 是否有下一页
 
-    private int previousPage = 0;// 上一页的页码
+
+    protected boolean hasPrevious = false; // 是否有前一页
+
+    // 每页的起始数
+    protected long pageStartRow = 0;
+
+    // 每页显示数据的终止数
+    protected long pageEndRow = 0;
+
+    protected long nextPage = 0;// 下一页的页码
+
+    protected long previousPage = 0;// 上一页的页码
+
 
     //数据信息
     //主键
-    String id="";
+    protected String countId = "";
 
+
+    protected boolean searchCount = true; // 是否计算总条数
 
     //开始行id
-    long pageStartId=0;
+    protected long pageStartId = 0;
 
-    List<Map<String, Object>> dataMaps;
-    PageData pageData;
+
+
+    protected List<Map<String, Object>> recordsMaps;
+
+
+    protected   List<T> records;
+    PAGE page;
 
     // 构造函数
-    public PageModel(){
+    public PageModel() {
 
     }
 
 
-    // 获取数据
 
-    public PageModel execute()  {
-
-            totalRows = pageData.getRowCount();
-            toPage();
-
-            pageData.setPage(this);
-            dataMaps= pageData.getPageData();
-        return  this;
+    public List<Map<String, Object>> getRecordsMaps() {
+        return recordsMaps;
     }
 
-    public void toPage() {
+    public PageModel setRecordsMaps(List<Map<String, Object>> recordsMaps) {
+        this.recordsMaps = recordsMaps;
+        return this;
+    }
+    public List<T> getRecords() {
+        return records;
+    }
 
+    public void setRecords(List<T> records) {
+        this.records = records;
+    }
+
+
+
+    PageModel setPages(long pages) {
+        this.pages = pages;
+        return this;
+    }
+
+    public long getPages() {
         //计算总页数
-        if ((totalRows % pageRecorders) == 0) {
-            totalPages = (int) (totalRows / pageRecorders);
+        if ((this.getTotal() % this.getSize()) == 0) {
+            pages = (long) (this.getTotal() % this.getSize());
         } else {
-            totalPages = (int) (totalRows / pageRecorders + 1);
+            pages = (long) (this.getTotal() % this.getSize() + 1);
         }
 
-        //计算当前页
-        if (currentPage < totalPages) {
-            pageStartRow = ((currentPage - 1) * pageRecorders);
-            this.pageEndRow = pageStartRow + pageRecorders;
+        //当前页不能大于总页数
+        if(this.current>this.pages)
+            this.current=this.pages;
 
-            hasNextPage = true;
-            nextPage = currentPage + 1;
-        } else if (currentPage == totalPages) {
-            pageStartRow = ((currentPage - 1) * pageRecorders);
-            this.pageEndRow = totalRows;
+        //计算当前页,下一页
+        if (current < pages) {
+            this.pageStartRow = ((current - 1) * this.size);
+            this.pageEndRow = this.pageStartRow + this.size;
 
-            hasNextPage = false;
-            nextPage = currentPage;
+            this.hasNext = true;
+            this.nextPage = this.current + 1;
+        } else if (current == pages) {
+            this.pageStartRow = ((this.current - 1) * this.size);
+            this.pageEndRow = total;
+
+            hasNext = false;
+            nextPage = current;
         }
 
         //计算前一页
-        if (currentPage < 2) {
-            previousPage = currentPage;
-            hasPreviousPage = false;
-        } else if (currentPage > 1) {
-            previousPage = currentPage - 1;
-            hasPreviousPage = true;
+        if (current < 2) {
+            this.previousPage = this.current;
+            this.hasPrevious = false;
+        } else if (current > 1) {
+            this.previousPage = this.current - 1;
+            this.hasPrevious = true;
         }
-    }
-    public String getId() {
-        return id;
-    }
 
-    public PageModel setId(String id) {
-        this.id = id;
-        return  this;
+        return pages;
     }
 
     public long getPageStartId() {
@@ -99,129 +123,126 @@ public  class PageModel {
 
     public PageModel setPageStartId(long pageStartId) {
         this.pageStartId = pageStartId;
-        return  this;
+        return this;
     }
     //设置每页行数
-    public PageModel setPageRecorders(int pageRecorders) {
+    public PageModel setSize(int size) {
+        this.size = size;
+        return this;
+    }
 
-        this.pageRecorders = pageRecorders;
-        return  this;
+    //获取每页行数
+    public long getSize() {
+        return this.size;
     }
 
     //设置当前页
-    public PageModel setCurrentPage(String pages) {
+    public PageModel setCurrent(String pages) {
 
         if (pages == null || pages.equals("null") || pages.trim().length() == 0) {
-            this.setCurrentPage(1);
+            this.setCurrent(1);
         } else {
-            this.setCurrentPage(new Integer(pages).intValue());
+            this.setCurrent(new Integer(pages).intValue());
         }
         return this;
 
     }
-    public PageModel setCurrentPage(int currentPage) {
-        this.currentPage = currentPage;
-        return  this;
+
+    public PageModel setCurrent(long current) {
+        this.current = current;
+        return this;
+    }
+
+    public long getCurrent() {
+        return this.current;
     }
 
 
 
-    public int getTotalPages() {
-        return totalPages;
+    public String getCountId() {
+        return countId;
     }
 
-    public PageModel setTotalPages(int totalPages) {
-        this.totalPages = totalPages;
-        return  this;
+    public PageModel setCountId(String countId) {
+        this.countId = countId;
+        return this;
+    }
+    public PageModel setTotal(long total) {
+        this.total = total;
+        this.getPages();
+        return this;
     }
 
-    public int getTotalRows() {
-        return totalRows;
+    public long getTotal() {
+        return total;
+    }
+    public boolean isSearchCount() {
+        return searchCount;
     }
 
-    public PageModel setTotalRows(int totalRows) {
-        this.totalRows = totalRows;
-        return  this;
+    public void setSearchCount(boolean searchCount) {
+        this.searchCount = searchCount;
     }
 
-    public int getPageStartRow() {
+    public long getPageStartRow() {
         return pageStartRow;
     }
 
     public PageModel setPageStartRow(int pageStartRow) {
         this.pageStartRow = pageStartRow;
-        return  this;
+        return this;
     }
 
-    public int getPageEndRow() {
+    public long getPageEndRow() {
         return pageEndRow;
     }
 
     public PageModel setPageEndRow(int pageEndRow) {
         this.pageEndRow = pageEndRow;
-        return  this;
-    }
-
-    public boolean isHasNextPage() {
-        return hasNextPage;
-    }
-
-    public PageModel setHasNextPage(boolean hasNextPage) {
-        this.hasNextPage = hasNextPage;
-        return  this;
-    }
-
-    public boolean isHasPreviousPage() {
-        return hasPreviousPage;
-    }
-
-    public PageModel setHasPreviousPage(boolean hasPreviousPage) {
-        this.hasPreviousPage = hasPreviousPage;
         return this;
     }
 
-    public int getNextPage() {
+    public long getNextPage() {
         return nextPage;
     }
 
     public PageModel setNextPage(int nextPage) {
         this.nextPage = nextPage;
-        return  this;
+        return this;
     }
 
-    public int getPreviousPage() {
+    public long getPreviousPage() {
         return previousPage;
     }
 
     public PageModel setPreviousPage(int previousPage) {
         this.previousPage = previousPage;
-        return  this;
+        return this;
+    }
+    public boolean isHasNext() {
+        return hasNext;
     }
 
-
-    public int getCurrentPage() {
-        return currentPage;
+    public PageModel setHasNext(boolean hasNext) {
+        this.hasNext = hasNext;
+        return this;
     }
 
-
-    public int getPageRecorders() {
-        return pageRecorders;
-    }
-    public List<Map<String, Object>> getDataMaps() {
-        return dataMaps;
+    public boolean isHasPrevious() {
+        return hasPrevious;
     }
 
-    public PageModel setDataMaps(List<Map<String, Object>> page_data) {
-        this.dataMaps = page_data;
-        return  this;
+    public PageModel setHasPrevious(boolean hasPrevious) {
+        this.hasPrevious = hasPrevious;
+        return this;
     }
 
-    public PageData getPageData() {
-        return pageData;
+    public PAGE getPageData() {
+        return page;
     }
 
-    public PageModel setPageData(PageData pageData) {
-        this.pageData = pageData;
-        return  this;
+    public PageModel setPageData(PAGE page) {
+        this.page = page;
+        return this;
     }
 }

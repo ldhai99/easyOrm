@@ -5,6 +5,7 @@ package io.github.ldhai99.easyOrm;
 import io.github.ldhai99.easyOrm.executor.DbUtilsExecutor;
 import io.github.ldhai99.easyOrm.executor.Executor;
 import io.github.ldhai99.easyOrm.executor.JdbcTemplateExecutor;
+import io.github.ldhai99.easyOrm.tools.DbTools;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import javax.sql.DataSource;
@@ -78,7 +79,7 @@ public class SQL {
 
     //默认执行器为JdbcTemplateMapper
     public SQL createExecutor(){
-        executor =  JdbcTemplateExecutor.getMapper();
+        executor =  DbTools.getExecutor();
         return  this;
     }
     public SQL createExecutor(Connection connection){
@@ -97,29 +98,29 @@ public class SQL {
     }
 
     //大学，构造，并传入执行器
-    public static SQL MAPPER(Connection connection) {
+    public static SQL ofExecutor(Connection connection) {
         return new SQL( connection);
     }
-    public static SQL MAPPER(DataSource dataSource) {
+    public static SQL ofExecutor(DataSource dataSource) {
         return new SQL( dataSource);
     }
 
-    public  static SQL MAPPER(Executor executor) {
+    public  static SQL ofExecutor(Executor executor) {
         return new SQL( executor);
 
     }
 
     //小写，设置执行器
-    public  SQL mapper(Connection connection) {
+    public  SQL executor(Connection connection) {
         createExecutor(connection);
         return this;
     }
-    public  SQL mapper(DataSource dataSource) {
+    public  SQL executor(DataSource dataSource) {
         createExecutor(dataSource);
         return this;
     }
 
-    public  SQL mapper(Executor executor) {
+    public  SQL executor(Executor executor) {
         createExecutor(executor);
 
         return this;
@@ -397,7 +398,10 @@ public class SQL {
         this.builder.column(name);
         return this;
     }
-
+    public SQL column(String name,String alias) {
+        this.builder.column(name,alias);
+        return this;
+    }
     public SQL column(String name, boolean groupBy) {
         this.builder.column(name, groupBy);
         return this;
@@ -500,9 +504,9 @@ public class SQL {
             else if (operator.equalsIgnoreCase("notlike")) {
                 newvalue = "%" + oldValue + "%";
             } else if (operator.equalsIgnoreCase("likeLeft")) {
-                newvalue = "%" + oldValue;
-            } else if (operator.equalsIgnoreCase("likeRight")) {
                 newvalue = oldValue + "%";
+            } else if (operator.equalsIgnoreCase("likeRight")) {
+                newvalue = "%" + oldValue;
             } else if (operator.equalsIgnoreCase("like_")) {
                 newvalue = oldValue;
             }
@@ -661,7 +665,14 @@ public class SQL {
         set(name, new DbParameter(name, value));
         return this;
     }
+    //不为空时候更新
+    public SQL setIfNotNull(String name, Object value) {
+        if(value==null)
+            return  this;
 
+        set(name, new DbParameter(name, value));
+        return this;
+    }
     public SQL set(String name, Object value, String datatype) {
         set(name, new DbParameter(name, value, datatype));
         return this;
@@ -789,171 +800,62 @@ public class SQL {
     public int update()  {
         return executor.update(this);
     }
-    public int update(DataSource ds)  {
-        createExecutor(ds);
-        return update();
-    }
-    public int update(Connection conn)  {
-        createExecutor(conn);
-        return update();
-    }
-    public int update(Executor mapper)  {
-        createExecutor(mapper);
-        return update();
-    }
+
     //增加，返回主键
     public Number insert()  {
         return executor.insert(this);
     }
 
-    public Number insert(DataSource ds)  {
-        createExecutor(ds);
-        return insert();
-    }
-    public Number insert(Connection conn)  {
-        createExecutor(conn);
-        return insert();
-    }
-    public Number insert(Executor mapper)  {
-        createExecutor(mapper);
-        return insert();
-    }
     //执行存储过程
     public int execute()  {
 
         return executor.execute(this);
     }
 
-    public int execute(DataSource ds)  {
-        createExecutor(ds);
-        return execute();
-    }
-    public int execute(Connection conn)  {
-        createExecutor(conn);
-        return execute();
-    }
-
-    public int execute(Executor mapper)  {
-        createExecutor(mapper);
-        return execute();
-    }
     //查询数据库-----------------------------------------------------------------------------------
 
     //返回单列单行数据
     public String getString()  {
         return executor.getString(this);
     }
-    public String getString(DataSource ds)  {
-        createExecutor(ds);
-        return getString();
-    }
-    public String getString(Connection conn)  {
-        createExecutor(conn);
-        return getString();
-    }
-    public String getString(Executor mapper)  {
-        createExecutor(mapper);
-        return getString();
-    }
+
 
     public Integer getInteger()  {
         return executor.getInteger(this);
-    }
-    public Integer getInteger(DataSource ds)  {
-        createExecutor(ds);
-        return getInteger();
-    }
-    public Integer getInteger(Connection conn)  {
-        createExecutor(conn);
-        return getInteger();
     }
 
     public Long getLong()  {
         return executor.getLong(this);
     }
-    public Long getLong(DataSource ds)  {
-        createExecutor(ds);
-        return getLong();
-    }
-    public Long getLong(Connection conn)  {
-        createExecutor(conn);
-        return getLong();
-    }
+
 
     public Float getFloat()  {
         return executor.getFloat(this);
-    }
-    public Float getFloat(DataSource ds)  {
-        createExecutor(ds);
-        return getFloat();
-    }
-    public Float getFloat(Connection conn)  {
-        createExecutor(conn);
-        return getFloat();
     }
 
     public Double getDouble()  {
 
         return executor.getDouble(this);
     }
-    public Double getDouble(DataSource ds)  {
-        createExecutor(ds);
-        return getDouble();
-    }
-    public Double getDouble(Connection conn)  {
-        createExecutor(conn);
-        return getDouble();
-    }
 
     public Number getNumber()  {
         return executor.getNumber(this);
     }
-    public Number getNumber(Connection conn)  {
-        createExecutor(conn);
-        return getNumber();
-    }
-    public Number getNumber(DataSource ds)  {
-        createExecutor(ds);
-        return getNumber();
-    }
+
 
     public BigDecimal getBigDecimal()  {
 
         return executor.getBigDecimal(this);
     }
 
-    public BigDecimal getBigDecimal(DataSource ds)  {
-        createExecutor(ds);
-        return getBigDecimal();
-    }
-    public BigDecimal getBigDecimal(Connection conn)  {
-        createExecutor(conn);
-        return getBigDecimal();
-    }
-
     public Date getDate()  {
 
         return executor.getDate(this);
     }
-    public Date getDate(DataSource ds)  {
-        createExecutor(ds);
-        return getDate();
-    }
-    public Date getDate(Connection conn)  {
-        createExecutor(conn);
-        return getDate();
-    }
+
 
     public <T> T getValue(Class<T> requiredType)  {
         return executor.getValue(this,requiredType);
-    }
-    public <T> T getValue(DataSource ds,Class<T> requiredType)  {
-        createExecutor(ds);
-        return getValue(requiredType);
-    }
-    public <T> T getValue(Connection conn,Class<T> requiredType)  {
-        createExecutor(conn);
-        return getValue(requiredType);
     }
 
     //返回单列list数据
@@ -961,104 +863,47 @@ public class SQL {
 
         return executor.getStrings(this);
     }
-    public List<String> getStrings(DataSource ds)  {
-        createExecutor(ds);
-        return getStrings();
-    }
-    public List<String> getStrings(Connection conn)  {
-        createExecutor(conn);
-        return getStrings();
-    }
+
 
     public List<Integer> getIntegers()  {
         return executor.getIntegers(this);
     }
-    public List<Integer> getIntegers(DataSource ds)  {
-        createExecutor(ds);
-        return getIntegers();
-    }
-    public List<Integer> getIntegers(Connection conn)  {
-        createExecutor(conn);
-        return getIntegers();
-    }
+
 
     public List<Long> getLongs()  {
 
         return executor.getLongs(this);
     }
-    public List<Long> getLongs(DataSource ds)  {
-        createExecutor(ds);
-        return getLongs();
-    }
-    public List<Long> getLongs(Connection conn)  {
-        createExecutor(conn);
-        return getLongs();
-    }
+
 
 
     public List<Double> getDoubles()  {
         return executor.getDoubles(this);
     }
-    public List<Double> getDoubles(DataSource ds)  {
-        createExecutor(ds);
-        return getDoubles();
-    }
-    public List<Double> getDoubles(Connection conn)  {
-        createExecutor(conn);
-        return getDoubles();
-    }
+
 
     public List<Float> getFloats()  {
         return executor.getFloats(this);
     }
-    public List<Float> getFloats(DataSource ds)  {
-        createExecutor(ds);
-        return getFloats();
-    }
-    public List<Float> getFloats(Connection conn)  {
-        createExecutor(conn);
-        return getFloats();
-    }
+
 
     public List<Number> getNumbers()  {
 
         return executor.getNumbers(this);
     }
 
-    public List<Number> getNumbers(DataSource ds)  {
-        createExecutor(ds);
-        return getNumbers();
-    }
-    public List<Number> getNumbers(Connection conn)  {
-        createExecutor(conn);
-        return getNumbers();
-    }
+
 
     public List<BigDecimal> getBigDecimals()  {
 
         return executor.getBigDecimals(this);
     }
-    public List<BigDecimal> getBigDecimals(DataSource ds)  {
-        createExecutor(ds);
-        return getBigDecimals();
-    }
-    public List<BigDecimal> getBigDecimals(Connection conn)  {
-        createExecutor(conn);
-        return getBigDecimals();
-    }
+
 
 
     public List<Date> getDates()  {
 
         return executor.getDates(this);
-    }
-    public List<Date> getDates(DataSource ds)  {
-        createExecutor(ds);
-        return getDates();
-    }
-    public List<Date> getDates(Connection conn)  {
-        createExecutor(conn);
-        return getDates();
     }
 
 
@@ -1066,14 +911,7 @@ public class SQL {
 
         return executor.getValues(this,requiredType);
     }
-    public <T> List<T> getValues(DataSource ds,Class<T> requiredType)  {
-        createExecutor(ds);
-        return getValues(requiredType);
-    }
-    public <T> List<T> getValues(Connection conn,Class<T> requiredType)  {
-        createExecutor(conn);
-        return getValues(requiredType);
-    }
+
 
 
     //返回单行数据
@@ -1082,27 +920,12 @@ public class SQL {
 
         return executor.getMap(this);
     }
-    public Map<String, Object> getMap(DataSource ds)  {
-        createExecutor(ds);
-        return getMap();
-    }
-    public Map<String, Object> getMap(Connection conn)  {
-        createExecutor(conn);
-        return getMap();
-    }
+
 
     //返回多行数据
     public List<Map<String, Object>> getMaps()  {
 
         return executor.getMaps(this);
-    }
-    public List<Map<String, Object>> getMaps(DataSource ds)  {
-        createExecutor(ds);
-        return getMaps();
-    }
-    public List<Map<String, Object>> getMaps(Connection conn)  {
-        createExecutor(conn);
-        return getMaps();
     }
 
 
@@ -1111,52 +934,24 @@ public class SQL {
 
         return executor.getBean(this,T);
     }
-    public <T> T getBean(DataSource ds,Class<T> T)  {
-        createExecutor(ds);
-        return getBean(T);
-    }
-    public <T> T getBean(Connection conn,Class<T> T)  {
-        createExecutor(conn);
-        return getBean(T);
-    }
+
 
     //返回Bean list
     public <T> List<T> getBeans(Class<T> T)  {
 
         return executor.getBeans(this,T);
     }
-    public <T> List<T> getBeans(DataSource ds,Class<T> T)  {
-        createExecutor(ds);
-        return getBeans(T);
-    }
-    public <T> List<T> getBeans(Connection conn,Class<T> T)  {
-        createExecutor(conn);
-        return getBeans(T);
-    }
+
 
     //查询应用-------------判断是否存在------------------------------------------------
     public boolean isExists()  {
        return this.executor.isExists(this);
     }
-    public boolean isExists(DataSource ds)  {
-        createExecutor(ds);
-        return isExists();
-    }
-    public boolean isExists(Connection conn)  {
-        createExecutor(conn);
-        return isExists();
-    }
+
     //对一个查询给出记录数
     public Number getCount()  {
         return this.executor.getCount(this);
     }
-    public Number getCount(DataSource ds)  {
-        createExecutor(ds);
-        return getCount();
-    }
-    public Number getCount(Connection conn)  {
-        createExecutor(conn);
-        return getCount();
-    }
+
 
 }

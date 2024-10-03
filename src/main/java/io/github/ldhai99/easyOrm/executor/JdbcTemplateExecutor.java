@@ -28,18 +28,7 @@ public class JdbcTemplateExecutor extends AbstractExecutor {
         this.template=template;
 
     }
-    //全局执行器
-    public  static JdbcTemplateExecutor getMapper(){
-        //存在返回
-        if(EasyOrmProperties.executor!=null)
-            return  EasyOrmProperties.executor;
 
-        //不存在，但存在数据源，生成全局执行器，并保存
-        if(EasyOrmProperties.ds!=null)
-           EasyOrmProperties.executor= new JdbcTemplateExecutor();
-        return  null;
-
-    }
     //执行Sql----------------------------------------------
     //写数据库
 //更新数据库----------------------------------------------------------------------------------------------------
