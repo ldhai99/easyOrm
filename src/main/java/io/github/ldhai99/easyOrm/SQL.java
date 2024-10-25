@@ -448,6 +448,11 @@ public class SQL {
     public SQL eq(Object name, Object value) {
         return nameOperatorValue(name, "=", value);
     }
+    public SQL eqIfNotNull(Object name, Object value) {
+        if(value==null)
+            return this;
+        return nameOperatorValue(name, "=", value);
+    }
 
     public SQL neq(Object name, Object value) {
         return nameOperatorValue(name, "<>", value);
