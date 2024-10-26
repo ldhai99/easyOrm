@@ -1,7 +1,7 @@
 package io.github.ldhai99.easyOrm.executor;
 
 import io.github.ldhai99.easyOrm.SQL;
-import io.github.ldhai99.easyOrm.autoConfig.EasyOrmProperties;
+import io.github.ldhai99.easyOrm.tools.DbTools;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -16,7 +16,7 @@ public class JdbcTemplateExecutor extends AbstractExecutor {
 
     public JdbcTemplateExecutor(){
 
-        template=new NamedParameterJdbcTemplate(EasyOrmProperties.getDs());
+        template=new NamedParameterJdbcTemplate(DbTools.getDataSource());
 
     }
     public JdbcTemplateExecutor(DataSource dataSource){

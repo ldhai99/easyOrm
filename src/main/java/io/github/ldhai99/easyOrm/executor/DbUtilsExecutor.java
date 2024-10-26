@@ -1,7 +1,8 @@
 package io.github.ldhai99.easyOrm.executor;
 
 import io.github.ldhai99.easyOrm.SQL;
-import io.github.ldhai99.easyOrm.autoConfig.EasyOrmProperties;
+
+import io.github.ldhai99.easyOrm.tools.DbTools;
 import org.apache.commons.dbutils.BasicRowProcessor;
 import org.apache.commons.dbutils.GenerousBeanProcessor;
 import org.apache.commons.dbutils.QueryRunner;
@@ -23,9 +24,9 @@ public class DbUtilsExecutor extends AbstractExecutor {
     QueryRunner qr;
 
     public DbUtilsExecutor(){
-        if(EasyOrmProperties.getDs()!=null){
+        if(DbTools.getDataSource()!=null){
             // 从事务管理器获取当前事务的连接，全局数据源
-            this.connection= DataSourceUtils.getConnection(EasyOrmProperties.getDs());
+            this.connection= DataSourceUtils.getConnection(DbTools.getDataSource());
             qr=new QueryRunner();
         }
     }
