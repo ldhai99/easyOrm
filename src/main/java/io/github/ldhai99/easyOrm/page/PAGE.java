@@ -56,7 +56,7 @@ public class PAGE {
     }
 
     //设置计数id
-    public PAGE setCountIdId(String countId) {
+    public PAGE setCountId(String countId) {
         this.pageModel.setCountId(countId);
         return this;
     }
@@ -114,10 +114,17 @@ public class PAGE {
         return pageModel.getRecordsMaps();
     }
 
-    public PAGE getPageByMaps() {
+
+
+    public PAGE getPageWithMaps() {
         toBuild();
         pageModel.setRecordsMaps(pageSql.getMaps());
         return this;
+    }
+    public PageModel getPageModelWithMaps() {
+        toBuild();
+        pageModel.setRecordsMaps(pageSql.getMaps());
+        return pageModel;
     }
 
     public <T> List<T> getPageBeans(Class<T> T) {
@@ -126,10 +133,15 @@ public class PAGE {
         return pageModel.getRecords();
     }
 
-    public PAGE getPageByBeans(Class T) {
+    public PAGE getPageWithBeans(Class T) {
         toBuild();
         pageModel.setRecords(pageSql.getBeans(T));
         return this;
+    }
+    public PageModel getPageModelWithBeans(Class T) {
+        toBuild();
+        pageModel.setRecords(pageSql.getBeans(T));
+        return pageModel;
     }
     // 获取数据
 

@@ -1,55 +1,48 @@
 package io.github.ldhai99.easyOrm.page;
 
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 public class PageModel <T>{
-    //记录信息
-    protected long total = 0; // 总记录数
-    protected long size = 10;// 每页5条数据
+    // 页面信息
+    protected long current = 1; // 当前页码，默认值为 1
+    protected long size = 10; // 每页显示的记录数，默认值为 10
+    protected long total = 0; // 总记录数，这个值在执行完分页查询后由框架自动填充
+    protected long pages = 0; // 总页数，基于 total 和 size 计算得出
 
-    //页面信息
-    protected long current = 1; // 当前页
-    protected long pages = 0l;//总页数
-
-
-    protected boolean hasNext = false; // 是否有下一页
-
-
-    protected boolean hasPrevious = false; // 是否有前一页
-
-    // 每页的起始数
-    protected long pageStartRow = 0;
-
-    // 每页显示数据的终止数
-    protected long pageEndRow = 0;
-
-    protected long nextPage = 0;// 下一页的页码
-
-    protected long previousPage = 0;// 上一页的页码
-
-
-    //数据信息
-    //主键
-    protected String countId = "";
-
-
-    protected boolean searchCount = true; // 是否计算总条数
-
-    //开始行id
-    protected long pageStartId = 0;
-
-
-
+    // 数据信息
+    protected List<T> records; // 当前页的数据列表，类型通常为 List<T>，其中 T 是实体类类型
     protected List<Map<String, Object>> recordsMaps;
 
+    // 查询选项
+    protected boolean searchCount = true; // 是否进行 count 查询以获取总记录数，默认为 true
+    protected Long maxLimit; // 单页最大限制数量，默认无限制
+    protected boolean optimizeCountSql = true; // 优化 COUNT SQL，当 searchCount 为 true 时生效，默认为 true
 
-    protected   List<T> records;
-    PAGE page;
+    // 分页状态
+    protected boolean hasNext = false; // 是否有下一页
+    protected boolean hasPrevious = false; // 是否有前一页
+    protected long pageStartRow = 0; // 每页的起始行
+    protected long pageEndRow = 0; // 每页显示数据的终止行
+    protected long nextPage = 0; // 下一页的页码
+    protected long previousPage = 0; // 上一页的页码
+
+    // 主键
+    protected String countId = ""; // 用于分页的主键字段
+    protected long pageStartId = 0; // 开始行的 ID
 
     // 构造函数
     public PageModel() {
+        this.records = Collections.emptyList();
+        this.total = 0L;
+        this.size = 10L;
+        this.current = 1L;
+
+        this.optimizeCountSql = true;
+        this.searchCount = true;
 
     }
 
@@ -237,12 +230,12 @@ public class PageModel <T>{
         return this;
     }
 
-    public PAGE getPageData() {
-        return page;
+    public Long getMaxLimit() {
+        return maxLimit;
     }
 
-    public PageModel setPageData(PAGE page) {
-        this.page = page;
-        return this;
+    public void setMaxLimit(Long maxLimit) {
+        this.maxLimit = maxLimit;
     }
+
 }

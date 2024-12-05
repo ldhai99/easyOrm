@@ -30,26 +30,15 @@ public class DbTools {
     public static PageSql pageSqlById;
     public static PageSql pageSqlByStartId;
 
-    static {
-        Properties pro = new Properties();
-
-        InputStream in = DbTools.class.getClassLoader().getResourceAsStream("druid.properties");
-        try {
-            pro.load(in);
-            String db = pro.getProperty("database");
-            if (db != null)
-                database = db;
-            dataSource = DruidDataSourceFactory.createDataSource(pro);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
     //获取连接
     public static Connection getConnection() {
         Connection conn = null;
         try {
-            conn = dataSource.getConnection();
+            if (dataSource != null)
+                conn = dataSource.getConnection();
+            else
+                conn = getDataSource().getConnection();
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
@@ -107,6 +96,7 @@ public class DbTools {
 
         return DbTools.pageSql;
     }
+
     public static PageSql getPageSqlNormal() {
         if (DbTools.pageSqlNormal == null)
             if (database.equalsIgnoreCase("mysql")) {
@@ -115,6 +105,7 @@ public class DbTools {
 
         return DbTools.pageSqlNormal;
     }
+
     public static PageSql getPageSqlById() {
         if (DbTools.pageSqlById == null)
             if (database.equalsIgnoreCase("mysql")) {
@@ -158,6 +149,21 @@ public class DbTools {
 
     //获取数据源
     public static DataSource getDataSource() {
+        if (dataSource != null)
+            return dataSource;
+
+        Properties pro = new Properties();
+
+        InputStream in = DbTools.class.getClassLoader().getResourceAsStream("druid.properties");
+        try {
+            pro.load(in);
+            String db = pro.getProperty("database");
+            if (db != null)
+                database = db;
+            dataSource = DruidDataSourceFactory.createDataSource(pro);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return dataSource;
     }
 

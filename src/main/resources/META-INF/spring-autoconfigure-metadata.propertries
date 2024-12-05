@@ -1,3 +1,0 @@
-# 接下来，我们为这个自动配置类定义条件
-org.springframework.boot.autoconfigure.condition.ConditionalOnClass=\
-javax.sql.DataSource
