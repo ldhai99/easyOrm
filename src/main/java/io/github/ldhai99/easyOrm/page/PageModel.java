@@ -20,6 +20,8 @@ public class PageModel <T>{
     // 查询选项
     protected boolean searchCount = true; // 是否进行 count 查询以获取总记录数，默认为 true
     protected Long maxLimit; // 单页最大限制数量，默认无限制
+
+
     protected boolean optimizeCountSql = true; // 优化 COUNT SQL，当 searchCount 为 true 时生效，默认为 true
 
     // 分页状态
@@ -74,9 +76,9 @@ public class PageModel <T>{
     public long getPages() {
         //计算总页数
         if ((this.getTotal() % this.getSize()) == 0) {
-            pages = (long) (this.getTotal() % this.getSize());
+            pages = (long) (this.getTotal()/ this.getSize());
         } else {
-            pages = (long) (this.getTotal() % this.getSize() + 1);
+            pages = (long) (this.getTotal()/ this.getSize() + 1);
         }
 
         //当前页不能大于总页数
@@ -91,6 +93,8 @@ public class PageModel <T>{
             this.hasNext = true;
             this.nextPage = this.current + 1;
         } else if (current == pages) {
+            if(current==0)
+                current=1;
             this.pageStartRow = ((this.current - 1) * this.size);
             this.pageEndRow = total;
 
@@ -236,6 +240,33 @@ public class PageModel <T>{
 
     public void setMaxLimit(Long maxLimit) {
         this.maxLimit = maxLimit;
+    }
+    public void setSize(long size) {
+        this.size = size;
+    }
+
+    public boolean isOptimizeCountSql() {
+        return optimizeCountSql;
+    }
+
+    public void setOptimizeCountSql(boolean optimizeCountSql) {
+        this.optimizeCountSql = optimizeCountSql;
+    }
+
+    public void setPageStartRow(long pageStartRow) {
+        this.pageStartRow = pageStartRow;
+    }
+
+    public void setPageEndRow(long pageEndRow) {
+        this.pageEndRow = pageEndRow;
+    }
+
+    public void setNextPage(long nextPage) {
+        this.nextPage = nextPage;
+    }
+
+    public void setPreviousPage(long previousPage) {
+        this.previousPage = previousPage;
     }
 
 }

@@ -1,7 +1,6 @@
 package io.github.ldhai99.easyOrm;
 
 
-
 import io.github.ldhai99.easyOrm.executor.DbUtilsExecutor;
 import io.github.ldhai99.easyOrm.executor.Executor;
 import io.github.ldhai99.easyOrm.executor.JdbcTemplateExecutor;
@@ -43,6 +42,7 @@ public class SQL {
         System.out.println(read.getParameterMap());
 
     }
+
     //构造方法
     public SQL() {
         createExecutor();
@@ -52,10 +52,12 @@ public class SQL {
     public SQL(Connection connection) {
         createExecutor(connection);
     }
+
     //构造函数，传入数据源
     public SQL(DataSource dataSource) {
         createExecutor(dataSource);
     }
+
     //构造函数，传入执行器
     public SQL(Executor executor) {
         createExecutor(executor);
@@ -69,58 +71,64 @@ public class SQL {
 
     //克隆
     protected SQL(SQL sql) {
-        this.builder=sql.builder.clone();
+        this.builder = sql.builder.clone();
         this.jdbcModel.mergeParameterMap(sql);
-        this.executor= sql.executor;
+        this.executor = sql.executor;
     }
-    public SQL clone(){
+
+    public SQL clone() {
         return new SQL(this);
     }
 
     //默认执行器为JdbcTemplateMapper
-    public SQL createExecutor(){
-        executor =  DbTools.getExecutor();
-        return  this;
+    public SQL createExecutor() {
+        executor = DbTools.getExecutor();
+        return this;
     }
-    public SQL createExecutor(Connection connection){
+
+    public SQL createExecutor(Connection connection) {
 
         executor = new DbUtilsExecutor(connection);
-        return  this;
+        return this;
 
     }
-    public SQL createExecutor(DataSource dataSource){
+
+    public SQL createExecutor(DataSource dataSource) {
         executor = new DbUtilsExecutor(dataSource);
-        return  this;
+        return this;
     }
-    public SQL createExecutor(Executor executor){
+
+    public SQL createExecutor(Executor executor) {
         this.executor = executor;
-        return  this;
+        return this;
     }
 
     //大学，构造，并传入执行器
     public static SQL ofExecutor(Connection connection) {
-        return new SQL( connection);
-    }
-    public static SQL ofExecutor(DataSource dataSource) {
-        return new SQL( dataSource);
+        return new SQL(connection);
     }
 
-    public  static SQL ofExecutor(Executor executor) {
-        return new SQL( executor);
+    public static SQL ofExecutor(DataSource dataSource) {
+        return new SQL(dataSource);
+    }
+
+    public static SQL ofExecutor(Executor executor) {
+        return new SQL(executor);
 
     }
 
     //小写，设置执行器
-    public  SQL executor(Connection connection) {
+    public SQL executor(Connection connection) {
         createExecutor(connection);
         return this;
     }
-    public  SQL executor(DataSource dataSource) {
+
+    public SQL executor(DataSource dataSource) {
         createExecutor(dataSource);
         return this;
     }
 
-    public  SQL executor(Executor executor) {
+    public SQL executor(Executor executor) {
         createExecutor(executor);
 
         return this;
@@ -130,8 +138,9 @@ public class SQL {
     public static SQL SELECT(String table) {
         return new SQL().select(table);
     }
-    public static SQL SELECT(SQL subSql,String alias) {
-        return new SQL().select(subSql,alias);
+
+    public static SQL SELECT(SQL subSql, String alias) {
+        return new SQL().select(subSql, alias);
     }
 
     public static SQL UPDATE(String table) {
@@ -145,15 +154,22 @@ public class SQL {
     public static SQL INSERT(String table) {
         return new SQL().insert(table);
     }
-    public static SQL WHERE() {    return new SQL().where();    }
-    public static SQL WHERE(String name) {    return new SQL().where().where(name);    }
-    public static SQL WHERE(SQL sql) {    return new SQL().where().where(sql);    }
+
+    public static SQL WHERE() {
+        return new SQL().where();
+    }
+
+    public static SQL WHERE(String name) {
+        return new SQL().where().where(name);
+    }
+
+    public static SQL WHERE(SQL sql) {
+        return new SQL().where().where(sql);
+    }
+
     public static SQL SETSQL(String directSql, Object... values) {
         return new SQL().setSql(directSql, values);
     }
-
-
-
 
 
     //开始任务-----------------------------------------------------------
@@ -161,8 +177,9 @@ public class SQL {
         this.builder.from(table);
         return this;
     }
+
     public SQL select(SQL subSql, String alias) {
-        return  this.from(subSql,alias);
+        return this.from(subSql, alias);
     }
 
     public SQL update(String table) {
@@ -179,6 +196,7 @@ public class SQL {
         this.builder.insert(table);
         return this;
     }
+
     public SQL where() {
         this.builder.where();
         return this;
@@ -190,11 +208,13 @@ public class SQL {
         this.builder.setColumn(name);
         return this;
     }
+
     public SQL setWhere(String name) {
 
         this.builder.setWhere(name);
         return this;
     }
+
     //查询表----------------------------------------
     public SQL from(String table) {
         this.builder.from(table);
@@ -213,17 +233,20 @@ public class SQL {
         this.builder.where(name);
         return this;
     }
+
     public SQL where(SQL subSql) {
-        if (subSql==null)
+        if (subSql == null)
             return this;
 
         this.builder.where(jdbcModel.processSqlName(subSql));
         return this;
     }
+
     public SQL having(String name) {
         this.builder.having(name);
         return this;
     }
+
     public SQL having(SQL subSql) {
 
         this.builder.having(jdbcModel.processSqlName(subSql));
@@ -236,11 +259,13 @@ public class SQL {
         this.builder.setDirectSql(jdbcModel.createSqlNameParams(directSql, values));
         return this;
     }
+
     public SQL setSql(SQL subSql) {
 
         this.builder.setDirectSql(jdbcModel.processSqlName(subSql));
         return this;
     }
+
     public JdbcModel getJdbcDataModel() {
         return jdbcModel;
     }
@@ -253,7 +278,8 @@ public class SQL {
     public Map<String, Object> getParameterMap() {
         return jdbcModel.getParameterMap();
     }
-    public    Object[] getParamsList() {
+
+    public Object[] getParamsList() {
         return jdbcModel.getParamsList().toArray();
     }
 
@@ -279,22 +305,27 @@ public class SQL {
         this.builder.join(join);
         return this;
     }
+
     public SQL join(String table, String on) {
         this.join("inner join", table, on);
         return this;
     }
+
     public SQL leftJoin(String table, String on) {
         this.join("left join", table, on);
         return this;
     }
+
     public SQL rightJoin(String table, String on) {
         this.join("right join", table, on);
         return this;
     }
+
     public SQL fullJoin(String table, String on) {
         this.join("full join", table, on);
         return this;
     }
+
     public SQL join(String join, String table, String on) {
         if (on != null && on.trim().length() != 0) {
             this.builder.join(join + " " + table + " on " + on);
@@ -303,6 +334,31 @@ public class SQL {
         return this;
     }
 
+
+    public SQL orderByAsc(List<String> names) {
+        for (String name : names) {
+            orderByAsc(name);
+        }
+
+        return this;
+    }
+    public SQL orderByDesc(List<String> names) {
+        for (String name : names) {
+            orderByDesc(name);
+        }
+
+        return this;
+    }
+
+    public SQL orderByAsc(String name) {
+        this.orderBy(name, true);
+        return this;
+    }
+
+    public SQL orderByDesc(String name) {
+        this.orderBy(name, false);
+        return this;
+    }
 
     public SQL orderBy(String name) {
         this.orderBy(name, true);
@@ -398,8 +454,13 @@ public class SQL {
         this.builder.column(name);
         return this;
     }
-    public SQL column(String name,String alias) {
-        this.builder.column(name,alias);
+
+    public SQL column(String name, String alias) {
+        this.builder.column(name, alias);
+        return this;
+    }
+    public SQL column(String tableAlias,String name, String alias) {
+        this.builder.column(tableAlias+"."+name, alias);
         return this;
     }
     public SQL column(String name, boolean groupBy) {
@@ -410,22 +471,26 @@ public class SQL {
     //子查询列----------------------------------------------------
     public SQL column(SQL subSql, String alias) {
 
-        this.builder.column(jdbcModel.processSqlName(subSql)+ alias + " ");
+        this.builder.column(jdbcModel.processSqlName(subSql) + alias + " ");
         return this;
     }
+
     //0、通用查询-----------age=18----------------------------------------------------
     //name+operator+value
     private SQL nameOperatorValue(Object name, String operator, Object value) {
+        if(value==null)
+            return this;
 
-        this.where(String.format(" %s %s %s ", jdbcModel.processSqlName(name),operator, jdbcModel.processSqlValue(value)));
+        this.where(String.format(" %s %s %s ", jdbcModel.processSqlName(name), operator, jdbcModel.processSqlValue(value)));
         return this;
     }
 
     //operator+value------exists（value）-------
     public SQL operatorValue(String operator, SQL subSQL) {
-        this.where(String.format("  %s %s ",operator, jdbcModel.processSqlValue(subSQL)));
+        this.where(String.format("  %s %s ", operator, jdbcModel.processSqlValue(subSQL)));
         return this;
     }
+
     //一、比较谓词----------------------------------------------------
     public SQL func(Object name, Object value) {
         return nameOperatorValue(name, "=", value);
@@ -438,18 +503,20 @@ public class SQL {
 
 
     public SQL eqMap(Map<String, Object> columnMap) {
-        if(columnMap==null)
-            return  this;
-        for (String key:columnMap.keySet()   ) {
-            eq(key,columnMap.get(key));
+        if (columnMap == null)
+            return this;
+        for (String key : columnMap.keySet()) {
+            eq(key, columnMap.get(key));
         }
         return this;
     }
+
     public SQL eq(Object name, Object value) {
         return nameOperatorValue(name, "=", value);
     }
+
     public SQL eqIfNotNull(Object name, Object value) {
-        if(value==null)
+        if (value == null)
             return this;
         return nameOperatorValue(name, "=", value);
     }
@@ -496,9 +563,18 @@ public class SQL {
         return likeOperator(name, "likeRight", value);
     }
 
+    public SQL notLikeLeft(Object name, Object value) {
+        return likeOperator(name, "notLikeLeft", value);
+    }
+
+    public SQL notLikeRight(Object name, Object value) {
+        return likeOperator(name, "notLikeRight", value);
+    }
+
+
     public SQL likeOperator(Object name, String operator, Object value) {
 
-        Object newvalue=value;
+        Object newvalue = value;
 
         //对值预处理
         if (!(value instanceof SQL)) {
@@ -507,11 +583,15 @@ public class SQL {
             if (operator.equalsIgnoreCase("like"))
                 newvalue = "%" + oldValue + "%";
             else if (operator.equalsIgnoreCase("notlike")) {
-                newvalue = "%" + oldValue + "%";
+                newvalue = " not %" + oldValue + "%";
             } else if (operator.equalsIgnoreCase("likeLeft")) {
                 newvalue = oldValue + "%";
             } else if (operator.equalsIgnoreCase("likeRight")) {
                 newvalue = "%" + oldValue;
+            } else if (operator.equalsIgnoreCase("notlikeLeft")) {
+                newvalue = " not " + oldValue + "%";
+            } else if (operator.equalsIgnoreCase("notlikeRight")) {
+                newvalue = " not %" + oldValue;
             } else if (operator.equalsIgnoreCase("like_")) {
                 newvalue = oldValue;
             }
@@ -529,23 +609,23 @@ public class SQL {
 
     //三、BETWEEN 谓词——范围查询
     public SQL between(Object name, Object value1, Object value2) {
-        this.between(name,  "  between " ,value1,value2);
+        this.between(name, "  between ", value1, value2);
 
         return this;
     }
 
     public SQL notBetween(Object name, Object value1, Object value2) {
 
-        this.between(name,  "  not between " ,value1,value2);
+        this.between(name, "  not between ", value1, value2);
 
         return this;
     }
 
-    public SQL between(Object name,String between, Object value1, Object value2) {
+    public SQL between(Object name, String between, Object value1, Object value2) {
         String placehoder1 = jdbcModel.processSqlValue(value1);
         String placehoder2 = jdbcModel.processSqlValue(value2);
         String namePlacehoder = jdbcModel.processSqlName(name);
-        this.where(namePlacehoder + between +placehoder1 + " and " +  placehoder2);
+        this.where(namePlacehoder + between + placehoder1 + " and " + placehoder2);
 
         return this;
     }
@@ -554,21 +634,22 @@ public class SQL {
 
     public SQL isNull(Object name) {
 
-        this.isNull(name,"is  null");
+        this.isNull(name, "is  null");
         return this;
     }
 
     public SQL isNotNull(Object name) {
 
-        this.isNull(name,"is not null");
+        this.isNull(name, "is not null");
         return this;
     }
 
-    public SQL isNull(Object name,String isNull) {
+    public SQL isNull(Object name, String isNull) {
         String namePlacehoder = jdbcModel.processSqlName(name);
-        this.where(namePlacehoder + " "+ isNull);
+        this.where(namePlacehoder + " " + isNull);
         return this;
     }
+
     //五、IN 谓词——OR 的简便用法
     public SQL or() {
 
@@ -585,34 +666,36 @@ public class SQL {
 
         return nameOperatorValue(name, "in", new ArrayList<>(Arrays.asList(values)));
     }
+
     public SQL in(Object name, SQL subSql) {
 
         return nameOperatorValue(name, "in", subSql);
     }
+
     public SQL notIn(Object name, List<?> values) {
         return nameOperatorValue(name, "not in", values);
     }
+
     public SQL notIn(Object name, SQL subSql) {
 
         return nameOperatorValue(name, "not in", subSql);
     }
+
     public SQL notIn(Object name, Object... values) {
         return nameOperatorValue(name, "not in", new ArrayList<>(Arrays.asList(values)));
 
     }
 
 
-
     //七、EXIST 谓词
     //
     public SQL exists(SQL subSQL) {
-        return operatorValue( "exists", subSQL);
+        return operatorValue("exists", subSQL);
     }
 
     public SQL notExists(SQL subSQL) {
-        return operatorValue( "not exists", subSQL);
+        return operatorValue("not exists", subSQL);
     }
-
 
 
     //八、括号
@@ -629,7 +712,6 @@ public class SQL {
     }
 
 
-
     //翻页---------------------------
 
 
@@ -640,44 +722,47 @@ public class SQL {
     public SQL setMap(String fields, Map value) {
 
         //表示不通过fields来过滤字段，直接用Map中的key，vaule的值都是有用的
-        if(fields==null || fields.equals("")||fields.equals("*")){
+        if (fields == null || fields.equals("") || fields.equals("*")) {
             return setMap(value);
         }
         //通过fields来过滤Map的key,value中包含没用的key
-        else
-        {
+        else {
             String[] parts = fields.split(",\\s*");
             for (int i = 0; i < parts.length; i++) {
-                    //通过值过滤，存在值就更新，不存在不更新，双过滤
-                    if(value.containsKey(parts[i]))
-                        set(parts[i], new DbParameter(parts[i], value.get(parts[i])));
+                //通过值过滤，存在值就更新，不存在不更新，双过滤
+                if (value.containsKey(parts[i]))
+                    set(parts[i], new DbParameter(parts[i], value.get(parts[i])));
             }
             return this;
         }
 
     }
+
     //直接用Map中的key，vaule的值都是有用的
     public SQL setMap(Map<String, Object> columnMap) {
-        for (String key:columnMap.keySet()             ) {
-            set(key, new DbParameter(key,columnMap.get(key), null));
+        for (String key : columnMap.keySet()) {
+            set(key, new DbParameter(key, columnMap.get(key), null));
 
         }
         return this;
     }
+
     //设置字段---值
     public SQL set(String name, Object value) {
 
         set(name, new DbParameter(name, value));
         return this;
     }
+
     //不为空时候更新
     public SQL setIfNotNull(String name, Object value) {
-        if(value==null)
-            return  this;
+        if (value == null)
+            return this;
 
         set(name, new DbParameter(name, value));
         return this;
     }
+
     public SQL set(String name, Object value, String datatype) {
         set(name, new DbParameter(name, value, datatype));
         return this;
@@ -689,7 +774,7 @@ public class SQL {
     }
 
     public void set(String name, DbParameter pmt) {
-        set1(name,pmt.getValue());
+        set1(name, pmt.getValue());
 
     }
 
@@ -710,7 +795,7 @@ public class SQL {
         else if (builder.getDoState().equals("insert")) {
 
 
-            this.builder.insertColumn(name,nameParamPlaceholder);
+            this.builder.insertColumn(name, nameParamPlaceholder);
 
         }
 
@@ -761,7 +846,7 @@ public class SQL {
     //自我扩展-------------------------------------------------------------------------------------------------
     public SQL last(Object last) {
         return new SQL(this.executor)
-                .setSql(" :arg0  :arg1" )
+                .setSql(" :arg0  :arg1")
                 .setValue$("arg0", this)
                 .setValue$("arg1", last);
     }
@@ -802,17 +887,17 @@ public class SQL {
 
 
     //更新
-    public int update()  {
+    public int update() {
         return executor.update(this);
     }
 
     //增加，返回主键
-    public Number insert()  {
+    public Number insert() {
         return executor.insert(this);
     }
 
     //执行存储过程
-    public int execute()  {
+    public int execute() {
 
         return executor.execute(this);
     }
@@ -820,141 +905,137 @@ public class SQL {
     //查询数据库-----------------------------------------------------------------------------------
 
     //返回单列单行数据
-    public String getString()  {
+    public String getString() {
         return executor.getString(this);
     }
 
 
-    public Integer getInteger()  {
+    public Integer getInteger() {
         return executor.getInteger(this);
     }
 
-    public Long getLong()  {
+    public Long getLong() {
         return executor.getLong(this);
     }
 
 
-    public Float getFloat()  {
+    public Float getFloat() {
         return executor.getFloat(this);
     }
 
-    public Double getDouble()  {
+    public Double getDouble() {
 
         return executor.getDouble(this);
     }
 
-    public Number getNumber()  {
+    public Number getNumber() {
         return executor.getNumber(this);
     }
 
 
-    public BigDecimal getBigDecimal()  {
+    public BigDecimal getBigDecimal() {
 
         return executor.getBigDecimal(this);
     }
 
-    public Date getDate()  {
+    public Date getDate() {
 
         return executor.getDate(this);
     }
 
 
-    public <T> T getValue(Class<T> requiredType)  {
-        return executor.getValue(this,requiredType);
+    public <T> T getValue(Class<T> requiredType) {
+        return executor.getValue(this, requiredType);
     }
 
     //返回单列list数据
-    public List<String> getStrings()  {
+    public List<String> getStrings() {
 
         return executor.getStrings(this);
     }
 
 
-    public List<Integer> getIntegers()  {
+    public List<Integer> getIntegers() {
         return executor.getIntegers(this);
     }
 
 
-    public List<Long> getLongs()  {
+    public List<Long> getLongs() {
 
         return executor.getLongs(this);
     }
 
 
-
-    public List<Double> getDoubles()  {
+    public List<Double> getDoubles() {
         return executor.getDoubles(this);
     }
 
 
-    public List<Float> getFloats()  {
+    public List<Float> getFloats() {
         return executor.getFloats(this);
     }
 
 
-    public List<Number> getNumbers()  {
+    public List<Number> getNumbers() {
 
         return executor.getNumbers(this);
     }
 
 
-
-    public List<BigDecimal> getBigDecimals()  {
+    public List<BigDecimal> getBigDecimals() {
 
         return executor.getBigDecimals(this);
     }
 
 
-
-    public List<Date> getDates()  {
+    public List<Date> getDates() {
 
         return executor.getDates(this);
     }
 
 
-    public <T> List<T> getValues(Class<T> requiredType)  {
+    public <T> List<T> getValues(Class<T> requiredType) {
 
-        return executor.getValues(this,requiredType);
+        return executor.getValues(this, requiredType);
     }
-
 
 
     //返回单行数据
 
-    public Map<String, Object> getMap()  {
+    public Map<String, Object> getMap() {
 
         return executor.getMap(this);
     }
 
 
     //返回多行数据
-    public List<Map<String, Object>> getMaps()  {
+    public List<Map<String, Object>> getMaps() {
 
         return executor.getMaps(this);
     }
 
 
     //返回Bean实体
-    public <T> T getBean(Class<T> T)  {
+    public <T> T getBean(Class<T> T) {
 
-        return executor.getBean(this,T);
+        return executor.getBean(this, T);
     }
 
 
     //返回Bean list
-    public <T> List<T> getBeans(Class<T> T)  {
+    public <T> List<T> getBeans(Class<T> T) {
 
-        return executor.getBeans(this,T);
+        return executor.getBeans(this, T);
     }
 
 
     //查询应用-------------判断是否存在------------------------------------------------
-    public boolean isExists()  {
-       return this.executor.isExists(this);
+    public boolean isExists() {
+        return this.executor.isExists(this);
     }
 
     //对一个查询给出记录数
-    public Number getCount()  {
+    public Number getCount() {
         return this.executor.getCount(this);
     }
 

@@ -62,7 +62,6 @@
 
 
     <dependencies>
-
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-jdbc</artifactId>
@@ -103,16 +102,12 @@
             <version>5.8.2</version>
             <scope>test</scope>
         </dependency>
-        <!--雪花id-->
-
-
         <dependency>
             <groupId>com.github.yitter</groupId>
             <artifactId>yitter-idgenerator</artifactId>
             <version>1.0.6</version>
             <scope>compile</scope>
         </dependency>
-
 
     </dependencies>
     <profiles>
