@@ -1,6 +1,9 @@
 package io.github.ldhai99.easyOrm;
 
 
+import io.github.ldhai99.easyOrm.Lambda.LambdaPropertyExtractor;
+import io.github.ldhai99.easyOrm.Lambda.SerializableGetter;
+import io.github.ldhai99.easyOrm.Lambda.TableNameResolver;
 import io.github.ldhai99.easyOrm.executor.DbUtilsExecutor;
 import io.github.ldhai99.easyOrm.executor.Executor;
 import io.github.ldhai99.easyOrm.executor.JdbcTemplateExecutor;
@@ -139,6 +142,9 @@ public class SQL {
         return new SQL().select(table);
     }
 
+    public static SQL SELECT( Class<?> clazz) {
+        return SELECT(TableNameResolver.getTableName(clazz));
+    }
     public static SQL SELECT(SQL subSql, String alias) {
         return new SQL().select(subSql, alias);
     }
@@ -146,15 +152,21 @@ public class SQL {
     public static SQL UPDATE(String table) {
         return new SQL().update(table);
     }
-
+    public static SQL UPDATE( Class<?> clazz) {
+        return UPDATE(TableNameResolver.getTableName(clazz));
+    }
     public static SQL DELETE(String table) {
         return new SQL().delete(table);
     }
-
+    public static SQL DELETE( Class<?> clazz) {
+        return DELETE(TableNameResolver.getTableName(clazz));
+    }
     public static SQL INSERT(String table) {
         return new SQL().insert(table);
     }
-
+    public static SQL INSERT( Class<?> clazz) {
+        return INSERT(TableNameResolver.getTableName(clazz));
+    }
     public static SQL WHERE() {
         return new SQL().where();
     }
@@ -177,7 +189,9 @@ public class SQL {
         this.builder.from(table);
         return this;
     }
-
+    public  SQL select( Class<?> clazz) {
+        return select(TableNameResolver.getTableName(clazz));
+    }
     public SQL select(SQL subSql, String alias) {
         return this.from(subSql, alias);
     }
@@ -186,17 +200,23 @@ public class SQL {
         this.builder.update(table);
         return this;
     }
-
+    public  SQL update( Class<?> clazz) {
+        return update(TableNameResolver.getTableName(clazz));
+    }
     public SQL delete(String table) {
         this.builder.delete(table);
         return this;
     }
-
+    public  SQL delete( Class<?> clazz) {
+        return delete(TableNameResolver.getTableName(clazz));
+    }
     public SQL insert(String table) {
         this.builder.insert(table);
         return this;
     }
-
+    public  SQL insert( Class<?> clazz) {
+        return insert(TableNameResolver.getTableName(clazz));
+    }
     public SQL where() {
         this.builder.where();
         return this;
@@ -220,7 +240,9 @@ public class SQL {
         this.builder.from(table);
         return this;
     }
-
+    public  SQL from( Class<?> clazz) {
+        return from(TableNameResolver.getTableName(clazz));
+    }
     //子查询表
     public SQL from(SQL subSql, String alias) {
 
@@ -246,7 +268,9 @@ public class SQL {
         this.builder.having(name);
         return this;
     }
-
+    public <T> SQL having(SerializableGetter<T> getter) {
+        return having( LambdaPropertyExtractor.getPropertyName(getter));
+    }
     public SQL having(SQL subSql) {
 
         this.builder.having(jdbcModel.processSqlName(subSql));
@@ -298,9 +322,11 @@ public class SQL {
         this.builder.groupBy(name);
         return this;
     }
+    public <T> SQL groupBy(SerializableGetter<T> getter) {
+        return groupBy( LambdaPropertyExtractor.getPropertyName(getter));
+    }
 
-
-    //
+    //----------多表连接------------------------------
     public SQL join(String join) {
         this.builder.join(join);
         return this;
@@ -310,22 +336,30 @@ public class SQL {
         this.join("inner join", table, on);
         return this;
     }
-
+    public  SQL join( Class<?> clazz, String on) {
+        return join(TableNameResolver.getTableName(clazz),on);
+    }
     public SQL leftJoin(String table, String on) {
         this.join("left join", table, on);
         return this;
     }
-
+    public  SQL leftJoin( Class<?> clazz, String on) {
+        return leftJoin(TableNameResolver.getTableName(clazz),on);
+    }
     public SQL rightJoin(String table, String on) {
         this.join("right join", table, on);
         return this;
     }
-
+    public  SQL rightJoin( Class<?> clazz, String on) {
+        return rightJoin(TableNameResolver.getTableName(clazz),on);
+    }
     public SQL fullJoin(String table, String on) {
         this.join("full join", table, on);
         return this;
     }
-
+    public  SQL fullJoin( Class<?> clazz, String on) {
+        return rightJoin(TableNameResolver.getTableName(clazz),on);
+    }
     public SQL join(String join, String table, String on) {
         if (on != null && on.trim().length() != 0) {
             this.builder.join(join + " " + table + " on " + on);
@@ -334,7 +368,7 @@ public class SQL {
         return this;
     }
 
-
+//-----------排序----------------------------------------------------
     public SQL orderByAsc(List<String> names) {
         for (String name : names) {
             orderByAsc(name);
@@ -351,20 +385,27 @@ public class SQL {
     }
 
     public SQL orderByAsc(String name) {
+
         this.orderBy(name, true);
         return this;
     }
-
+    public <T> SQL orderByAsc(SerializableGetter<T> getter) {
+        return orderByAsc( LambdaPropertyExtractor.getPropertyName(getter));
+    }
     public SQL orderByDesc(String name) {
         this.orderBy(name, false);
         return this;
     }
-
+    public <T> SQL orderByDesc(SerializableGetter<T> getter) {
+        return orderByDesc( LambdaPropertyExtractor.getPropertyName(getter));
+    }
     public SQL orderBy(String name) {
         this.orderBy(name, true);
         return this;
     }
-
+    public <T> SQL orderBy(SerializableGetter<T> getter) {
+        return orderBy( LambdaPropertyExtractor.getPropertyName(getter));
+    }
     public SQL orderBy(String name, boolean ascending) {
         this.builder.orderBy(name, ascending);
         return this;
@@ -375,57 +416,58 @@ public class SQL {
         return this.builder;
     }
 
-    /* public PreparedStatementCreator count(final Dialect dialect) {
-          return new PreparedStatementCreator() {
-              public PreparedStatement createPreparedStatement(Connection con)  {
-                  return SelectBuilder.this.getPreparedStatementCreator().setSql(dialect.createCountSelect(SelectBuilder.this.builder.toString())).createPreparedStatement(con);
-              }
-          };
-      }*/
-/*
-    public PreparedStatementCreator page(final Dialect dialect, final int limit, final int offset) {
-        return new PreparedStatementCreator() {
-            public PreparedStatement createPreparedStatement(Connection con)  {
-                return SelectBuilder.this.getPreparedStatementCreator().setSql(dialect.createPageSelect(SelectBuilder.this.builder.toString(), limit, offset)).createPreparedStatement(con);
-            }
-        };
-    }
-*/
+
     //代理SqlDataModel---------------------------
 //聚合函数列----------------------------------------
     public SQL sum(String name) {
         return aggregate("sum", name);
     }
-
+    public <T> SQL sum(SerializableGetter<T> getter) {
+        return sum( LambdaPropertyExtractor.getPropertyName(getter));
+    }
     public SQL sum(String name, String alias) {
         return aggregate("sum", name, alias);
     }
-
+    public <T> SQL sum(SerializableGetter<T> getter, String alias) {
+        return sum( LambdaPropertyExtractor.getPropertyName(getter), alias);
+    }
     public SQL avg(String name) {
         return aggregate("avg", name);
     }
-
+    public <T> SQL avg(SerializableGetter<T> getter) {
+        return avg( LambdaPropertyExtractor.getPropertyName(getter));
+    }
     public SQL avg(String name, String alias) {
         return aggregate("avg", name, alias);
     }
-
+    public <T> SQL avg(SerializableGetter<T> getter, String alias) {
+        return avg( LambdaPropertyExtractor.getPropertyName(getter), alias);
+    }
     public SQL max(String name) {
         return aggregate("max", name);
     }
-
+    public <T> SQL max(SerializableGetter<T> getter) {
+        return max( LambdaPropertyExtractor.getPropertyName(getter));
+    }
     public SQL max(String name, String alias) {
         return aggregate("max", name, alias);
     }
-
+    public <T> SQL max(SerializableGetter<T> getter, String alias) {
+        return max( LambdaPropertyExtractor.getPropertyName(getter), alias);
+    }
 
     public SQL min(String name) {
         return aggregate("min", name);
     }
-
+    public <T> SQL min(SerializableGetter<T> getter) {
+        return min( LambdaPropertyExtractor.getPropertyName(getter));
+    }
     public SQL min(String name, String alias) {
         return aggregate("min", name, alias);
     }
-
+    public <T> SQL min(SerializableGetter<T> getter, String alias) {
+        return min( LambdaPropertyExtractor.getPropertyName(getter), alias);
+    }
     public SQL count() {
         this.builder.column("count(" + "*" + ") ");
         return this;
@@ -454,20 +496,36 @@ public class SQL {
         this.builder.column(name);
         return this;
     }
-
+    public <T> SQL column(SerializableGetter<T> getter) {
+        return column( LambdaPropertyExtractor.getPropertyName(getter));
+    }
+    public <T> SQL column(SerializableGetter<T> ...getters) {
+        for (int i = 0; i < getters.length; i++) {
+            column( LambdaPropertyExtractor.getPropertyName(getters[i]));
+        }
+        return this;
+    }
     public SQL column(String name, String alias) {
         this.builder.column(name, alias);
         return this;
+    }
+    public <T> SQL column(SerializableGetter<T> getter, String alias) {
+        return column( LambdaPropertyExtractor.getPropertyName(getter),alias);
     }
     public SQL column(String tableAlias,String name, String alias) {
         this.builder.column(tableAlias+"."+name, alias);
         return this;
     }
+    public <T> SQL column(String tableAlias,SerializableGetter<T> getter, String alias) {
+        return column(tableAlias, LambdaPropertyExtractor.getPropertyName(getter),alias);
+    }
     public SQL column(String name, boolean groupBy) {
         this.builder.column(name, groupBy);
         return this;
     }
-
+    public <T> SQL column(SerializableGetter<T> getter, boolean groupBy) {
+        return column( LambdaPropertyExtractor.getPropertyName(getter),groupBy);
+    }
     //子查询列----------------------------------------------------
     public SQL column(SQL subSql, String alias) {
 
@@ -476,20 +534,8 @@ public class SQL {
     }
 
     //0、通用查询-----------age=18----------------------------------------------------
-    //name+operator+value
-    private SQL nameOperatorValue(Object name, String operator, Object value) {
-        if(value==null)
-            return this;
 
-        this.where(String.format(" %s %s %s ", jdbcModel.processSqlName(name), operator, jdbcModel.processSqlValue(value)));
-        return this;
-    }
 
-    //operator+value------exists（value）-------
-    public SQL operatorValue(String operator, SQL subSQL) {
-        this.where(String.format("  %s %s ", operator, jdbcModel.processSqlValue(subSQL)));
-        return this;
-    }
 
     //一、比较谓词----------------------------------------------------
     public SQL func(Object name, Object value) {
@@ -500,7 +546,9 @@ public class SQL {
     public SQL where(Object name, Object value) {
         return nameOperatorValue(name, "=", value);
     }
-
+    public <T> SQL where(SerializableGetter<T> getter, Object value) {
+        return where( LambdaPropertyExtractor.getPropertyName(getter),value);
+    }
 
     public SQL eqMap(Map<String, Object> columnMap) {
         if (columnMap == null)
@@ -514,65 +562,104 @@ public class SQL {
     public SQL eq(Object name, Object value) {
         return nameOperatorValue(name, "=", value);
     }
+    // 新增支持Lambda的eq方法
+// 支持泛型的 eq 方法<T> String getPropertyName(SerializableGetter<T> getter)
+    public <T> SQL eq(SerializableGetter<T> getter, Object value) {
+        return eq( LambdaPropertyExtractor.getPropertyName(getter),value);
+    }
 
     public SQL eqIfNotNull(Object name, Object value) {
         if (value == null)
             return this;
         return nameOperatorValue(name, "=", value);
     }
-
+    public <T> SQL eqIfNotNull(SerializableGetter<T> getter, Object value) {
+        return eqIfNotNull( LambdaPropertyExtractor.getPropertyName(getter),value);
+    }
     public SQL neq(Object name, Object value) {
         return nameOperatorValue(name, "<>", value);
     }
-
+    public <T> SQL neq(SerializableGetter<T> getter, Object value) {
+        return neq( LambdaPropertyExtractor.getPropertyName(getter),value);
+    }
     public SQL gt(Object name, Object value) {
         return nameOperatorValue(name, ">", value);
     }
-
+    public <T> SQL gt(SerializableGetter<T> getter, Object value) {
+        return gt( LambdaPropertyExtractor.getPropertyName(getter),value);
+    }
     public SQL gte(Object name, Object value) {
         return nameOperatorValue(name, ">=", value);
     }
-
+    public <T> SQL gte(SerializableGetter<T> getter, Object value) {
+        return gte( LambdaPropertyExtractor.getPropertyName(getter),value);
+    }
     public SQL lt(Object name, Object value) {
         return nameOperatorValue(name, "<", value);
     }
-
+    public <T> SQL lt(SerializableGetter<T> getter, Object value) {
+        return lt( LambdaPropertyExtractor.getPropertyName(getter),value);
+    }
     public SQL lte(Object name, Object value) {
         return nameOperatorValue(name, "<=", value);
     }
+    public <T> SQL lte(SerializableGetter<T> getter, Object value) {
+        return lte( LambdaPropertyExtractor.getPropertyName(getter),value);
+    }
+    //name+operator+value
+    protected SQL nameOperatorValue(Object name, String operator, Object value) {
+        if(value==null)
+            return this;
 
+        this.where(String.format(" %s %s %s ", jdbcModel.processSqlName(name), operator, jdbcModel.processSqlValue(value)));
+        return this;
+    }
 
     //二、LIKE 谓词——字符串的部分一致查询
     public SQL like(Object name, Object value) {
         return likeOperator(name, "like", value);
     }
-
+    public <T> SQL like(SerializableGetter<T> getter, Object value) {
+        return like( LambdaPropertyExtractor.getPropertyName(getter),value);
+    }
     public SQL like_(Object name, Object value) {
         return likeOperator(name, "like_", value);
     }
-
+    public <T> SQL like_(SerializableGetter<T> getter, Object value) {
+        return like_( LambdaPropertyExtractor.getPropertyName(getter),value);
+    }
     public SQL notLike(Object name, Object value) {
         return likeOperator(name, "notLike", value);
     }
-
+    public <T> SQL notLike(SerializableGetter<T> getter, Object value) {
+        return notLike( LambdaPropertyExtractor.getPropertyName(getter),value);
+    }
     public SQL likeLeft(Object name, Object value) {
         return likeOperator(name, "likeLeft", value);
     }
-
+    public <T> SQL likeLeft(SerializableGetter<T> getter, Object value) {
+        return likeLeft( LambdaPropertyExtractor.getPropertyName(getter),value);
+    }
     public SQL likeRight(Object name, Object value) {
         return likeOperator(name, "likeRight", value);
     }
-
+    public <T> SQL likeRight(SerializableGetter<T> getter, Object value) {
+        return likeRight( LambdaPropertyExtractor.getPropertyName(getter),value);
+    }
     public SQL notLikeLeft(Object name, Object value) {
         return likeOperator(name, "notLikeLeft", value);
     }
-
+    public <T> SQL notLikeLeft(SerializableGetter<T> getter, Object value) {
+        return notLikeLeft( LambdaPropertyExtractor.getPropertyName(getter),value);
+    }
     public SQL notLikeRight(Object name, Object value) {
         return likeOperator(name, "notLikeRight", value);
     }
+    public <T> SQL notLikeRight(SerializableGetter<T> getter, Object value) {
+        return notLikeRight( LambdaPropertyExtractor.getPropertyName(getter),value);
+    }
 
-
-    public SQL likeOperator(Object name, String operator, Object value) {
+    protected SQL likeOperator(Object name, String operator, Object value) {
 
         Object newvalue = value;
 
@@ -613,6 +700,9 @@ public class SQL {
 
         return this;
     }
+    public <T> SQL between(SerializableGetter<T> getter,  Object value1, Object value2) {
+        return between( LambdaPropertyExtractor.getPropertyName(getter), value1, value2);
+    }
 
     public SQL notBetween(Object name, Object value1, Object value2) {
 
@@ -620,8 +710,10 @@ public class SQL {
 
         return this;
     }
-
-    public SQL between(Object name, String between, Object value1, Object value2) {
+    public <T> SQL notBetween(SerializableGetter<T> getter,  Object value1, Object value2) {
+        return notBetween( LambdaPropertyExtractor.getPropertyName(getter), value1, value2);
+    }
+    protected SQL between(Object name, String between, Object value1, Object value2) {
         String placehoder1 = jdbcModel.processSqlValue(value1);
         String placehoder2 = jdbcModel.processSqlValue(value2);
         String namePlacehoder = jdbcModel.processSqlName(name);
@@ -637,14 +729,18 @@ public class SQL {
         this.isNull(name, "is  null");
         return this;
     }
-
+    public <T> SQL isNull(SerializableGetter<T> getter) {
+        return isNull( LambdaPropertyExtractor.getPropertyName(getter));
+    }
     public SQL isNotNull(Object name) {
 
         this.isNull(name, "is not null");
         return this;
     }
-
-    public SQL isNull(Object name, String isNull) {
+    public <T> SQL isNotNull(SerializableGetter<T> getter) {
+        return isNotNull( LambdaPropertyExtractor.getPropertyName(getter));
+    }
+    protected SQL isNull(Object name, String isNull) {
         String namePlacehoder = jdbcModel.processSqlName(name);
         this.where(namePlacehoder + " " + isNull);
         return this;
@@ -661,31 +757,43 @@ public class SQL {
         return nameOperatorValue(name, "in", values);
 
     }
-
+    public <T> SQL in(SerializableGetter<T> getter, List<?> values) {
+        return in( LambdaPropertyExtractor.getPropertyName(getter),values);
+    }
     public SQL in(Object name, Object... values) {
 
         return nameOperatorValue(name, "in", new ArrayList<>(Arrays.asList(values)));
     }
-
+    public <T> SQL in(SerializableGetter<T> getter, Object... values) {
+        return in( LambdaPropertyExtractor.getPropertyName(getter),values);
+    }
     public SQL in(Object name, SQL subSql) {
 
         return nameOperatorValue(name, "in", subSql);
     }
-
+    public <T> SQL in(SerializableGetter<T> getter,SQL subSql) {
+        return in( LambdaPropertyExtractor.getPropertyName(getter),subSql);
+    }
     public SQL notIn(Object name, List<?> values) {
         return nameOperatorValue(name, "not in", values);
     }
-
+    public <T> SQL notIn(SerializableGetter<T> getter, List<?> values) {
+        return notIn( LambdaPropertyExtractor.getPropertyName(getter),values);
+    }
     public SQL notIn(Object name, SQL subSql) {
 
         return nameOperatorValue(name, "not in", subSql);
     }
-
+    public <T> SQL notIn(SerializableGetter<T> getter,SQL subSql) {
+        return notIn( LambdaPropertyExtractor.getPropertyName(getter),subSql);
+    }
     public SQL notIn(Object name, Object... values) {
         return nameOperatorValue(name, "not in", new ArrayList<>(Arrays.asList(values)));
 
     }
-
+    public <T> SQL notIn(SerializableGetter<T> getter, Object... values) {
+        return notIn( LambdaPropertyExtractor.getPropertyName(getter),values);
+    }
 
     //七、EXIST 谓词
     //
@@ -697,7 +805,11 @@ public class SQL {
         return operatorValue("not exists", subSQL);
     }
 
-
+    //operator+value------exists（value）-------
+    protected SQL operatorValue(String operator, SQL subSQL) {
+        this.where(String.format("  %s %s ", operator, jdbcModel.processSqlValue(subSQL)));
+        return this;
+    }
     //八、括号
     public SQL begin() {
 
@@ -747,13 +859,15 @@ public class SQL {
         return this;
     }
 
-    //设置字段---值
+    //设置字段---值---------------------------------------------
     public SQL set(String name, Object value) {
 
         set(name, new DbParameter(name, value));
         return this;
     }
-
+    public <T> SQL set(SerializableGetter<T> getter,  Object value) {
+        return set( LambdaPropertyExtractor.getPropertyName(getter),value);
+    }
     //不为空时候更新
     public SQL setIfNotNull(String name, Object value) {
         if (value == null)
@@ -762,23 +876,32 @@ public class SQL {
         set(name, new DbParameter(name, value));
         return this;
     }
-
+    public <T> SQL setIfNotNull(SerializableGetter<T> getter,  Object value) {
+        return setIfNotNull( LambdaPropertyExtractor.getPropertyName(getter),value);
+    }
     public SQL set(String name, Object value, String datatype) {
         set(name, new DbParameter(name, value, datatype));
         return this;
     }
-
+    public <T> SQL set(SerializableGetter<T> getter,  Object value, String datatype) {
+        return set( LambdaPropertyExtractor.getPropertyName(getter),value,datatype);
+    }
     public SQL set(String name, Object value, String datatype, boolean allowNull) {
         set(name, new DbParameter(name, value, datatype, allowNull));
         return this;
     }
-
-    public void set(String name, DbParameter pmt) {
+    public <T> SQL set(SerializableGetter<T> getter,  Object value, String datatype, boolean allowNull) {
+        return set( LambdaPropertyExtractor.getPropertyName(getter),value,datatype,allowNull);
+    }
+    public SQL set(String name, DbParameter pmt) {
         set1(name, pmt.getValue());
+        return this;
 
     }
-
-    public SQL set1(String name, Object subSql) {
+    public <T> SQL set(SerializableGetter<T> getter,   DbParameter pmt) {
+        return set( LambdaPropertyExtractor.getPropertyName(getter),pmt);
+    }
+    protected SQL set1(String name, Object subSql) {
         //设置占位符号
         setPlaceholder(name, jdbcModel.processSqlValue(subSql));
 
@@ -809,7 +932,9 @@ public class SQL {
         this.builder.paraName(name, jdbcModel.processSqlValue(subSql));
         return this;
     }
-
+    public <T> SQL setValue(SerializableGetter<T> getter, Object subSql) {
+        return setValue( LambdaPropertyExtractor.getPropertyName(getter),subSql);
+    }
 
     public SQL setValue$(String name, Object subSql) {
 
@@ -817,7 +942,9 @@ public class SQL {
         this.builder.paraName(name, jdbcModel.processSqlName(subSql));
         return this;
     }
-
+    public <T> SQL setValue$(SerializableGetter<T> getter, Object subSql) {
+        return setValue$( LambdaPropertyExtractor.getPropertyName(getter),subSql);
+    }
     public String toSelect() {
         return this.builder.toSelect();
     }

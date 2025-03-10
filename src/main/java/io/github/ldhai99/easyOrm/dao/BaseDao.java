@@ -179,7 +179,7 @@ public class BaseDao<T extends BaseDm> {
     }
 
     public <E> E getBeanById(Serializable id, Class<E> E) {
-        return SQL.SELECT(dm.select_table)
+        return (E)SQL.SELECT(dm.select_table)
                 .column(dm.select_fields)
                 .eq(dm.table_id, id)
                 .getBean(E);
@@ -224,7 +224,7 @@ public class BaseDao<T extends BaseDm> {
     }
 
     public <E> E getBeanByMap(Map<String, Object> columnMap, Class<E> E) {
-        return SQL.SELECT(dm.select_table)
+        return (E)SQL.SELECT(dm.select_table)
                 .column(dm.select_fields)
                 .eqMap(columnMap)
                 .getBean(E);

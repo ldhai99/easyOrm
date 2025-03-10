@@ -52,7 +52,8 @@ public class JdbcTemplateExecutor extends AbstractExecutor {
 
     public < T > T getValue (SQL sql, Class<T> requiredType) {
         try {
-            return template.queryForObject(sql.toString(), sql.getParameterMap(), requiredType);
+            Object value = template.queryForObject(sql.toString(), sql.getParameterMap(), requiredType);
+            return (T) value;
         }catch (IncorrectResultSizeDataAccessException e){
             List mapList=getValues(sql, requiredType);
             if(mapList.size()>=1)
@@ -91,7 +92,8 @@ public class JdbcTemplateExecutor extends AbstractExecutor {
     public <T> T getBean(SQL sql,Class<T> T)  {
 
         try {
-            return template.queryForObject(sql.toString(), sql.getParameterMap(), new BeanPropertyRowMapper<T>(T));
+            Object value = template.queryForObject(sql.toString(), sql.getParameterMap(), new BeanPropertyRowMapper<T>(T));
+            return (T) value;
 
         }catch (IncorrectResultSizeDataAccessException e){
 
