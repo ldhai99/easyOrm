@@ -6,5 +6,5 @@ import java.util.function.Function;
 
 // 定义可序列化的函数式接口
 @FunctionalInterface
-public interface SerializableGetter<T> extends Function<T, Object>, Serializable {
+public interface PropertyGetter<T> extends Function<T, Object>, Serializable {
 }
