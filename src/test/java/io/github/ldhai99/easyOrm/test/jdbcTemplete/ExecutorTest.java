@@ -168,12 +168,12 @@ public class ExecutorTest {
         }
 
         new SQL(npjt)
-                .setSql("delete from student where name=:name")
+                .addSql("delete from student where name=:name")
                 .set("name", "李四")
                 .execute();
 
         new SQL(npjt)
-                .setSql("insert into student(id,name,password,age,sex,student_id,create_time) " +
+                .addSql("insert into student(id,name,password,age,sex,student_id,create_time) " +
                         "values(:id,:name,:password,:age,:sex,:student_id,:create_time)")
                 .set("id", 0).set("age", 19)
                 .set("name", "李四").set("sex", "女")
@@ -187,7 +187,7 @@ public class ExecutorTest {
         System.out.println(student);
 
         new SQL(npjt)
-                .setSql("update student set age=:age   where name=:name")
+                .addSql("update student set age=:age   where name=:name")
                 .set("age", "18")
                 .set("name", "李四")
                 .execute();

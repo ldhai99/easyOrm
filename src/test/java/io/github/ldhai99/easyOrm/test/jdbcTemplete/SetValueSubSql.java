@@ -33,7 +33,7 @@ public class SetValueSubSql {
     public void setSql() throws SQLException {
 
         System.out.println(
-                new SQL(executor).setSql("select name,age from student where age = ?", 18).getMaps()
+                new SQL(executor).addSql("select name,age from student where age = ?", 18).getMaps()
         );
     }
 
@@ -43,12 +43,12 @@ public class SetValueSubSql {
 
         System.out.println(
                 new SQL(executor)
-                        .setSql("select name,age from student where age = :arg1")
+                        .addSql("select name,age from student where age = :arg1")
                         .setValue("arg1", 18)
         );
         System.out.println(
                 new SQL(executor)
-                        .setSql("select name,age from student where age = :arg1")
+                        .addSql("select name,age from student where age = :arg1")
                         .setValue("arg1", 18).getMaps()
         );
     }
@@ -57,13 +57,13 @@ public class SetValueSubSql {
 
         System.out.println(
                 new SQL(executor)
-                        .setSql("select name,age from student where :arg0 = :arg1")
+                        .addSql("select name,age from student where :arg0 = :arg1")
                         .setValue$("arg0", "age")
                         .setValue("arg1", 18)
         );
         System.out.println(
                 new SQL(executor)
-                        .setSql("select name,age from student where :arg0 = :arg1")
+                        .addSql("select name,age from student where :arg0 = :arg1")
                         .setValue$("arg0", "age")
                         .setValue("arg1", 18)
                         .getMaps()
@@ -75,17 +75,17 @@ public class SetValueSubSql {
 
         System.out.println(
                 new SQL(executor)
-                        .setSql("select :field").setValue$("field","name,age")
-                        .setSql(" from :table").setValue$("table","student")
-                        .setSql(" where :arg0 = :arg1")
+                        .addSql("select :field").setValue$("field","name,age")
+                        .addSql(" from :table").setValue$("table","student")
+                        .addSql(" where :arg0 = :arg1")
                         .setValue$("arg0", "age")
                         .setValue("arg1", 18)
         );
         System.out.println(
                 new SQL(executor)
-                        .setSql("select :field").setValue$("field","name,age")
-                        .setSql(" from :table").setValue$("table","student")
-                        .setSql(" where :arg0 = :arg1")
+                        .addSql("select :field").setValue$("field","name,age")
+                        .addSql(" from :table").setValue$("table","student")
+                        .addSql(" where :arg0 = :arg1")
                         .setValue$("arg0", "age")
                         .setValue("arg1", 18)
 
@@ -103,14 +103,14 @@ public class SetValueSubSql {
         new SQL(executor).delete("student1").eq("name", "李四").update();
 
 
-                new SQL(executor).setSql(" insert into student1(id,student_id,name,age,sex,create_time) :arg1")
+                new SQL(executor).addSql(" insert into student1(id,student_id,name,age,sex,create_time) :arg1")
                         .setValue("arg1", SQL.SELECT("student")
                                 .column("id,student_id,name,age,sex,create_time")
                                 .eq("name", "李四"))
                         .update();
 
         System.out.print(new SQL(executor).select("student1").column("id,name,age").eq("name", "李四").getMaps());
-        System.out.println(new SQL(executor).setSql(" insert into student1(id,student_id,name,age,sex,create_time) :arg1")
+        System.out.println(new SQL(executor).addSql(" insert into student1(id,student_id,name,age,sex,create_time) :arg1")
                 .setValue("arg1", SQL.SELECT("student")
                         .column("id,student_id,name,age,sex,create_time")
                         .eq("name", "李四")));
@@ -138,12 +138,12 @@ public class SetValueSubSql {
         System.out.println(
                 new SQL(executor)
 
-                        .setSql(SQL.SELECT("student").column("name,age").eq("name","张三"))
-                        .setSql(" union all")
-                        .setSql( SQL.SELECT("student").column("name,age").eq("name","张三"))
-                        .setSql(" union all")
-                        .setSql(SQL.SELECT("student").column("name,age").eq("name","李四"))
-                        .setSql(" order by age")
+                        .addSql(SQL.SELECT("student").column("name,age").eq("name","张三"))
+                        .addSql(" union all")
+                        .addSql( SQL.SELECT("student").column("name,age").eq("name","张三"))
+                        .addSql(" union all")
+                        .addSql(SQL.SELECT("student").column("name,age").eq("name","李四"))
+                        .addSql(" order by age")
                         .getMaps()
         );
     }

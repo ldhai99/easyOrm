@@ -381,9 +381,9 @@ public class SQL {
         this.join("inner join", table, on);
         return this;
     }
-    public SQL join(String table, SQL  sql) {
+    public SQL join(Class clazz, SQL  sql) {
 
-        return this.join(table,sql.toString());
+        return this.join(TableNameResolver.getTableName(clazz),sql.toString());
     }
     public SQL join(Class<?> clazz, String on) {
         return join(TableNameResolver.getTableName(clazz), on);

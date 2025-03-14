@@ -31,12 +31,12 @@ public class WhereSubSql {
 
         System.out.println(
                 new SQL(executor).select(" student ").column("name,age").where(
-                        SQL.SETSQL("age = round(?)", 18.3)
+                        SQL.ADDSQL("age = round(?)", 18.3)
                 ).getMaps()
         );
         System.out.println(
                 new SQL(executor).select(" student ").column("name,age").where(
-                        SQL.SETSQL("age = round(:age)").setValue("age", 18.3)
+                        SQL.ADDSQL("age = round(:age)").setValue("age", 18.3)
                 ).getMaps()
         );
     }
@@ -45,12 +45,12 @@ public class WhereSubSql {
 
         System.out.println(
                 new SQL(executor).select(" student ").column("name,age")
-                        .eq("age", SQL.SETSQL("round(?)", 18.3)
+                        .eq("age", SQL.ADDSQL("round(?)", 18.3)
                         ).getMaps()
         );
         System.out.println(
                 new SQL(executor).select(" student ").column("name,age")
-                        .eq("age", SQL.SETSQL("round(:age)").setValue("age", 18.3)
+                        .eq("age", SQL.ADDSQL("round(:age)").setValue("age", 18.3)
                         ).getMaps()
         );
 
@@ -68,7 +68,7 @@ public class WhereSubSql {
 
         System.out.println(
                 new SQL(executor).select(" student ").column("name,age")
-                        .eq(SQL.SETSQL("round(age,:arg0)").setValue("arg0", 2)
+                        .eq(SQL.ADDSQL("round(age,:arg0)").setValue("arg0", 2)
                                 , SQL.SELECT("dual").column("round(:age)").setValue("age", 18.3)
                         ).getMaps()
         );
@@ -80,11 +80,11 @@ public class WhereSubSql {
 
         System.out.println(
                 new SQL(executor).select("student").column("name,sex")
-                        .like("sex", SQL.SETSQL(" CONCAT('%',right(?,1),'%')", "男女")).getMaps()
+                        .like("sex", SQL.ADDSQL(" CONCAT('%',right(?,1),'%')", "男女")).getMaps()
         );
         System.out.println(
                 new SQL(executor).select("student").column("name,sex")
-                        .like("sex", SQL.SETSQL(" CONCAT('%',left(:sex,1),'%')").setValue("sex", "男女")).getMaps()
+                        .like("sex", SQL.ADDSQL(" CONCAT('%',left(:sex,1),'%')").setValue("sex", "男女")).getMaps()
         );
         System.out.println(
                 new SQL(executor).select("student").column("name,sex")
@@ -98,15 +98,15 @@ public class WhereSubSql {
         System.out.println(
                 new SQL(executor).select(" student ").column("name,age")
                         .between("age"
-                                , SQL.SETSQL("round(?)", 18.3)
-                                , SQL.SETSQL("round(?)", 20.3)
+                                , SQL.ADDSQL("round(?)", 18.3)
+                                , SQL.ADDSQL("round(?)", 20.3)
                         ).getMaps()
         );
         System.out.println(
                 new SQL(executor).select(" student ").column("name,age")
                         .between("age"
-                                , SQL.SETSQL("round(:age)").setValue("age", 18.3)
-                                , SQL.SETSQL("round(:age)").setValue("age", 20.3)
+                                , SQL.ADDSQL("round(:age)").setValue("age", 18.3)
+                                , SQL.ADDSQL("round(:age)").setValue("age", 20.3)
                         ).getMaps()
         );
 
@@ -174,8 +174,8 @@ public class WhereSubSql {
 
         System.out.println(
                 new SQL(executor).select(" student ").column("name,age").where(
-                        SQL.SETSQL("age = :age").
-                                setValue("age", SQL.SETSQL("round(:age)").setValue("age", 18.3))
+                        SQL.ADDSQL("age = :age").
+                                setValue("age", SQL.ADDSQL("round(:age)").setValue("age", 18.3))
                 ).getMaps()
         );
     }

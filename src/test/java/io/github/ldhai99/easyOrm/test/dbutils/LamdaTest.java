@@ -65,7 +65,7 @@ public class LamdaTest {
         );
         System.out.println(
                 new SQL(con).select(Student.class).fullColumn(Student::getAge,Student::getName)
-                        .join(Student1.class,SQL.ADDSQLFullColumn(Student1::getName).addSql("=").addSql(Student::getName))
+                        .join(Student1.class,SQL.ADDSQLFullColumn(Student1::getName).addSql("=").addSqlFullColumn(Student::getName))
                         .getMaps()
         );
     }

@@ -63,25 +63,25 @@ public class UpdateQueryTest {
     public int updateStudent(Student student) throws SQLException{
         String sql = "update student1 set age = ? where id = ?";
         Object[] args = {student.getAge(), student.getId()};
-        return new SQL(executor).setSql(sql,args).update();
+        return new SQL(executor).addSql(sql,args).update();
     }
 
     public int deleteStudentByName(String name) throws SQLException {
         String sql = "delete from student1 where name = ?";
         Object[] args = {name};
-        return new SQL(executor).setSql(sql,args).update();
+        return new SQL(executor).addSql(sql,args).update();
     }
 
     public int insert(Student student) throws SQLException{
         String sql = "INSERT  INTO student1(id,student_id,name,password,sex,age, create_time) values (?,?,?,?,?,?,?)";
         Object[] args = {student.getId(), student.getStudentId(), student.getName(), student.getPassword(), student.getSex(), student.getAge(), student.getCreateTime()};
-        return new SQL(executor).setSql(sql,args).update();
+        return new SQL(executor).addSql(sql,args).update();
     }
 
 
     public Student queryStudent(String name) throws SQLException{
 
-        Student student = (Student)new SQL(executor).setSql("select * from student1 where name=?",name).getBean(Student.class);
+        Student student = (Student)new SQL(executor).addSql("select * from student1 where name=?",name).getBean(Student.class);
         return student;
     }
 }

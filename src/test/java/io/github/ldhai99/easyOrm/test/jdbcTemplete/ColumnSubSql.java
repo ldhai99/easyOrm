@@ -44,14 +44,14 @@ public class ColumnSubSql {
 
         System.out.println(
                 new SQL(executor).select(" student ").column("name,age").
-                        column(SQL.SETSQL("CASE WHEN age>=? THEN '成年' ELSE '未成年' END", 18), "adult")
+                        column(SQL.ADDSQL("CASE WHEN age>=? THEN '成年' ELSE '未成年' END", 18), "adult")
                         .in("age", 17, 18)
 
                         .getMaps()
         );
         System.out.println(
                 new SQL(executor).select(" student ").column("name,age").
-                        column(SQL.SETSQL("CASE WHEN age>=:age THEN '成年' ELSE '未成年' END").setValue("age", 18), "adult")
+                        column(SQL.ADDSQL("CASE WHEN age>=:age THEN '成年' ELSE '未成年' END").setValue("age", 18), "adult")
                         .in("age", 17, 18)
 
                         .getMaps()
