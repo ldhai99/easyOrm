@@ -55,12 +55,12 @@ public class LamdaTest {
 
         System.out.println(
                 new SQL(con).select(Student.class).fullColumn(Student::getAge).fullColumn(Student1::getName)
-                        .join(Student1.class, JoinOn.of(Student1::getName).eq(Student::getName).getOn())
+                        .join(Student1.class, JoinOn.on(Student1::getName).eq(Student::getName).toString())
                         .getMaps()
         );
         System.out.println(
                 new SQL(con).select(Student.class).fullColumn(Student::getAge,Student::getName)
-                        .join(Student1.class, JoinOn.of(Student1::getName).eq(Student::getName).getOn())
+                        .join(Student1.class, JoinOn.on(Student1::getName).eq(Student::getName).toString())
                         .getMaps()
         );
         System.out.println(

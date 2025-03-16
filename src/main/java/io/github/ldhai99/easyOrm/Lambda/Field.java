@@ -4,12 +4,12 @@ import java.lang.invoke.SerializedLambda;
 import java.lang.reflect.Method;
 
 
-public class LambdaExtractor {
+public class Field {
 
     /**
      * 获取完整的列引用（表名.字段名）
      */
-    public static <T> String getFullColumnName(PropertyGetter<T> getter) {
+    public static <T> String fullField(PropertyGetter<T> getter) {
 
             SerializedLambda lambda =extractSerializedLambda(getter);
 
@@ -34,7 +34,7 @@ public class LambdaExtractor {
      * 获取属性名（字段名）
      */
 
-    public static <T> String getColumnName(PropertyGetter<T> getter) {
+    public static <T> String field(PropertyGetter<T> getter) {
 
         SerializedLambda lambda =extractSerializedLambda(getter);
         String methodName = lambda.getImplMethodName();

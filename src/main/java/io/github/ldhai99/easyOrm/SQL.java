@@ -1,7 +1,7 @@
 package io.github.ldhai99.easyOrm;
 
 
-import io.github.ldhai99.easyOrm.Lambda.LambdaExtractor;
+import io.github.ldhai99.easyOrm.Lambda.Field;
 import io.github.ldhai99.easyOrm.Lambda.PropertyGetter;
 import io.github.ldhai99.easyOrm.Lambda.TableNameResolver;
 import io.github.ldhai99.easyOrm.executor.DbUtilsExecutor;
@@ -191,12 +191,12 @@ public class SQL {
     }
     public static <T>  SQL ADDSQL(PropertyGetter<T> getter, Object... values) {
 
-        return ADDSQL(LambdaExtractor.getColumnName(getter), values);
+        return ADDSQL(Field.field(getter), values);
 
     }
     public static <T> SQL ADDSQLFullColumn(PropertyGetter<T> getter, Object... values) {
 
-        return ADDSQL(LambdaExtractor.getFullColumnName(getter), values);
+        return ADDSQL(Field.fullField(getter), values);
 
     }
 
@@ -309,12 +309,12 @@ public class SQL {
     }
     public <T> SQL addSql(PropertyGetter<T> getter, Object... values) {
 
-        this.addSql(LambdaExtractor.getColumnName(getter), values);
+        this.addSql(Field.field(getter), values);
         return this;
     }
     public <T> SQL addSqlFullColumn(PropertyGetter<T> getter, Object... values) {
 
-        this.addSql(LambdaExtractor.getFullColumnName(getter), values);
+        this.addSql(Field.fullField(getter), values);
         return this;
     }
     public SQL addSql(SQL subSql) {
@@ -366,9 +366,9 @@ public class SQL {
 
     public <T> SQL groupBy(PropertyGetter<T> getter, boolean useFullColumn) {
         if (useFullColumn)
-            return groupBy(LambdaExtractor.getFullColumnName(getter));
+            return groupBy(Field.fullField(getter));
         else
-            return groupBy(LambdaExtractor.getColumnName(getter));
+            return groupBy(Field.field(getter));
     }
 
     //----------多表连接------------------------------
@@ -390,8 +390,8 @@ public class SQL {
     }
 
     public <T> SQL join(Class<?> clazz, PropertyGetter<T> leftGetter, PropertyGetter<T> rightGetter) {
-        String leftColumnReference = LambdaExtractor.getFullColumnName(leftGetter);
-        String rightColumnReference = LambdaExtractor.getFullColumnName(rightGetter);
+        String leftColumnReference = Field.fullField(leftGetter);
+        String rightColumnReference = Field.fullField(rightGetter);
 
         String onCondition = String.format("%s = %s", leftColumnReference, rightColumnReference);
         return join(TableNameResolver.getTableName(clazz), onCondition);
@@ -467,9 +467,9 @@ public class SQL {
 
     public <T> SQL orderByAsc(PropertyGetter<T> getter, boolean useFullColumn) {
         if (useFullColumn)
-            return orderByAsc(LambdaExtractor.getFullColumnName(getter));
+            return orderByAsc(Field.fullField(getter));
         else
-            return orderByAsc(LambdaExtractor.getColumnName(getter));
+            return orderByAsc(Field.field(getter));
     }
 
     //---降序排序
@@ -489,9 +489,9 @@ public class SQL {
 
     public <T> SQL orderByDesc(PropertyGetter<T> getter, boolean useFullColumn) {
         if (useFullColumn)
-            return orderByDesc(LambdaExtractor.getFullColumnName(getter));
+            return orderByDesc(Field.fullField(getter));
         else
-            return orderByDesc(LambdaExtractor.getColumnName(getter));
+            return orderByDesc(Field.field(getter));
     }
 
     //---默认升序排序
@@ -510,9 +510,9 @@ public class SQL {
 
     public <T> SQL orderBy(PropertyGetter<T> getter, boolean useFullColumn) {
         if (useFullColumn)
-            return orderBy(LambdaExtractor.getFullColumnName(getter));
+            return orderBy(Field.fullField(getter));
         else
-            return orderBy(LambdaExtractor.getColumnName(getter));
+            return orderBy(Field.field(getter));
     }
 
     //---排序
@@ -532,9 +532,9 @@ public class SQL {
 
     public <T> SQL orderBy(PropertyGetter<T> getter, boolean ascending, boolean useFullColumn) {
         if (useFullColumn)
-            return orderBy(LambdaExtractor.getFullColumnName(getter), ascending);
+            return orderBy(Field.fullField(getter), ascending);
         else
-            return orderBy(LambdaExtractor.getColumnName(getter), ascending);
+            return orderBy(Field.field(getter), ascending);
     }
 
     public SqlModel getBuilder() {
@@ -559,9 +559,9 @@ public class SQL {
 
     public <T> SQL sum(PropertyGetter<T> getter, boolean useFullColumn) {
         if (useFullColumn)
-            return sum(LambdaExtractor.getFullColumnName(getter));
+            return sum(Field.fullField(getter));
         else
-            return sum(LambdaExtractor.getColumnName(getter));
+            return sum(Field.field(getter));
     }
 
     //---sum-----alias---------
@@ -579,9 +579,9 @@ public class SQL {
 
     public <T> SQL sum(PropertyGetter<T> getter, String alias, boolean useFullColumn) {
         if (useFullColumn)
-            return sum(LambdaExtractor.getFullColumnName(getter), alias);
+            return sum(Field.fullField(getter), alias);
         else
-            return sum(LambdaExtractor.getColumnName(getter), alias);
+            return sum(Field.field(getter), alias);
     }
 
     //---avg--------------
@@ -600,9 +600,9 @@ public class SQL {
 
     public <T> SQL avg(PropertyGetter<T> getter, boolean useFullColumn) {
         if (useFullColumn)
-            return avg(LambdaExtractor.getFullColumnName(getter));
+            return avg(Field.fullField(getter));
         else
-            return avg(LambdaExtractor.getColumnName(getter));
+            return avg(Field.field(getter));
     }
 
     //---avg-----alias---------
@@ -620,9 +620,9 @@ public class SQL {
 
     public <T> SQL avg(PropertyGetter<T> getter, String alias, boolean useFullColumn) {
         if (useFullColumn)
-            return sum(LambdaExtractor.getFullColumnName(getter), alias);
+            return sum(Field.fullField(getter), alias);
         else
-            return sum(LambdaExtractor.getColumnName(getter), alias);
+            return sum(Field.field(getter), alias);
     }
 
     //---max--------------
@@ -641,9 +641,9 @@ public class SQL {
 
     public <T> SQL max(PropertyGetter<T> getter, boolean useFullColumn) {
         if (useFullColumn)
-            return max(LambdaExtractor.getFullColumnName(getter));
+            return max(Field.fullField(getter));
         else
-            return max(LambdaExtractor.getColumnName(getter));
+            return max(Field.field(getter));
     }
 
     //---max--alis------------
@@ -662,9 +662,9 @@ public class SQL {
 
     public <T> SQL max(PropertyGetter<T> getter, String alias, boolean useFullColumn) {
         if (useFullColumn)
-            return max(LambdaExtractor.getFullColumnName(getter), alias);
+            return max(Field.fullField(getter), alias);
         else
-            return max(LambdaExtractor.getColumnName(getter), alias);
+            return max(Field.field(getter), alias);
     }
 
     //---min--------------
@@ -683,9 +683,9 @@ public class SQL {
 
     public <T> SQL min(PropertyGetter<T> getter, boolean useFullColumn) {
         if (useFullColumn)
-            return min(LambdaExtractor.getFullColumnName(getter));
+            return min(Field.fullField(getter));
         else
-            return min(LambdaExtractor.getColumnName(getter));
+            return min(Field.field(getter));
     }
 
     //---min--alis------------
@@ -704,9 +704,9 @@ public class SQL {
 
     public <T> SQL min(PropertyGetter<T> getter, String alias, boolean useFullColumn) {
         if (useFullColumn)
-            return min(LambdaExtractor.getFullColumnName(getter), alias);
+            return min(Field.fullField(getter), alias);
         else
-            return min(LambdaExtractor.getColumnName(getter), alias);
+            return min(Field.field(getter), alias);
     }
 
     //---count--------------
@@ -758,9 +758,9 @@ public class SQL {
 
     public <T> SQL aggregate(String function, PropertyGetter<T> getter, String alias, boolean useFullColumn) {
         if (useFullColumn)
-            return aggregate(function, LambdaExtractor.getFullColumnName(getter), alias);
+            return aggregate(function, Field.fullField(getter), alias);
         else
-            return aggregate(function, LambdaExtractor.getColumnName(getter), alias);
+            return aggregate(function, Field.field(getter), alias);
     }
 
     //-------------------------查询列----------------------------------------------------
@@ -770,23 +770,23 @@ public class SQL {
     }
 
     public <T> SQL column(PropertyGetter<T> getter) {
-        return column(LambdaExtractor.getColumnName(getter));
+        return column(Field.field(getter));
     }
 
     public <T> SQL fullColumn(PropertyGetter<T> getter) {
-        return column(LambdaExtractor.getFullColumnName(getter));
+        return column(Field.fullField(getter));
     }
 
     public <T> SQL column(PropertyGetter<T>... getters) {
         for (int i = 0; i < getters.length; i++) {
-            column(LambdaExtractor.getColumnName(getters[i]));
+            column(Field.field(getters[i]));
         }
         return this;
     }
 
     public <T> SQL fullColumn(PropertyGetter<T>... getters) {
         for (int i = 0; i < getters.length; i++) {
-            column(LambdaExtractor.getFullColumnName(getters[i]));
+            column(Field.fullField(getters[i]));
         }
         return this;
     }
@@ -798,11 +798,11 @@ public class SQL {
     }
 
     public <T> SQL column(PropertyGetter<T> getter, String alias) {
-        return column(LambdaExtractor.getColumnName(getter), alias);
+        return column(Field.field(getter), alias);
     }
 
     public <T> SQL fullColumn(PropertyGetter<T> getter, String alias) {
-        return column(LambdaExtractor.getFullColumnName(getter), alias);
+        return column(Field.fullField(getter), alias);
     }
 
     //---表.字段 列别名-----------------------
@@ -817,11 +817,11 @@ public class SQL {
     }
 
     public <T> SQL column(String tableAlias, PropertyGetter<T> getter, String alias) {
-        return column(tableAlias, LambdaExtractor.getColumnName(getter), alias);
+        return column(tableAlias, Field.field(getter), alias);
     }
 
     public <T> SQL column(Class<?> clazz, PropertyGetter<T> getter, String alias) {
-        return column(TableNameResolver.getTableName(clazz), LambdaExtractor.getColumnName(getter), alias);
+        return column(TableNameResolver.getTableName(clazz), Field.field(getter), alias);
     }
 
     //---列加分组-----------------------
@@ -831,11 +831,11 @@ public class SQL {
     }
 
     public <T> SQL column(PropertyGetter<T> getter, boolean groupBy) {
-        return column(LambdaExtractor.getColumnName(getter), groupBy);
+        return column(Field.field(getter), groupBy);
     }
 
     public <T> SQL fullColumn(PropertyGetter<T> getter, boolean groupBy) {
-        return column(LambdaExtractor.getFullColumnName(getter), groupBy);
+        return column(Field.fullField(getter), groupBy);
     }
 
     //子查询列----------------------------------------------------
@@ -858,7 +858,7 @@ public class SQL {
     }
 
     public <T> SQL where(PropertyGetter<T> getter, Object value) {
-        return where(LambdaExtractor.getColumnName(getter), value);
+        return where(Field.field(getter), value);
     }
 
     public SQL eqMap(Map<String, Object> columnMap) {
@@ -875,9 +875,9 @@ public class SQL {
     }
 
     // 新增支持Lambda的eq方法
-// 支持泛型的 eq 方法<T> String getColumnName(PropertyGetter<T> getter)
+// 支持泛型的 eq 方法<T> String field(PropertyGetter<T> getter)
     public <T> SQL eq(PropertyGetter<T> getter, Object value) {
-        return eq(LambdaExtractor.getColumnName(getter), value);
+        return eq(Field.field(getter), value);
     }
 
     public SQL eqIfNotNull(Object name, Object value) {
@@ -887,7 +887,7 @@ public class SQL {
     }
 
     public <T> SQL eqIfNotNull(PropertyGetter<T> getter, Object value) {
-        return eqIfNotNull(LambdaExtractor.getColumnName(getter), value);
+        return eqIfNotNull(Field.field(getter), value);
     }
 
     public SQL neq(Object name, Object value) {
@@ -895,7 +895,7 @@ public class SQL {
     }
 
     public <T> SQL neq(PropertyGetter<T> getter, Object value) {
-        return neq(LambdaExtractor.getColumnName(getter), value);
+        return neq(Field.field(getter), value);
     }
 
     public SQL gt(Object name, Object value) {
@@ -903,7 +903,7 @@ public class SQL {
     }
 
     public <T> SQL gt(PropertyGetter<T> getter, Object value) {
-        return gt(LambdaExtractor.getColumnName(getter), value);
+        return gt(Field.field(getter), value);
     }
 
     public SQL gte(Object name, Object value) {
@@ -911,7 +911,7 @@ public class SQL {
     }
 
     public <T> SQL gte(PropertyGetter<T> getter, Object value) {
-        return gte(LambdaExtractor.getColumnName(getter), value);
+        return gte(Field.field(getter), value);
     }
 
     public SQL lt(Object name, Object value) {
@@ -919,7 +919,7 @@ public class SQL {
     }
 
     public <T> SQL lt(PropertyGetter<T> getter, Object value) {
-        return lt(LambdaExtractor.getColumnName(getter), value);
+        return lt(Field.field(getter), value);
     }
 
     public SQL lte(Object name, Object value) {
@@ -927,7 +927,7 @@ public class SQL {
     }
 
     public <T> SQL lte(PropertyGetter<T> getter, Object value) {
-        return lte(LambdaExtractor.getColumnName(getter), value);
+        return lte(Field.field(getter), value);
     }
 
     //name+operator+value
@@ -945,7 +945,7 @@ public class SQL {
     }
 
     public <T> SQL like(PropertyGetter<T> getter, Object value) {
-        return like(LambdaExtractor.getColumnName(getter), value);
+        return like(Field.field(getter), value);
     }
 
     public SQL like_(Object name, Object value) {
@@ -953,7 +953,7 @@ public class SQL {
     }
 
     public <T> SQL like_(PropertyGetter<T> getter, Object value) {
-        return like_(LambdaExtractor.getColumnName(getter), value);
+        return like_(Field.field(getter), value);
     }
 
     public SQL notLike(Object name, Object value) {
@@ -961,7 +961,7 @@ public class SQL {
     }
 
     public <T> SQL notLike(PropertyGetter<T> getter, Object value) {
-        return notLike(LambdaExtractor.getColumnName(getter), value);
+        return notLike(Field.field(getter), value);
     }
 
     public SQL likeLeft(Object name, Object value) {
@@ -969,7 +969,7 @@ public class SQL {
     }
 
     public <T> SQL likeLeft(PropertyGetter<T> getter, Object value) {
-        return likeLeft(LambdaExtractor.getColumnName(getter), value);
+        return likeLeft(Field.field(getter), value);
     }
 
     public SQL likeRight(Object name, Object value) {
@@ -977,7 +977,7 @@ public class SQL {
     }
 
     public <T> SQL likeRight(PropertyGetter<T> getter, Object value) {
-        return likeRight(LambdaExtractor.getColumnName(getter), value);
+        return likeRight(Field.field(getter), value);
     }
 
     public SQL notLikeLeft(Object name, Object value) {
@@ -985,7 +985,7 @@ public class SQL {
     }
 
     public <T> SQL notLikeLeft(PropertyGetter<T> getter, Object value) {
-        return notLikeLeft(LambdaExtractor.getColumnName(getter), value);
+        return notLikeLeft(Field.field(getter), value);
     }
 
     public SQL notLikeRight(Object name, Object value) {
@@ -993,7 +993,7 @@ public class SQL {
     }
 
     public <T> SQL notLikeRight(PropertyGetter<T> getter, Object value) {
-        return notLikeRight(LambdaExtractor.getColumnName(getter), value);
+        return notLikeRight(Field.field(getter), value);
     }
 
     protected SQL likeOperator(Object name, String operator, Object value) {
@@ -1039,7 +1039,7 @@ public class SQL {
     }
 
     public <T> SQL between(PropertyGetter<T> getter, Object value1, Object value2) {
-        return between(LambdaExtractor.getColumnName(getter), value1, value2);
+        return between(Field.field(getter), value1, value2);
     }
 
     public SQL notBetween(Object name, Object value1, Object value2) {
@@ -1050,7 +1050,7 @@ public class SQL {
     }
 
     public <T> SQL notBetween(PropertyGetter<T> getter, Object value1, Object value2) {
-        return notBetween(LambdaExtractor.getColumnName(getter), value1, value2);
+        return notBetween(Field.field(getter), value1, value2);
     }
 
     protected SQL between(Object name, String between, Object value1, Object value2) {
@@ -1071,7 +1071,7 @@ public class SQL {
     }
 
     public <T> SQL isNull(PropertyGetter<T> getter) {
-        return isNull(LambdaExtractor.getColumnName(getter));
+        return isNull(Field.field(getter));
     }
 
     public SQL isNotNull(Object name) {
@@ -1081,7 +1081,7 @@ public class SQL {
     }
 
     public <T> SQL isNotNull(PropertyGetter<T> getter) {
-        return isNotNull(LambdaExtractor.getColumnName(getter));
+        return isNotNull(Field.field(getter));
     }
 
     protected SQL isNull(Object name, String isNull) {
@@ -1107,7 +1107,7 @@ public class SQL {
     }
 
     public <T> SQL in(PropertyGetter<T> getter, List<?> values) {
-        return in(LambdaExtractor.getColumnName(getter), values);
+        return in(Field.field(getter), values);
     }
 
     public SQL in(Object name, Object... values) {
@@ -1116,7 +1116,7 @@ public class SQL {
     }
 
     public <T> SQL in(PropertyGetter<T> getter, Object... values) {
-        return in(LambdaExtractor.getColumnName(getter), values);
+        return in(Field.field(getter), values);
     }
 
     public SQL in(Object name, SQL subSql) {
@@ -1125,7 +1125,7 @@ public class SQL {
     }
 
     public <T> SQL in(PropertyGetter<T> getter, SQL subSql) {
-        return in(LambdaExtractor.getColumnName(getter), subSql);
+        return in(Field.field(getter), subSql);
     }
 
     public SQL notIn(Object name, List<?> values) {
@@ -1133,7 +1133,7 @@ public class SQL {
     }
 
     public <T> SQL notIn(PropertyGetter<T> getter, List<?> values) {
-        return notIn(LambdaExtractor.getColumnName(getter), values);
+        return notIn(Field.field(getter), values);
     }
 
     public SQL notIn(Object name, SQL subSql) {
@@ -1142,7 +1142,7 @@ public class SQL {
     }
 
     public <T> SQL notIn(PropertyGetter<T> getter, SQL subSql) {
-        return notIn(LambdaExtractor.getColumnName(getter), subSql);
+        return notIn(Field.field(getter), subSql);
     }
 
     public SQL notIn(Object name, Object... values) {
@@ -1151,7 +1151,7 @@ public class SQL {
     }
 
     public <T> SQL notIn(PropertyGetter<T> getter, Object... values) {
-        return notIn(LambdaExtractor.getColumnName(getter), values);
+        return notIn(Field.field(getter), values);
     }
 
     //七、EXIST 谓词
@@ -1226,7 +1226,7 @@ public class SQL {
     }
 
     public <T> SQL set(PropertyGetter<T> getter, Object value) {
-        return set(LambdaExtractor.getColumnName(getter), value);
+        return set(Field.field(getter), value);
     }
 
     //不为空时候更新
@@ -1239,7 +1239,7 @@ public class SQL {
     }
 
     public <T> SQL setIfNotNull(PropertyGetter<T> getter, Object value) {
-        return setIfNotNull(LambdaExtractor.getColumnName(getter), value);
+        return setIfNotNull(Field.field(getter), value);
     }
 
     public SQL set(String name, Object value, String datatype) {
@@ -1248,7 +1248,7 @@ public class SQL {
     }
 
     public <T> SQL set(PropertyGetter<T> getter, Object value, String datatype) {
-        return set(LambdaExtractor.getColumnName(getter), value, datatype);
+        return set(Field.field(getter), value, datatype);
     }
 
     public SQL set(String name, Object value, String datatype, boolean allowNull) {
@@ -1257,7 +1257,7 @@ public class SQL {
     }
 
     public <T> SQL set(PropertyGetter<T> getter, Object value, String datatype, boolean allowNull) {
-        return set(LambdaExtractor.getColumnName(getter), value, datatype, allowNull);
+        return set(Field.field(getter), value, datatype, allowNull);
     }
 
     public SQL set(String name, DbParameter pmt) {
@@ -1267,7 +1267,7 @@ public class SQL {
     }
 
     public <T> SQL set(PropertyGetter<T> getter, DbParameter pmt) {
-        return set(LambdaExtractor.getColumnName(getter), pmt);
+        return set(Field.field(getter), pmt);
     }
 
     protected SQL set1(String name, Object subSql) {
@@ -1303,7 +1303,7 @@ public class SQL {
     }
 
     public <T> SQL setValue(PropertyGetter<T> getter, Object subSql) {
-        return setValue(LambdaExtractor.getColumnName(getter), subSql);
+        return setValue(Field.field(getter), subSql);
     }
 
     public SQL setValue$(String name, Object subSql) {
@@ -1314,7 +1314,7 @@ public class SQL {
     }
 
     public <T> SQL setValue$(PropertyGetter<T> getter, Object subSql) {
-        return setValue$(LambdaExtractor.getColumnName(getter), subSql);
+        return setValue$(Field.field(getter), subSql);
     }
 
     public String toSelect() {

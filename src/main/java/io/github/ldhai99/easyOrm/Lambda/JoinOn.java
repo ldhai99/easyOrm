@@ -1,25 +1,45 @@
 package io.github.ldhai99.easyOrm.Lambda;
 
 public class JoinOn {
-    String on;
+    StringBuilder on=new StringBuilder();
     private JoinOn()
     {
     }
-    public  <T> JoinOn eq(PropertyGetter<T> getter)
-    {
-        if(on==null){
-            on=LambdaExtractor.getFullColumnName(getter);
-        }else on+=" = "+LambdaExtractor.getFullColumnName(getter);
-        return this;
-    }
-    public static <T> JoinOn of(PropertyGetter<T> getter)
+    public static <T> JoinOn on(PropertyGetter<T> getter)
     {
         JoinOn joinOn=new JoinOn();
-        joinOn.eq(getter);
+        joinOn.add(Field.fullField(getter));
         return joinOn;
     }
-    public String getOn()
+
+    protected JoinOn add(String expr){
+        on.append(expr);
+        return this;
+
+    }
+    public  <T> JoinOn add(PropertyGetter<T> getter){
+        on.append(Field.fullField(getter));
+        return this;
+
+    }
+    public  <T> JoinOn eq(PropertyGetter<T> getter)
     {
-        return on;
+        this.add(" = ");
+        this.add(Field.fullField(getter));
+
+        return this;
+    }
+    public JoinOn and(PropertyGetter<?> leftField) {
+        on.append(" AND ");
+        return add(leftField);
+    }
+
+    public JoinOn or(PropertyGetter<?> leftField) {
+        on.append(" OR ");
+        return add(leftField);
+    }
+    public String toString()
+    {
+        return on.toString();
     }
 }
