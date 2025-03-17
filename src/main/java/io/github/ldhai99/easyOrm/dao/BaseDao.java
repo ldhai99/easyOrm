@@ -1,5 +1,6 @@
 package io.github.ldhai99.easyOrm.dao;
 
+import io.github.ldhai99.easyOrm.Lambda.TableNameResolver;
 import io.github.ldhai99.easyOrm.page.MysqlPageSqlByStartId;
 import io.github.ldhai99.easyOrm.page.PAGE;
 import io.github.ldhai99.easyOrm.tools.SnowflakeId;
@@ -17,6 +18,8 @@ import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import static io.github.ldhai99.easyOrm.dao.Entity.*;
 
 public class BaseDao<T extends BaseDm> {
     public T dm;
@@ -74,7 +77,29 @@ public class BaseDao<T extends BaseDm> {
         this.dm = dm;
     }
 
-    //增加---------------------
+    //增加------------------------------------------------------------------------------------
+    // 在 SQL 类中添加以下方法
+
+    /**
+     * 插入实体对象（全字段插入，包含空值）
+     * @param entity 实体对象
+     * @return 当前SQL实例
+     */
+    public <T> int insertEntity(T entity) {
+        return insertEntity(entity, false);
+    }
+
+    /**
+     * 插入实体对象（可选是否忽略空值）
+     * @param entity 实体对象
+     * @param ignoreNull 是否忽略空值字段
+     * @return 当前SQL实例
+     */
+    public <T> int insertEntity(T entity, boolean ignoreNull) {
+        Map<String, Object> fieldMap = resolveEntityFields(entity, ignoreNull);
+        return insert(fieldMap);
+    }
+
     public int insert(Map<String, Object> data) {
 
         if (data.containsKey(dm.table_id) && data.get(dm.table_id) != null)
@@ -90,7 +115,7 @@ public class BaseDao<T extends BaseDm> {
                     update();
     }
 
-    //删除---------------------
+    //删除------------------------------------------------------------------------------------------
     //通过id删除
     public int deleteById(Serializable id) {
 
@@ -129,13 +154,31 @@ public class BaseDao<T extends BaseDm> {
                 update();
     }
 
-    //修改--------------------------------
+    //修改------------------------------------------------------------------------------------------
+    /**
+     * 根据主键更新实体对象（自动识别主键字段）
+     * @param entity 实体对象
+     * @return 当前SQL实例
+     */
+    public  <T> int updateEntity(T entity) {
+        Map<String, Object> fieldMap = resolveEntityFields(entity, true);
+
+        return this.updateById(fieldMap);
+
+    }
+    public  <T> int updateEntity(T entity, boolean ignoreNull) {
+        Map<String, Object> fieldMap = resolveEntityFields(entity, ignoreNull);
+
+        return this.updateById(fieldMap);
+
+    }
     //通过id修改，用配置的修改字段
     public int updateById(Map<String, Object> data) {
+        Object id = data.get(dm.table_id);
 
         return SQL.UPDATE(dm.update_table).
-                setMap(dm.update_fields, data).
-                set(dm.table_id, data.get(dm.table_id)).
+                setMap( data).
+                eq(dm.table_id, id).
                 update();
 
     }
@@ -146,7 +189,7 @@ public class BaseDao<T extends BaseDm> {
 
         return SQL.UPDATE(dm.update_table)
                 .setMap(fields, data)
-                .set(dm.table_id, data.get(dm.table_id))
+                .eq(dm.table_id, data.get(dm.table_id))
                 .update();
 
     }
@@ -155,7 +198,7 @@ public class BaseDao<T extends BaseDm> {
 
     public int updateByMap(Map<String, Object> data, Map<String, Object> columnMap) {
         return SQL.UPDATE(dm.update_table).
-                setMap(dm.update_fields, data).
+                setMap( data).
                 eqMap(columnMap).
                 update();
     }
@@ -169,7 +212,7 @@ public class BaseDao<T extends BaseDm> {
     }
 
 
-    //查询---------------------------------------
+    //查询-------------------------------------------------------------------------------------------------------
     //通过id，获取一条记录为map
     public Map<String, Object> getMapById(Serializable id) {
         return SQL.SELECT(dm.select_table)

@@ -1,6 +1,7 @@
 package io.github.ldhai99.easyOrm.test.dao;
 
 import io.github.ldhai99.easyOrm.page.PageModel;
+import io.github.ldhai99.easyOrm.test.Student;
 import io.github.ldhai99.easyOrm.test.studentDao.dao2.StudentDao;
 import io.github.ldhai99.easyOrm.tools.ChainMap;
 import io.github.ldhai99.easyOrm.tools.DbTools;
@@ -84,7 +85,49 @@ public class DaoTest {
         );
         // connection.commit();
     }
+    @Test
+    public void updateEntityTest() throws SQLException {
 
+        System.out.println(
+                dao.getMapByMap(ChainMap.of("name", "李四"))
+        );
+
+        dao.deleteByMap(ChainMap.of("name","李四"));
+        Student student = new Student();
+        student.setId(2);
+        student.setName("李四");
+        student.setAge(19);
+        student.setSex("女");
+        student.setStudentId("20190102");
+        student.setPassword("666");
+        student.setCreateTime(new Date());
+
+
+        dao.insertEntity(student);
+
+
+        System.out.println(
+                dao.getMapByMap(ChainMap.of("name", "李四"))
+        );
+
+        dao.updateByMap(ChainMap.of("age", 29),ChainMap.of("name", "李四"));
+
+
+        System.out.println(
+                dao.getMapByMap(ChainMap.of("name", "李四"))
+        );
+        //dao.updateByMap(ChainMap.of("age", 19),ChainMap.of("name", "李四"));
+
+        Student student1 = new Student();
+        student1.setId(2);
+        student1.setAge(19);
+        dao.updateEntity(student1);
+
+        System.out.println(
+                dao.getMapByMap(ChainMap.of("name", "李四"))
+        );
+        // connection.commit();
+    }
     //column子查询扩展------------------------
     @Test
     public void existsId() throws SQLException {
