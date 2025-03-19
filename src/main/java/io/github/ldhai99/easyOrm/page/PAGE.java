@@ -78,68 +78,68 @@ public class PAGE {
 
     public void setTotal() {
 
-        this.pageModel.setTotal(this.getRowCount());
+        this.pageModel.setTotal(this.countRows());
     }
     //---------------------------------------------------------------
-    public PAGE toBuild() {
+    public PAGE buildPage() {
 
         //获取总记录数量
-        long count = getRowCount();
+        long count = countRows();
         //保存总记录数量
         pageModel.setTotal(count);
         //生成翻页sql
-        createPageSql();
+        initPageSqlGenerator();
         this.pageSql = pageSqlGenerator.getPageSql(pageModel, sql);
         return this;
 
     }
 
     //提供默认翻页sql生成器
-    public void createPageSql() {
+    public void initPageSqlGenerator() {
         if (this.pageSqlGenerator == null)
             pageSqlGenerator = DbTools.getPageSql();
     }
 
 
     //获取总记录数量
-    public long getRowCount() {
+    public long countRows() {
 
         return sql.getCount().longValue();
     }
 
 
-    public List<Map<String, Object>> getPageMaps() {
-        toBuild();
+    public List<Map<String, Object>> pageMaps() {
+        buildPage();
         pageModel.setRecordsMaps(pageSql.getMaps());
         return pageModel.getRecordsMaps();
     }
 
 
 
-    public PAGE getPageWithMaps() {
-        toBuild();
+    public PAGE pageMapsAnd() {
+        buildPage();
         pageModel.setRecordsMaps(pageSql.getMaps());
         return this;
     }
-    public PageModel getPageModelWithMaps() {
-        toBuild();
+    public PageModel pageMapsWithModel() {
+        buildPage();
         pageModel.setRecordsMaps(pageSql.getMaps());
         return pageModel;
     }
 
-    public <T> List<T> getPageBeans(Class<T> T) {
-        toBuild();
+    public <T> List<T> pageBeans(Class<T> T) {
+        buildPage();
         pageModel.setRecords(pageSql.getBeans(T));
         return pageModel.getRecords();
     }
 
-    public PAGE getPageWithBeans(Class T) {
-        toBuild();
+    public PAGE pageBeansAnd(Class T) {
+        buildPage();
         pageModel.setRecords(pageSql.getBeans(T));
         return this;
     }
-    public PageModel getPageModelWithBeans(Class T) {
-        toBuild();
+    public PageModel pageBeansWithModel(Class T) {
+        buildPage();
         pageModel.setRecords(pageSql.getBeans(T));
         return pageModel;
     }
@@ -168,7 +168,7 @@ public class PAGE {
 
     public SQL getPageSql() {
         //生成翻页sql
-        createPageSql();
+        initPageSqlGenerator();
         this.pageSql = pageSqlGenerator.getPageSql(pageModel, sql);
         return pageSql;
     }

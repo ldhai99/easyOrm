@@ -348,7 +348,7 @@ public class BaseDao<T extends BaseDm> {
 
     //获取页面数据
     public List<Map<String, Object>> getPageBySQL(PageModel pageModel, SQL sql) {
-        return PAGE.of(pageModel, sql).getPageMaps();
+        return PAGE.of(pageModel, sql).pageMaps();
 
 
     }
@@ -359,7 +359,7 @@ public class BaseDao<T extends BaseDm> {
                         SQL.SELECT(dm.select_table)
                                 .column(dm.select_fields)
                                 .where(sqlWhere))
-                .getPageMaps();
+                .pageMaps();
 
     }
 
@@ -367,7 +367,7 @@ public class BaseDao<T extends BaseDm> {
     public List<Map<String, Object>> getPageByStartId(PageModel pageModel, SQL sql) {
         return PAGE.of(pageModel).setSql(sql)
                 .setPageSqlGenerator(new MysqlPageSqlByStartId())
-                .getPageMaps();
+                .pageMaps();
 
     }
 

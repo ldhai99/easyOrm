@@ -41,7 +41,7 @@ public class PageGetDataTest {
                 PAGE.of(sql)
                         .setCurrent(1)
                         .setSize(2)
-                        .getPageMaps());
+                        .pageMaps());
 
     }
     //先返回PAGE,获取list maps
@@ -54,7 +54,7 @@ public class PageGetDataTest {
                 PAGE.of(sql)
                         .setCurrent(1)
                         .setSize(2)
-                        .getPageWithMaps().getRecordsMaps());
+                        .pageMapsAnd().getRecordsMaps());
 
     }
     //获取list beans
@@ -67,7 +67,7 @@ public class PageGetDataTest {
                 PAGE.of(sql)
                         .setCurrent(1)
                         .setSize(2)
-                        .getPageBeans(Student.class));
+                        .pageBeans(Student.class));
 
     }
     //先返回PAGE，获取list beans
@@ -78,7 +78,7 @@ public class PageGetDataTest {
         List<Student> students=PAGE.of(sql)
                 .setCurrent(1)
                 .setSize(2)
-                .getPageWithBeans(Student.class).getRecords();
+                .pageBeansAnd(Student.class).getRecords();
 
         System.out.println(students     );
 

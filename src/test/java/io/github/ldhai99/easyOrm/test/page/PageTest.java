@@ -44,7 +44,7 @@ public class PageTest {
                 PAGE.of(sql)
                         .setCurrent(1)
                         .setSize(2)
-                        .getPageMaps());
+                        .pageMaps());
 
     }
 
@@ -67,7 +67,7 @@ public class PageTest {
                         .setSize(2)
                         .setCountId("id")
                         .setPageSqlGenerator(new MysqlPageSqlById())
-                        .getPageMaps());
+                        .pageMaps());
 
     }
     @Test
@@ -91,7 +91,7 @@ public class PageTest {
                         .setCountId("id")
                         .setPageStartId(0)
                         .setPageSqlGenerator(new MysqlPageSqlByStartId())
-                        .getPageMaps());
+                        .pageMaps());
 
     }
     @Test
@@ -107,7 +107,7 @@ public class PageTest {
                         .setSize(2)
                         .setCountId("id")
                         .setPageSqlGenerator(new MysqlPageSqlById())
-                        .toBuild().getPageSql().toString());
+                        .getPageSql().toString());
 
     }
 }

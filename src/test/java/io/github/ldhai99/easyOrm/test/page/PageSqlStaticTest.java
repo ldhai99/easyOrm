@@ -46,7 +46,7 @@ import java.sql.SQLException;
                     PAGE.of(sql)
                             .setCurrent(1)
                             .setSize(2)
-                            .getPageMaps());
+                            .pageMaps());
 
         }
         //正常翻页PageSqlNormal
@@ -70,7 +70,7 @@ import java.sql.SQLException;
                             .setSize(2)
 
                             .setPageSqlGenerator(DbTools.getPageSqlNormal())
-                            .getPageMaps());
+                            .pageMaps());
 
         }
         //有id的翻页PageSqlid
@@ -95,7 +95,7 @@ import java.sql.SQLException;
                             .setSize(2)
                             .setCountId("id")
                             .setPageSqlGenerator(DbTools.getPageSqlById())
-                            .getPageMaps());
+                            .pageMaps());
 
         }
         //有起始行翻页PageSqlStartid
@@ -122,7 +122,7 @@ import java.sql.SQLException;
                             .setCountId("id")
                             .setPageStartId(2)
                             .setPageSqlGenerator(DbTools.getPageSqlByStartId())
-                            .getPageMaps());
+                            .pageMaps());
 
         }
     }

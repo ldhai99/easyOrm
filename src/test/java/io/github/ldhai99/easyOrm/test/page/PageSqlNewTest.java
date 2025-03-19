@@ -54,7 +54,7 @@ public class PageSqlNewTest {
                         .setSize(2)
 
                         .setPageSqlGenerator(new MysqlPageSql())
-                        .getPageMaps());
+                        .pageMaps());
 
     }
     //有id的翻页PageSqlid
@@ -79,7 +79,7 @@ public class PageSqlNewTest {
                         .setSize(2)
                         .setCountId("id")
                         .setPageSqlGenerator(new MysqlPageSqlById())
-                        .getPageMaps());
+                        .pageMaps());
 
     }
     //有起始行翻页PageSqlStartid
@@ -106,7 +106,7 @@ public class PageSqlNewTest {
                         .setCountId("id")
                         .setPageStartId(2)
                         .setPageSqlGenerator(new MysqlPageSqlByStartId())
-                        .getPageMaps());
+                        .pageMaps());
 
     }
 }

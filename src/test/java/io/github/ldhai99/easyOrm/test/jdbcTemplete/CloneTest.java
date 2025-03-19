@@ -120,7 +120,7 @@ public class CloneTest {
 
         System.out.println(
                 PAGE.of(sql).setCurrent(1).setSize(2)
-                        .getPageMaps());
+                        .pageMaps());
 
     }
 }
