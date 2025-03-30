@@ -1,7 +1,6 @@
 package io.github.ldhai99.easyOrm.dao;
 
-import io.github.ldhai99.easyOrm.Lambda.TableNameResolver;
-import io.github.ldhai99.easyOrm.page.MysqlPageSqlByStartId;
+import io.github.ldhai99.easyOrm.page.PageSQLGenerator.mysql.MysqlPageSqlByStartId;
 import io.github.ldhai99.easyOrm.page.PAGE;
 import io.github.ldhai99.easyOrm.tools.SnowflakeId;
 import io.github.ldhai99.easyOrm.datamodel.BaseDm;
@@ -85,8 +84,8 @@ public class BaseDao<T extends BaseDm> {
      * @param entity 实体对象
      * @return 当前SQL实例
      */
-    public <T> int insertEntity(T entity) {
-        return insertEntity(entity, false);
+    public <T> int insert(T entity) {
+        return insert(entity, false);
     }
 
     /**
@@ -95,11 +94,21 @@ public class BaseDao<T extends BaseDm> {
      * @param ignoreNull 是否忽略空值字段
      * @return 当前SQL实例
      */
-    public <T> int insertEntity(T entity, boolean ignoreNull) {
+    public <T> int insert(T entity, boolean ignoreNull) {
         Map<String, Object> fieldMap = resolveEntityFields(entity, ignoreNull);
         return insert(fieldMap);
     }
-
+    public boolean saveOrUpdate(Object entity) {
+        // 获取实体 ID（假设 ID 是 Serializable 类型）
+        Serializable id = getEntityId(entity);
+        if (id == null || id.equals(0L)) {
+            // ID 不存在，执行插入
+            return insert(entity)>0?true:false;
+        } else {
+            // ID 存在，执行更新
+            return update(entity)>0?true:false;
+        }
+    }
     public int insert(Map<String, Object> data) {
 
         if (data.containsKey(dm.table_id) && data.get(dm.table_id) != null)
@@ -160,13 +169,13 @@ public class BaseDao<T extends BaseDm> {
      * @param entity 实体对象
      * @return 当前SQL实例
      */
-    public  <T> int updateEntity(T entity) {
+    public  <T> int update(T entity) {
         Map<String, Object> fieldMap = resolveEntityFields(entity, true);
 
         return this.updateById(fieldMap);
 
     }
-    public  <T> int updateEntity(T entity, boolean ignoreNull) {
+    public  <T> int update(T entity, boolean ignoreNull) {
         Map<String, Object> fieldMap = resolveEntityFields(entity, ignoreNull);
 
         return this.updateById(fieldMap);
@@ -210,7 +219,13 @@ public class BaseDao<T extends BaseDm> {
                 eqMap(columnMap).
                 update();
     }
-
+    //通过条件构造器修改
+    public int updateByWhere(Map map,SQL sql){
+        return SQL.UPDATE(dm.update_table).
+                setMap(map).
+                where(sql).
+                update();
+    }
 
     //查询-------------------------------------------------------------------------------------------------------
     //通过id，获取一条记录为map
@@ -236,13 +251,18 @@ public class BaseDao<T extends BaseDm> {
                 .getMaps();
     }
 
-    public <E> List<E> getBeansByIds(ArrayList ids, Class<E> E) {
+    public <E> List<E> getBeansByIdList(ArrayList ids, Class<E> E) {
         return SQL.SELECT(dm.select_table)
                 .column(dm.select_fields)
                 .in(dm.table_id, ids)
                 .getBeans(E);
     }
-
+    public <E> List<E> getBeansByIds(Class<E> E, Serializable... ids) {
+        return SQL.SELECT(dm.select_table)
+                .column(dm.select_fields)
+                .in(dm.table_id, ids)
+                .getBeans(E);
+    }
     //通过一组id数组，获取多条记录为maps
     public List<Map<String, Object>> getMapsByIds(Object... ids) {
         return SQL.SELECT(dm.select_table)
@@ -251,12 +271,7 @@ public class BaseDao<T extends BaseDm> {
                 .getMaps();
     }
 
-    public <E> List<E> getBeansByIds(Class<E> E, Serializable... ids) {
-        return SQL.SELECT(dm.select_table)
-                .column(dm.select_fields)
-                .in(dm.table_id, ids)
-                .getBeans(E);
-    }
+
 
     //通过map条件，获取一条记录为map
     public Map<String, Object> getMapByMap(Map<String, Object> columnMap) {
@@ -289,6 +304,18 @@ public class BaseDao<T extends BaseDm> {
     }
 
     //通过条件构造器，获取多条记录为maps
+    public <E> E getBeanByWhere(SQL sql, Class<E> E) {
+        return SQL.SELECT(dm.select_table)
+                .column(dm.select_fields)
+                .where(sql)
+                .getBean(E);
+    }
+    public Map<String, Object> getMapByWhere(SQL sql) {
+        return SQL.SELECT(dm.select_table)
+                .column(dm.select_fields)
+                .where(sql)
+                .getMap();
+    }
     public List<Map<String, Object>> getMapsByWhere(SQL sql) {
         return SQL.SELECT(dm.select_table)
                 .column(dm.select_fields)
@@ -303,6 +330,14 @@ public class BaseDao<T extends BaseDm> {
                 .getBeans(E);
     }
 
+    //判断实体是否存在
+    public  <T>Serializable getEntityId(T entity)
+    {
+        Map<String, Object> fieldMap = resolveEntityFields(entity, true);
+        String id_value=(String) fieldMap.get(dm.table_id);
+        Map map=getMapById(id_value);
+        return (Serializable) map.get(dm.table_id);
+    }
     //存在--------------
     //通过id判断存在
     public boolean exists(String id) {
@@ -320,6 +355,11 @@ public class BaseDao<T extends BaseDm> {
     public boolean existsByMap(Map<String, Object> columnMap) {
         return SQL.SELECT(dm.select_table)
                 .eqMap(columnMap)
+                .isExists();
+    }
+    public boolean existsByWhere(SQL sqlWhere) {
+        return SQL.SELECT(dm.select_table)
+                .where(sqlWhere)
                 .isExists();
     }
 
@@ -346,15 +386,17 @@ public class BaseDao<T extends BaseDm> {
                 .getCount().longValue();
     }
 
-    //获取页面数据
-    public List<Map<String, Object>> getPageBySQL(PageModel pageModel, SQL sql) {
+    //获取页面数据--------------------------------------
+    //page传入sql，普通的翻页
+    public List<Map<String, Object>> pageMapsBySql(PageModel pageModel, SQL sql) {
         return PAGE.of(pageModel, sql).pageMaps();
-
-
+    }
+    public <E> List<E> pageBeansBySql(PageModel pageModel, SQL sql, Class<E> E) {
+        return PAGE.of(pageModel, sql).pageBeans(E);
     }
 
     //page传入翻页条件，传入条件构造器，普通的翻页
-    public List<Map<String, Object>> getPageByWhere(PageModel pageModel, SQL sqlWhere) {
+    public List<Map<String, Object>> pageMapsByWhere(PageModel pageModel, SQL sqlWhere) {
         return PAGE.of(pageModel).setSql(
                         SQL.SELECT(dm.select_table)
                                 .column(dm.select_fields)
@@ -362,9 +404,16 @@ public class BaseDao<T extends BaseDm> {
                 .pageMaps();
 
     }
+    public <E> List<E> pageBeansByWhere(PageModel pageModel, SQL sqlWhere, Class<E> E) {
+        return PAGE.of(pageModel).setSql(
+                        SQL.SELECT(dm.select_table)
+                                .column(dm.select_fields)
+                                .where(sqlWhere))
+                .pageBeans(E);
+    }
 
     //   page传入翻页条件，传入条件构造器，翻页条件要加上页的起始行id
-    public List<Map<String, Object>> getPageByStartId(PageModel pageModel, SQL sql) {
+    public List<Map<String, Object>> pageByStartId(PageModel pageModel, SQL sql) {
         return PAGE.of(pageModel).setSql(sql)
                 .setPageSqlGenerator(new MysqlPageSqlByStartId())
                 .pageMaps();

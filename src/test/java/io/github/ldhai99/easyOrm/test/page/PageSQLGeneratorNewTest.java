@@ -2,9 +2,9 @@ package io.github.ldhai99.easyOrm.test.page;
 
 import io.github.ldhai99.easyOrm.SQL;
 import io.github.ldhai99.easyOrm.executor.Executor;
-import io.github.ldhai99.easyOrm.page.MysqlPageSql;
-import io.github.ldhai99.easyOrm.page.MysqlPageSqlById;
-import io.github.ldhai99.easyOrm.page.MysqlPageSqlByStartId;
+import io.github.ldhai99.easyOrm.page.PageSQLGenerator.mysql.MysqlPageSql;
+import io.github.ldhai99.easyOrm.page.PageSQLGenerator.mysql.MysqlPageSqlById;
+import io.github.ldhai99.easyOrm.page.PageSQLGenerator.mysql.MysqlPageSqlByStartId;
 import io.github.ldhai99.easyOrm.page.PAGE;
 import io.github.ldhai99.easyOrm.tools.DbTools;
 import org.junit.jupiter.api.AfterEach;
@@ -17,7 +17,7 @@ import java.sql.SQLException;
 
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class PageSqlNewTest {
+public class PageSQLGeneratorNewTest {
     private Executor executor;
 
     private NamedParameterJdbcTemplate npjt;
@@ -45,7 +45,7 @@ public class PageSqlNewTest {
                         .setSize(2)
 
                         .setPageSqlGenerator(new MysqlPageSql())
-                        .getPageSql());
+                        .getPagedSql());
         //(select id,name from student order by id asc)   limit 0, 2
 
         System.out.println(
@@ -69,7 +69,7 @@ public class PageSqlNewTest {
                         .setSize(2)
                         .setCountId("id")
                         .setPageSqlGenerator(new MysqlPageSqlById())
-                        .getPageSql());
+                        .getPagedSql());
         //select id,name from student where  id in
         // (select id from  (    (select id from student order by id asc)   limit 0, 2) a )  order by id asc
 
@@ -95,7 +95,7 @@ public class PageSqlNewTest {
                         .setCountId("id")
                         .setPageStartId(2)
                         .setPageSqlGenerator(new MysqlPageSqlByStartId())
-                        .getPageSql());
+                        .getPagedSql());
         //(select id,name from student where  id >  :p4e4aea350  order by id asc)    limit 2
 
 

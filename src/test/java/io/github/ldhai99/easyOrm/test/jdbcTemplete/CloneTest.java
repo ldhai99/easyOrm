@@ -3,7 +3,6 @@ package io.github.ldhai99.easyOrm.test.jdbcTemplete;
 import io.github.ldhai99.easyOrm.SQL;
 import io.github.ldhai99.easyOrm.executor.Executor;
 import io.github.ldhai99.easyOrm.page.PAGE;
-import io.github.ldhai99.easyOrm.page.PageModel;
 import io.github.ldhai99.easyOrm.tools.DbTools;
 import org.junit.jupiter.api.*;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;

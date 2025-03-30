@@ -1,12 +1,15 @@
 package io.github.ldhai99.easyOrm.page;
 
 
-import java.util.ArrayList;
+import io.github.ldhai99.easyOrm.SQL;
+import io.github.ldhai99.easyOrm.page.PageSQLGenerator.PageSQLGenerator;
+import io.github.ldhai99.easyOrm.tools.ConfigPageSql;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-public class PageModel <T>{
+public class PageModel<T> {
     // 页面信息
     protected long current = 1; // 当前页码，默认值为 1
     protected long size = 10; // 每页显示的记录数，默认值为 10
@@ -36,6 +39,8 @@ public class PageModel <T>{
     protected String countId = ""; // 用于分页的主键字段
     protected long pageStartId = 0; // 开始行的 ID
 
+    protected PageSQLGenerator pageSqlGenerator = null;
+
     // 构造函数
     public PageModel() {
         this.records = Collections.emptyList();
@@ -48,7 +53,28 @@ public class PageModel <T>{
 
     }
 
+    // 静态方法：普通分页
+    public static PageModel of() {
+        return new PageModel();
+    }
+    public static PageModel ofNormal(SQL sql) {
+        PageModel pageModel = new PageModel();
+        pageModel.setPageSqlNormal();            // 设置分页策略为按起始 ID 分页
+        return pageModel;
+    }
+    // 静态方法：按起始 ID 分页
+    public static PageModel ofStartId() {
+        PageModel pageModel = new PageModel();
+        pageModel.setPageSqlByStartId();            // 设置分页策略为按起始 ID 分页
+        return pageModel;
+    }
 
+    // 静态方法：按 ID 分页
+    public static PageModel ofById() {
+        PageModel pageModel = new PageModel();
+        pageModel.setPageSqlById();                 // 设置分页策略为按 ID 分页
+        return pageModel;
+    }
 
     public List<Map<String, Object>> getRecordsMaps() {
         return recordsMaps;
@@ -58,6 +84,7 @@ public class PageModel <T>{
         this.recordsMaps = recordsMaps;
         return this;
     }
+
     public List<T> getRecords() {
         return records;
     }
@@ -65,7 +92,6 @@ public class PageModel <T>{
     public void setRecords(List<T> records) {
         this.records = records;
     }
-
 
 
     PageModel setPages(long pages) {
@@ -76,14 +102,14 @@ public class PageModel <T>{
     public long getPages() {
         //计算总页数
         if ((this.getTotal() % this.getSize()) == 0) {
-            pages = (long) (this.getTotal()/ this.getSize());
+            pages = (long) (this.getTotal() / this.getSize());
         } else {
-            pages = (long) (this.getTotal()/ this.getSize() + 1);
+            pages = (long) (this.getTotal() / this.getSize() + 1);
         }
 
         //当前页不能大于总页数
-        if(this.current>this.pages)
-            this.current=this.pages;
+        if (this.current > this.pages)
+            this.current = this.pages;
 
         //计算当前页,下一页
         if (current < pages) {
@@ -93,8 +119,8 @@ public class PageModel <T>{
             this.hasNext = true;
             this.nextPage = this.current + 1;
         } else if (current == pages) {
-            if(current==0)
-                current=1;
+            if (current == 0)
+                current = 1;
             this.pageStartRow = ((this.current - 1) * this.size);
             this.pageEndRow = total;
 
@@ -122,6 +148,7 @@ public class PageModel <T>{
         this.pageStartId = pageStartId;
         return this;
     }
+
     //设置每页行数
     public PageModel setSize(int size) {
         this.size = size;
@@ -155,7 +182,6 @@ public class PageModel <T>{
     }
 
 
-
     public String getCountId() {
         return countId;
     }
@@ -164,6 +190,7 @@ public class PageModel <T>{
         this.countId = countId;
         return this;
     }
+
     public PageModel setTotal(long total) {
         this.total = total;
         this.getPages();
@@ -173,6 +200,7 @@ public class PageModel <T>{
     public long getTotal() {
         return total;
     }
+
     public boolean isSearchCount() {
         return searchCount;
     }
@@ -216,6 +244,7 @@ public class PageModel <T>{
         this.previousPage = previousPage;
         return this;
     }
+
     public boolean isHasNext() {
         return hasNext;
     }
@@ -241,6 +270,7 @@ public class PageModel <T>{
     public void setMaxLimit(Long maxLimit) {
         this.maxLimit = maxLimit;
     }
+
     public void setSize(long size) {
         this.size = size;
     }
@@ -267,6 +297,36 @@ public class PageModel <T>{
 
     public void setPreviousPage(long previousPage) {
         this.previousPage = previousPage;
+    }
+
+    //获取分页SQL生成器---------------------------------------------------------
+    //提供默认翻页sql生成器
+    public PageSQLGenerator getPageSqlGenerator() {
+        if (this.pageSqlGenerator == null)
+            pageSqlGenerator = ConfigPageSql.getPageSql();
+        return pageSqlGenerator;
+    }
+
+    //设置分页SQL生成器--动态策略
+    public PageModel setPageSqlGenerator(PageSQLGenerator pageSqlGenerator) {
+        this.pageSqlGenerator = pageSqlGenerator;
+        return this;
+    }
+
+    //设置分页SQL生成器----默认策略
+    public PageModel setPageSqlNormal() {
+        this.pageSqlGenerator = ConfigPageSql.getPageSqlNormal();
+        return this;
+    }
+
+    public PageModel setPageSqlById() {
+        this.pageSqlGenerator = ConfigPageSql.getPageSqlById();
+        return this;
+    }
+
+    public PageModel setPageSqlByStartId() {
+        this.pageSqlGenerator = ConfigPageSql.getPageSqlByStartId();
+        return this;
     }
 
 }

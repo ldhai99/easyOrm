@@ -1,12 +1,7 @@
 package io.github.ldhai99.easyOrm.tools;
 
 import com.alibaba.druid.pool.DruidDataSourceFactory;
-import io.github.ldhai99.easyOrm.executor.Executor;
 import io.github.ldhai99.easyOrm.executor.JdbcTemplateExecutor;
-import io.github.ldhai99.easyOrm.page.MysqlPageSql;
-import io.github.ldhai99.easyOrm.page.MysqlPageSqlById;
-import io.github.ldhai99.easyOrm.page.MysqlPageSqlByStartId;
-import io.github.ldhai99.easyOrm.page.PageSql;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 
@@ -18,17 +13,12 @@ import java.util.Properties;
 public class DbTools {
 
     private static DataSource dataSource;
-    private static String database = "mysql";
+
     private static NamedParameterJdbcTemplate template;
 
     //全局执行器
     public static JdbcTemplateExecutor executor = null;
-    //全局默认翻页语句生成器
-    public static PageSql pageSql;
 
-    public static PageSql pageSqlNormal;
-    public static PageSql pageSqlById;
-    public static PageSql pageSqlByStartId;
 
 
     //获取连接
@@ -87,48 +77,6 @@ public class DbTools {
         DbTools.executor = executor;
     }
 
-    //获取全局翻页生成器---------------------------
-    public static PageSql getPageSql() {
-        if (DbTools.pageSql == null)
-            if (database.equalsIgnoreCase("mysql")) {
-                pageSql = new MysqlPageSql();
-            }
-
-        return DbTools.pageSql;
-    }
-
-    public static PageSql getPageSqlNormal() {
-        if (DbTools.pageSqlNormal == null)
-            if (database.equalsIgnoreCase("mysql")) {
-                pageSqlNormal = new MysqlPageSql();
-            }
-
-        return DbTools.pageSqlNormal;
-    }
-
-    public static PageSql getPageSqlById() {
-        if (DbTools.pageSqlById == null)
-            if (database.equalsIgnoreCase("mysql")) {
-                pageSqlById = new MysqlPageSqlById();
-            }
-
-        return DbTools.pageSqlById;
-    }
-
-    public static PageSql getPageSqlByStartId() {
-        if (DbTools.pageSqlByStartId == null)
-            if (database.equalsIgnoreCase("mysql")) {
-                pageSqlByStartId = new MysqlPageSqlByStartId();
-            }
-
-        return DbTools.pageSqlByStartId;
-    }
-
-
-    public static void setPageSql(PageSql pageSql) {
-        DbTools.pageSql = pageSql;
-    }
-
 
     public static NamedParameterJdbcTemplate getTemplate() {
         return template;
@@ -159,7 +107,7 @@ public class DbTools {
             pro.load(in);
             String db = pro.getProperty("database");
             if (db != null)
-                database = db;
+                ConfigDatabase.database = db;
             dataSource = DruidDataSourceFactory.createDataSource(pro);
         } catch (Exception e) {
             e.printStackTrace();

@@ -3,6 +3,7 @@ package io.github.ldhai99.easyOrm.test.page;
 import io.github.ldhai99.easyOrm.SQL;
 import io.github.ldhai99.easyOrm.executor.Executor;
 import io.github.ldhai99.easyOrm.page.PAGE;
+import io.github.ldhai99.easyOrm.tools.ConfigPageSql;
 import io.github.ldhai99.easyOrm.tools.DbTools;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -14,7 +15,7 @@ import java.sql.SQLException;
 
 
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-    public class PageSqlStaticTest {
+    public class PageSQLGeneratorStaticTest {
         private Executor executor;
 
         private NamedParameterJdbcTemplate npjt;
@@ -39,7 +40,7 @@ import java.sql.SQLException;
                     PAGE.of(sql)
                             .setCurrent(1)
                             .setSize(2)
-                            .getPageSql());
+                            .getPagedSql());
             //(select id,name from student order by id asc)   limit 0, 2
 
             System.out.println(
@@ -60,8 +61,8 @@ import java.sql.SQLException;
                             .setCurrent(1)
                             .setSize(2)
 
-                            .setPageSqlGenerator(DbTools.getPageSqlNormal())
-                            .getPageSql());
+                            .setPageSqlGenerator(ConfigPageSql.getPageSqlNormal())
+                            .getPagedSql());
             //(select id,name from student order by id asc)   limit 0, 2
 
             System.out.println(
@@ -69,7 +70,7 @@ import java.sql.SQLException;
                             .setCurrent(1)
                             .setSize(2)
 
-                            .setPageSqlGenerator(DbTools.getPageSqlNormal())
+                            .setPageSqlGenerator(ConfigPageSql.getPageSqlNormal())
                             .pageMaps());
 
         }
@@ -84,8 +85,8 @@ import java.sql.SQLException;
                             .setCurrent(1)
                             .setSize(2)
                             .setCountId("id")
-                            .setPageSqlGenerator(DbTools.getPageSqlById())
-                            .getPageSql());
+                            .setPageSqlGenerator(ConfigPageSql.getPageSqlById())
+                            .getPagedSql());
             //select id,name from student where  id in
             // (select id from  (    (select id from student order by id asc)   limit 0, 2) a )  order by id asc
 
@@ -94,7 +95,7 @@ import java.sql.SQLException;
                             .setCurrent(1)
                             .setSize(2)
                             .setCountId("id")
-                            .setPageSqlGenerator(DbTools.getPageSqlById())
+                            .setPageSqlGenerator(ConfigPageSql.getPageSqlById())
                             .pageMaps());
 
         }
@@ -110,8 +111,8 @@ import java.sql.SQLException;
                             .setSize(2)
                             .setCountId("id")
                             .setPageStartId(2)
-                            .setPageSqlGenerator(DbTools.getPageSqlByStartId())
-                            .getPageSql());
+                            .setPageSqlGenerator(ConfigPageSql.getPageSqlByStartId())
+                            .getPagedSql());
             //(select id,name from student where  id >  :p4e4aea350  order by id asc)    limit 2
 
 
@@ -121,7 +122,7 @@ import java.sql.SQLException;
                             .setSize(2)
                             .setCountId("id")
                             .setPageStartId(2)
-                            .setPageSqlGenerator(DbTools.getPageSqlByStartId())
+                            .setPageSqlGenerator(ConfigPageSql.getPageSqlByStartId())
                             .pageMaps());
 
         }
