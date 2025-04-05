@@ -179,8 +179,8 @@ public class SQL {
         return new SQL().where();
     }
 
-    public static SQL WHERE(String name) {
-        return new SQL().where().where(name);
+    public static SQL WHERE(String clause) {
+        return new SQL().where().where(clause);
     }
 
     public static SQL WHERE(SQL sql) {
@@ -248,15 +248,20 @@ public class SQL {
     }
     //初始化----------------------------------------
 
-    public SQL setColumn(String name) {
+    public SQL setColumn(String column) {
 
-        this.builder.setColumn(name);
+        this.builder.setColumn(column);
+        return this;
+    }
+    public SQL setLast(String clause) {
+
+        this.builder.setLast(clause);
         return this;
     }
 
-    public SQL setWhere(String name) {
+    public SQL setWhere(String clause) {
 
-        this.builder.setWhere(name);
+        this.builder.setWhere(clause);
         return this;
     }
     //判断类型-----------------------------------------------------------------------------------
@@ -307,8 +312,8 @@ public class SQL {
     }
 
 
-    public SQL where(String name) {
-        this.builder.where(name);
+    public SQL where(String clause) {
+        this.builder.where(clause);
         return this;
     }
 
@@ -339,8 +344,8 @@ public class SQL {
         }
     }
 // 分组条件-----
-    public SQL having(String name) {
-        this.builder.having(name);
+    public SQL having(String clause) {
+        this.builder.having(clause);
         return this;
     }
 
@@ -400,8 +405,8 @@ public class SQL {
     }
 //分组-----groupBy---
 
-    public SQL groupBy(String name) {
-        this.builder.groupBy(name);
+    public SQL groupBy(String clause) {
+        this.builder.groupBy(clause);
         return this;
     }
 
@@ -483,26 +488,26 @@ public class SQL {
 
     //-----------------------排序----------------------------------------------------
     //---多组排序
-    public SQL orderByAsc(List<String> names) {
-        for (String name : names) {
-            orderByAsc(name);
+    public SQL orderByAsc(List<String> clauses) {
+        for (String clause : clauses) {
+            orderByAsc(clause);
         }
 
         return this;
     }
 
-    public SQL orderByDesc(List<String> names) {
-        for (String name : names) {
-            orderByDesc(name);
+    public SQL orderByDesc(List<String> clauses) {
+        for (String clause : clauses) {
+            orderByDesc(clause);
         }
 
         return this;
     }
 
     //---升序排序
-    public SQL orderByAsc(String name) {
+    public SQL orderByAsc(String clause) {
 
-        this.orderBy(name, true);
+        this.orderBy(clause, true);
         return this;
     }
 
@@ -522,8 +527,8 @@ public class SQL {
     }
 
     //---降序排序
-    public SQL orderByDesc(String name) {
-        this.orderBy(name, false);
+    public SQL orderByDesc(String clause) {
+        this.orderBy(clause, false);
         return this;
     }
 
@@ -544,8 +549,8 @@ public class SQL {
     }
 
     //---默认升序排序
-    public SQL orderBy(String name) {
-        this.orderBy(name, true);
+    public SQL orderBy(String clause) {
+        this.orderBy(clause, true);
         return this;
     }
 
@@ -565,8 +570,8 @@ public class SQL {
     }
 
     //---排序
-    public SQL orderBy(String name, boolean ascending) {
-        this.builder.orderBy(name, ascending);
+    public SQL orderBy(String clause, boolean ascending) {
+        this.builder.orderBy(clause, ascending);
         return this;
     }
 
@@ -594,8 +599,8 @@ public class SQL {
     //代理SqlDataModel---------------------------
 //------------------------------聚合函数列----------------------------------------
     //---sum--------------
-    public SQL sum(String name) {
-        return aggregate("sum", name);
+    public SQL sum(String column) {
+        return aggregate("sum", column);
     }
 
     public <T> SQL sum(PropertyGetter<T> getter) {
@@ -614,8 +619,8 @@ public class SQL {
     }
 
     //---sum-----alias---------
-    public SQL sum(String name, String alias) {
-        return aggregate("sum", name, alias);
+    public SQL sum(String column, String alias) {
+        return aggregate("sum", column, alias);
     }
 
     public <T> SQL sum(PropertyGetter<T> getter, String alias) {
@@ -634,8 +639,8 @@ public class SQL {
     }
 
     //---avg--------------
-    public SQL avg(String name) {
-        return aggregate("avg", name);
+    public SQL avg(String column) {
+        return aggregate("avg", column);
     }
 
 
@@ -655,8 +660,8 @@ public class SQL {
     }
 
     //---avg-----alias---------
-    public SQL avg(String name, String alias) {
-        return aggregate("avg", name, alias);
+    public SQL avg(String column, String alias) {
+        return aggregate("avg", column, alias);
     }
 
     public <T> SQL avg(PropertyGetter<T> getter, String alias) {
@@ -675,8 +680,8 @@ public class SQL {
     }
 
     //---max--------------
-    public SQL max(String name) {
-        return aggregate("max", name);
+    public SQL max(String column) {
+        return aggregate("max", column);
     }
 
 
@@ -696,8 +701,8 @@ public class SQL {
     }
 
     //---max--alis------------
-    public SQL max(String name, String alias) {
-        return aggregate("max", name, alias);
+    public SQL max(String column, String alias) {
+        return aggregate("max", column, alias);
     }
 
 
@@ -717,8 +722,8 @@ public class SQL {
     }
 
     //---min--------------
-    public SQL min(String name) {
-        return aggregate("min", name);
+    public SQL min(String column) {
+        return aggregate("min", column);
     }
 
 
@@ -738,8 +743,8 @@ public class SQL {
     }
 
     //---min--alis------------
-    public SQL min(String name, String alias) {
-        return aggregate("min", name, alias);
+    public SQL min(String column, String alias) {
+        return aggregate("min", column, alias);
     }
 
 
@@ -771,8 +776,8 @@ public class SQL {
     }
 
     //---aggregate--------------
-    public SQL aggregate(String function, String name) {
-        return aggregate(function, name, null);
+    public SQL aggregate(String function, String column) {
+        return aggregate(function, column, null);
     }
 
     public <T> SQL aggregate(String function, PropertyGetter<T> getter) {
@@ -788,11 +793,11 @@ public class SQL {
     }
 
     //---aggregate--alis------------
-    public SQL aggregate(String function, String name, String alias) {
+    public SQL aggregate(String function, String column, String alias) {
         String alias1 = alias;
         if (alias1 == null)
-            alias1 = name;
-        this.builder.column(" " + function + "(" + name + ") " + alias1 + " ");
+            alias1 = column;
+        this.builder.column(" " + function + "(" + column + ") " + alias1 + " ");
 
         return this;
     }
@@ -813,8 +818,8 @@ public class SQL {
     }
 
     //-------------------------查询列----------------------------------------------------
-    public SQL column(String name) {
-        this.builder.column(name);
+    public SQL column(String column) {
+        this.builder.column(column);
         return this;
     }
 
@@ -841,8 +846,8 @@ public class SQL {
     }
 
     //---列别名-----------------------
-    public SQL column(String name, String alias) {
-        this.builder.column(name, alias);
+    public SQL column(String column, String alias) {
+        this.builder.column(column, alias);
         return this;
     }
 
@@ -855,13 +860,13 @@ public class SQL {
     }
 
     //---表.字段 列别名-----------------------
-    public SQL column(String tableAlias, String name, String alias) {
-        this.builder.column(tableAlias + "." + name, alias);
+    public SQL column(String tableAlias, String column, String alias) {
+        this.builder.column(tableAlias + "." + column, alias);
         return this;
     }
 
-    public SQL column(Class<?> clazz, String name, String alias) {
-        this.builder.column(TableNameResolver.getTableName(clazz) + "." + name, alias);
+    public SQL column(Class<?> clazz, String column, String alias) {
+        this.builder.column(TableNameResolver.getTableName(clazz) + "." + column, alias);
         return this;
     }
 
@@ -874,8 +879,8 @@ public class SQL {
     }
 
     //---列加分组-----------------------
-    public SQL column(String name, boolean groupBy) {
-        this.builder.column(name, groupBy);
+    public SQL column(String column, boolean groupBy) {
+        this.builder.column(column, groupBy);
         return this;
     }
 
@@ -1389,12 +1394,16 @@ public class SQL {
     }
 
     //自我扩展-------------------------------------------------------------------------------------------------
-    public SQL last(Object last) {
-        return new SQL(this.executor)
-                .addSql(" :arg0  :arg1")
-                .setValue$("arg0", this)
-                .setValue$("arg1", last);
+    public SQL last(String clause) {
+        this.builder.last(clause);
+        return this;
     }
+//    public SQL last(Object last) {
+//        return new SQL(this.executor)
+//                .addSql(" :arg0  :arg1")
+//                .setValue$("arg0", this)
+//                .setValue$("arg1", last);
+//    }
 
     public SQL union(SQL subSql) {
         return union("union", subSql);

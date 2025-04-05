@@ -8,7 +8,8 @@ public class MysqlPageSqlById implements PageSQLGenerator {
     @Override
     public SQL generatePageSQL(PageModel pageModel, SQL sql) {
         return sql.clone().in(pageModel.getCountId(),
-                SQL.SELECT(sql.clone().setColumn(pageModel.getCountId())
+                SQL.SELECT(
+                        sql.clone().setColumn(pageModel.getCountId())
                                         .last("limit :start, :records")
                                         .setValue$("start",pageModel.getPageStartRow())
                                         .setValue$("records",pageModel.getSize())

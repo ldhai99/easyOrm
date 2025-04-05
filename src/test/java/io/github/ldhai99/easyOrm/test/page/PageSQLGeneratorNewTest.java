@@ -20,8 +20,6 @@ import java.sql.SQLException;
 public class PageSQLGeneratorNewTest {
     private Executor executor;
 
-    private NamedParameterJdbcTemplate npjt;
-
     @BeforeAll
     public void getTemplate() {
         executor = DbTools.getExecutor();
@@ -36,14 +34,11 @@ public class PageSQLGeneratorNewTest {
     //正常翻页PageSqlNormal
     @Test
     public void pageSqNormal() throws SQLException {
-
-
-        SQL sql = new SQL(executor).select("student").column("id,name").orderBy("id");
+        SQL sql = SQL.SELECT("student").column("id,name").orderBy("id");
         System.out.println(
                 PAGE.of(sql)
                         .setCurrent(1)
                         .setSize(2)
-
                         .setPageSqlGenerator(new MysqlPageSql())
                         .getPagedSql());
         //(select id,name from student order by id asc)   limit 0, 2
@@ -52,17 +47,13 @@ public class PageSQLGeneratorNewTest {
                 PAGE.of(sql)
                         .setCurrent(1)
                         .setSize(2)
-
                         .setPageSqlGenerator(new MysqlPageSql())
                         .pageMaps());
-
     }
     //有id的翻页PageSqlid
     @Test
     public void pageSqlId() throws SQLException {
-
-
-        SQL sql = new SQL(executor).select("student").column("id,name").orderBy("id");
+        SQL sql =  SQL.SELECT("student").column("id,name").orderBy("id");
         System.out.println(
                 PAGE.of(sql)
                         .setCurrent(1)

@@ -13,8 +13,8 @@ public class SqlModel implements  Cloneable ,Serializable {
     private static final long serialVersionUID = 1L;
 
     //增加，删除，修改表名
-    private String update_table;
-    private String table_id=null;
+    private String updateTable;
+    private String tableId =null;
     private TaskType taskType = TaskType.SELECT;
 
 
@@ -30,6 +30,8 @@ public class SqlModel implements  Cloneable ,Serializable {
     private List<String> groupBys = new ArrayList();
     private List<String> havings = new ArrayList();
     private List<String> orderBys = new ArrayList();
+
+    private List<String> lasts = new ArrayList();
 
     //修改组
     private List<String> sets = new ArrayList();
@@ -50,7 +52,7 @@ public class SqlModel implements  Cloneable ,Serializable {
 
     protected SqlModel(SqlModel other)  {
         this.taskType=other.taskType;
-        this.update_table=other.update_table;
+        this.updateTable =other.updateTable;
 
         this.dynamicSqls.addAll(other.dynamicSqls);
         this.columns.addAll(other.columns);
@@ -78,19 +80,19 @@ public class SqlModel implements  Cloneable ,Serializable {
     }
     //指定任务------------------------------------------------------
     public SqlModel update(String table) {
-        this.update_table = table;
+        this.updateTable = table;
         this.taskType = TaskType.UPDATE;
         return this;
     }
 
     public SqlModel delete(String table) {
-        this.update_table = table;
+        this.updateTable = table;
         this.taskType = TaskType.DELETE;
         return this;
     }
 
     public SqlModel insert(String table) {
-        this.update_table = table;
+        this.updateTable = table;
         this.taskType = TaskType.INSERT;
         return this;
     }
@@ -106,45 +108,49 @@ public class SqlModel implements  Cloneable ,Serializable {
         return this;
     }
     public SqlModel setTableId(String idFiled){
-        this.table_id=idFiled;
+        this.tableId =idFiled;
         return  this;
     }
     //初始化数据------------------------------------------------------------------------
-    public SqlModel setColumn(String name) {
+    public SqlModel setColumn(String column) {
         this.columns.clear();
-        this.columns.add(name);
+        this.columns.add(column);
         return this;
     }
-    public SqlModel setWhere(String name) {
+    public SqlModel setWhere(String clause) {
         this.wheres.clear();
-        this.where(name);
+        this.where(clause);
         return this;
     }
-    public SqlModel setHaving(String name) {
+    public SqlModel setHaving(String clause) {
         this.havings.clear();
-        this.havings.add(name);
+        this.havings.add(clause);
         return this;
     }
 
-    public SqlModel setGroup(String name) {
+    public SqlModel setGroup(String clause) {
         this.groupBys.clear();
-        this.groupBys.add(name);
+        this.groupBys.add(clause);
         return this;
     }
-    public SqlModel setJoins(String name) {
+    public SqlModel setJoins(String clause) {
         this.joins.clear();
-        this.joins.add(name);
+        this.joins.add(clause);
         return this;
     }
-
+    public SqlModel setLast(String clause) {
+        this.lasts.clear();
+        this.lasts.add(clause);
+        return this;
+    }
 
     //增加数据-----------------------------------------------------------------
-    public SqlModel DynamicSql(String name) {
-        this.dynamicSqls.add(name);
+    public SqlModel DynamicSql(String clause) {
+        this.dynamicSqls.add(clause);
         return this;
     }
-    public SqlModel afterSelect(String name) {
-        this.afterSelects.add(name);
+    public SqlModel afterSelect(String clause) {
+        this.afterSelects.add(clause);
         return this;
     }
     //增加更新部分
@@ -175,34 +181,39 @@ public class SqlModel implements  Cloneable ,Serializable {
     }
 
 
-    public SqlModel insertColumn(String name,String nameParamPlaceholder) {
+    public SqlModel insertColumn(String column,String nameParamPlaceholder) {
         // 遍历列表并替换
         for (int i = 0; i < columns.size(); i++) {
 
-            if (columns.get(i).equals(name)) {
+            if (columns.get(i).equals(column)) {
                 // 重新构造字符串并替换原元素
-                columns.set(i, name);
+                columns.set(i, column);
                 values.set(i,nameParamPlaceholder);
                 return this;
             }
         }
-        this.columns.add(name);
+        this.columns.add(column);
         this.value(nameParamPlaceholder);
         return this;
     }
-    public SqlModel column(String name) {
-        this.columns.add(name);
+    public SqlModel column(String column) {
+        this.columns.add(column);
         return this;
     }
-    public SqlModel column(String name,String alias) {
-        this.columns.add(name+" as "+alias);
+    public SqlModel last(String clause) {
+        this.lasts.add(clause);
         return this;
     }
 
-    public SqlModel column(String name, boolean groupBy) {
-        this.columns.add(name);
+    public SqlModel column(String column,String alias) {
+        this.columns.add(column+" as "+alias);
+        return this;
+    }
+
+    public SqlModel column(String column, boolean groupBy) {
+        this.columns.add(column);
         if (groupBy) {
-            this.groupBys.add(name);
+            this.groupBys.add(column);
         }
 
         return this;
@@ -258,11 +269,11 @@ public class SqlModel implements  Cloneable ,Serializable {
     }
 
 
-    public SqlModel orderBy(String name, boolean ascending) {
+    public SqlModel orderBy(String clause, boolean ascending) {
         if (ascending) {
-            this.orderBys.add(name + " asc");
+            this.orderBys.add(clause + " asc");
         } else {
-            this.orderBys.add(name + " desc");
+            this.orderBys.add(clause + " desc");
         }
 
         return this;
@@ -393,6 +404,8 @@ public class SqlModel implements  Cloneable ,Serializable {
 
         this.appendList(sql, this.orderBys, " order by ", ", ");
 
+        this.appendList(sql, this.lasts, "  ", " ");
+
         return toNewPara(sql.toString());
     }
 
@@ -404,29 +417,34 @@ public class SqlModel implements  Cloneable ,Serializable {
     }
 
     public String toInsert() {
-        StringBuilder sql = (new StringBuilder("insert into ")).append(this.update_table).append(" (");
+        StringBuilder sql = (new StringBuilder("insert into ")).append(this.updateTable).append(" (");
         this.appendList(sql, this.columns, "", ", ");
         sql.append(") values (");
         this.appendList(sql, this.values, "", ", ");
         sql.append(")");
+
+        this.appendList(sql, this.lasts, "  ", " ");
         return toNewPara(sql.toString());
     }
 
     public String toUpdate() {
-        StringBuilder sql = (new StringBuilder("update ")).append(this.update_table);
+        StringBuilder sql = (new StringBuilder("update ")).append(this.updateTable);
         this.appendList(sql, this.joins, " ", " ");
 
         this.appendList(sql, this.sets, " set ", ", ");
         //自带and 或者 or
         this.appendList(sql, this.wheres, " where ", " ");
+
+        this.appendList(sql, this.lasts, "  ", " ");
         return toNewPara(sql.toString());
     }
 
     public String toDelete() {
-        StringBuilder sql = (new StringBuilder(" delete from ")).append(this.update_table);
+        StringBuilder sql = (new StringBuilder(" delete from ")).append(this.updateTable);
 
         //自带and 或者 or
         this.appendList(sql, this.wheres, " where ", " ");
+        this.appendList(sql, this.lasts, "  ", " ");
         return toNewPara(sql.toString());
     }
 
