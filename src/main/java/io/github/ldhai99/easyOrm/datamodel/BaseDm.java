@@ -8,71 +8,71 @@ import java.util.List;
 import java.util.Map;
 
 public class BaseDm {
-    public String title;// 项目窗口标题
-    public String model_table;// 数据模型对应的表名（项目名）
+    // 项目窗口标题
+    public String windowTitle;
+    public String modelName;// 数据模型对应的表名（项目名）
 
     // 表字段信息-------------------------------------------------------
-    public String table_id = "id";// ID字段
-    public String table_p_id = "p_id";// 父ID字段
-
-    public String table_disp_field;// 显示名字段
-    public String table_url_field = "";// 地址字段
-    public String table_img_field = "";
-    public String table_find_fields;// 查询需要的字段
+    public String tableId = "id"; // 主键
+    public String tableParentId = "p_id"; // 父主键
+    public String tableDisplayField; // 显示字段
+    public String tableUrlField = ""; // URL字段
+    public String tableImageField = ""; // 图片列
+    public String tableQueryFields; // 查询列列表
 
     // 更新需要的信息--------------------------------------------------
-    public String update_table;// 更新表名
-    public String update_fields = "*";//更新的列
-    public String insert_fields = "*";//增加的列
-    public int where_para_count = 1;// 更新where条件参数个数
+// 更新相关配置--------------------------------------------------
+    public String updateTable; // 更新的目标表
+    public String updateFields = "*"; // 需要更新的列
+    public String insertFields = "*"; // 插入时需要的列
+    public int whereParameterCount = 1; // 更新条件参数的数量
 
     // 查询需要的信息(一般是页面查询，分页)---------------------------------------
-    public String select_sql;
-    public String select_table;// selecet 需要的主表
-    public String select_fields = "*";// select 需要列出的内容,缺省全部
-    public String select_where = "";// 查询条件，缺省为空
-    public String select_orderby = "";// 排序条件
-    public String select_groupby = "";
+// 查询相关配置(通常是分页查询)---------------------------------------
+    public String selectSql; // 自定义完整SQL查询语句
+    public String selectTable; // 查询主表
+    public String selectFields = "*"; // 查询字段列表
+    public String selectWhere = ""; // 查询条件
+    public String selectOrderBy = ""; // 排序条件
+    public String selectGroupBy = ""; // 分组条件
     //上下应用的数据模型-----------------------------
-    //上一个应用的数据模型
-    public BaseDm previous_dm;
-    // 下一个应用的数据模型
-    public BaseDm next_dm;
+    public BaseDm previousModel; // 上一个数据模型
+    public BaseDm nextModel; // 下一个数据模型
 
 
     // 页面传递数值-----------------------------
-    public String id_value;// 主键键值
-    public String p_id_value;// 父主键值
-    public String readonly = "";// 只读选项
-    public String eventName = "";// 用户传递URL选项
-    public String operation;// 用户传递URL操作选项
+    public String idKeyValue; // 主键值
+    public String pKeyValue; // 父主键值
+    public String readOnlyFlag = ""; // 只读标志
+    public String eventActionName = ""; // 用户事件名称
+    public String operationType; // 操作类型
     // 公用数据
   //  public List<DbParameter> pmt = new ArrayList<DbParameter>();// 用于存储更新参数的集合
     public String info;// 信息字段
 
 
-    // 数据存储变量------------------------------------------------------------
-    public List<Map<String, Object>> dt ;// 新框架用List<Map>数据格式datatable，从数据读取记录存dt
-    public Map<String, Object> dr,old_dr;// 数据集合--单记录datarow，从数据读取记录存dr,old_dr修改，删除时候保留旧记录
-    public List lst_data;// 数据集合--多记录
+    // 公用数据集合------------------------------------------------------------
+    public List<Map<String, Object>> dataTable; // 数据表记录集
+    public Map<String, Object> currentRow, originalRow; // 当前行和原始行（用于修改或删除时保留旧记录）
+    public List<?> dataList; // 多条记录的数据集合
 
-    public HashMap<String, Object> data = new HashMap<String, Object>();// 数据记录集合,附件数据
-    public HashMap<String, Object> ctl = new HashMap<String, Object>();// 控件记录集合
-    //---页面跳转配置----------
-    public String viewBase= FrameConstant.GoSelfView;
+    public HashMap<String, Object> recordData = new HashMap<>(); // 记录数据集合
+    public HashMap<String, Object> controlData = new HashMap<>(); // 控件数据集合
 
-    // grid需要的项目--------hashmap方式存储-------------------
-    public ArrayList<HashMap> lst_data_column = new ArrayList<HashMap>();
-    public ArrayList<HashMap> lst_cmd_column = new ArrayList();
-    public HashMap map_insert_cmd = new HashMap();
-    public HashMap map_other_cmd = new HashMap();// 增加控件信息
-    // grid需要的项目--------fieldbase方式存储-------------------
-    public List<BaseField> data_fields =new ArrayList();
-    public List<BaseField> cmd_fields =new ArrayList();
-    public BaseField insert_cmd,other_cmd;
+    // 页面跳转配置----------
+    public String viewTarget = FrameConstant.VIEW_GO_SELF;
 
+    // Grid相关配置--------HashMap方式存储-------------------
+    public ArrayList<HashMap> dataColumns = new ArrayList<>(); // 数据列集合
+    public ArrayList<HashMap> commandColumns = new ArrayList<>(); // 操作列集合
+    public HashMap insertCommand = new HashMap(); // 插入命令
+    public HashMap otherCommands = new HashMap(); // 其他命令
+    // Grid相关配置--------FieldBase方式存储-------------------
+    public List<BaseField> dataFieldList = new ArrayList<>(); // 数据字段列表
+    public List<BaseField> commandFieldList = new ArrayList<>(); // 操作字段列表
+    public BaseField insertCommandField, otherCommandField; // 插入命令和其他命令字段
 
-    public BaseGrid grid=new BaseGrid(this);
+    public BaseGrid grid = new BaseGrid(this);
 
     public BaseDm() {
 

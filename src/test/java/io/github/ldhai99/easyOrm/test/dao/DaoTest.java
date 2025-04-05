@@ -164,7 +164,7 @@ public class DaoTest {
 
         System.out.println(
 
-                dao.pageMapsByWhere(new PageModel().setCurrent(3).setSize(2)
+                dao.pageMapsBySql(new PageModel().setCurrent(3).setSize(2)
                         ,null)
         );
     }

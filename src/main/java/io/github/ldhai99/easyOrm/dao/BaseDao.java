@@ -81,6 +81,7 @@ public class BaseDao<T extends BaseDm> {
 
     /**
      * 插入实体对象（全字段插入，包含空值）
+     *
      * @param entity 实体对象
      * @return 当前SQL实例
      */
@@ -90,7 +91,8 @@ public class BaseDao<T extends BaseDm> {
 
     /**
      * 插入实体对象（可选是否忽略空值）
-     * @param entity 实体对象
+     *
+     * @param entity     实体对象
      * @param ignoreNull 是否忽略空值字段
      * @return 当前SQL实例
      */
@@ -98,29 +100,31 @@ public class BaseDao<T extends BaseDm> {
         Map<String, Object> fieldMap = resolveEntityFields(entity, ignoreNull);
         return insert(fieldMap);
     }
+
     public boolean saveOrUpdate(Object entity) {
         // 获取实体 ID（假设 ID 是 Serializable 类型）
         Serializable id = getEntityId(entity);
         if (id == null || id.equals(0L)) {
             // ID 不存在，执行插入
-            return insert(entity)>0?true:false;
+            return insert(entity) > 0 ? true : false;
         } else {
             // ID 存在，执行更新
-            return update(entity)>0?true:false;
+            return update(entity) > 0 ? true : false;
         }
     }
+
     public int insert(Map<String, Object> data) {
 
-        if (data.containsKey(dm.table_id) && data.get(dm.table_id) != null)
+        if (data.containsKey(dm.tableId) && data.get(dm.tableId) != null)
 
-            return SQL.INSERT(dm.update_table).
+            return SQL.INSERT(dm.updateTable).
                     setMap(data).
 
                     update();
         else
-            return SQL.INSERT(dm.update_table).
-                    setMap(dm.update_fields, data).
-                    set(dm.table_id, SnowflakeId.getId()).
+            return SQL.INSERT(dm.updateTable).
+                    setMap(dm.updateFields, data).
+                    set(dm.tableId, SnowflakeId.getId()).
                     update();
     }
 
@@ -128,66 +132,70 @@ public class BaseDao<T extends BaseDm> {
     //通过id删除
     public int deleteById(Serializable id) {
 
-        return SQL.DELETE(dm.update_table).
-                eq(dm.table_id, id).
+        return SQL.DELETE(dm.updateTable).
+                eq(dm.tableId, id).
                 update();
     }
 
     //通过id列表删除一组
     public int deleteByIds(ArrayList ids) {
 
-        return SQL.DELETE(dm.update_table).
-                in(dm.table_id, ids).
+        return SQL.DELETE(dm.updateTable).
+                in(dm.tableId, ids).
                 update();
     }
 
     //通过id数组删除一组
     public int deleteByIds(Object... ids) {
 
-        return SQL.DELETE(dm.update_table).
-                in(dm.table_id, ids).
+        return SQL.DELETE(dm.updateTable).
+                in(dm.tableId, ids).
                 update();
     }
 
     //通过条件组删除
     public int deleteByMap(Map<String, Object> columnMap) {
-        return SQL.DELETE(dm.update_table).
+        return SQL.DELETE(dm.updateTable).
                 eqMap(columnMap).
                 update();
     }
 
     //通过条件构造器删除
-    public int deleteByWhere(SQL sql) {
-        return SQL.DELETE(dm.update_table).
+    public int deleteBySql(SQL sql) {
+        return SQL.DELETE(dm.updateTable).
                 where(sql).
                 update();
     }
 
     //修改------------------------------------------------------------------------------------------
+
     /**
      * 根据主键更新实体对象（自动识别主键字段）
+     *
      * @param entity 实体对象
      * @return 当前SQL实例
      */
-    public  <T> int update(T entity) {
+    public <T> int update(T entity) {
         Map<String, Object> fieldMap = resolveEntityFields(entity, true);
 
         return this.updateById(fieldMap);
 
     }
-    public  <T> int update(T entity, boolean ignoreNull) {
+
+    public <T> int update(T entity, boolean ignoreNull) {
         Map<String, Object> fieldMap = resolveEntityFields(entity, ignoreNull);
 
         return this.updateById(fieldMap);
 
     }
+
     //通过id修改，用配置的修改字段
     public int updateById(Map<String, Object> data) {
-        Object id = data.get(dm.table_id);
+        Object id = data.get(dm.tableId);
 
-        return SQL.UPDATE(dm.update_table).
-                setMap( data).
-                eq(dm.table_id, id).
+        return SQL.UPDATE(dm.updateTable).
+                setMap(data).
+                eq(dm.tableId, id).
                 update();
 
     }
@@ -196,9 +204,9 @@ public class BaseDao<T extends BaseDm> {
     public int updateById(String fields, Map<String, Object> data) {
 
 
-        return SQL.UPDATE(dm.update_table)
+        return SQL.UPDATE(dm.updateTable)
                 .setMap(fields, data)
-                .eq(dm.table_id, data.get(dm.table_id))
+                .eq(dm.tableId, data.get(dm.tableId))
                 .update();
 
     }
@@ -206,22 +214,24 @@ public class BaseDao<T extends BaseDm> {
     //通过map条件修改，用配置的修改字段
 
     public int updateByMap(Map<String, Object> data, Map<String, Object> columnMap) {
-        return SQL.UPDATE(dm.update_table).
-                setMap( data).
+        return SQL.UPDATE(dm.updateTable).
+                setMap(data).
                 eqMap(columnMap).
                 update();
     }
 
     //通过map条件修改，传入修改字段
     public int updateByMap(String fields, Map<String, Object> data, Map<String, Object> columnMap) {
-        return SQL.UPDATE(dm.update_table).
+        return SQL.UPDATE(dm.updateTable).
                 setMap(fields, data).
                 eqMap(columnMap).
                 update();
     }
+
     //通过条件构造器修改
-    public int updateByWhere(Map map,SQL sql){
-        return SQL.UPDATE(dm.update_table).
+    public int updateBySql(Map map, SQL sql) {
+
+        return SQL.UPDATE(dm.updateTable).
                 setMap(map).
                 where(sql).
                 update();
@@ -230,119 +240,127 @@ public class BaseDao<T extends BaseDm> {
     //查询-------------------------------------------------------------------------------------------------------
     //通过id，获取一条记录为map
     public Map<String, Object> getMapById(Serializable id) {
-        return SQL.SELECT(dm.select_table)
-                .column(dm.select_fields)
-                .eq(dm.table_id, id)
+        return SQL.SELECT(dm.selectTable)
+                .column(dm.selectFields)
+                .eq(dm.tableId, id)
                 .getMap();
     }
 
     public <E> E getBeanById(Serializable id, Class<E> E) {
-        return (E)SQL.SELECT(dm.select_table)
-                .column(dm.select_fields)
-                .eq(dm.table_id, id)
+        return (E) SQL.SELECT(dm.selectTable)
+                .column(dm.selectFields)
+                .eq(dm.tableId, id)
                 .getBean(E);
     }
 
     //通过一组id列表，获取多条记录为maps
     public List<Map<String, Object>> getMapsByIds(ArrayList ids) {
-        return SQL.SELECT(dm.select_table)
-                .column(dm.select_fields)
-                .in(dm.table_id, ids)
+        return SQL.SELECT(dm.selectTable)
+                .column(dm.selectFields)
+                .in(dm.tableId, ids)
                 .getMaps();
     }
 
     public <E> List<E> getBeansByIdList(ArrayList ids, Class<E> E) {
-        return SQL.SELECT(dm.select_table)
-                .column(dm.select_fields)
-                .in(dm.table_id, ids)
+        return SQL.SELECT(dm.selectTable)
+                .column(dm.selectFields)
+                .in(dm.tableId, ids)
                 .getBeans(E);
     }
+
     public <E> List<E> getBeansByIds(Class<E> E, Serializable... ids) {
-        return SQL.SELECT(dm.select_table)
-                .column(dm.select_fields)
-                .in(dm.table_id, ids)
+        return SQL.SELECT(dm.selectTable)
+                .column(dm.selectFields)
+                .in(dm.tableId, ids)
                 .getBeans(E);
     }
+
     //通过一组id数组，获取多条记录为maps
     public List<Map<String, Object>> getMapsByIds(Object... ids) {
-        return SQL.SELECT(dm.select_table)
-                .column(dm.select_fields)
-                .in(dm.table_id, ids)
+        return SQL.SELECT(dm.selectTable)
+                .column(dm.selectFields)
+                .in(dm.tableId, ids)
                 .getMaps();
     }
 
 
-
     //通过map条件，获取一条记录为map
     public Map<String, Object> getMapByMap(Map<String, Object> columnMap) {
-        return SQL.SELECT(dm.select_table)
-                .column(dm.select_fields)
+        return SQL.SELECT(dm.selectTable)
+                .column(dm.selectFields)
                 .eqMap(columnMap)
                 .getMap();
     }
 
     public <E> E getBeanByMap(Map<String, Object> columnMap, Class<E> E) {
-        return (E)SQL.SELECT(dm.select_table)
-                .column(dm.select_fields)
+        return (E) SQL.SELECT(dm.selectTable)
+                .column(dm.selectFields)
                 .eqMap(columnMap)
                 .getBean(E);
     }
 
     //通过map条件，获取多条记录为maps
     public List<Map<String, Object>> getMapsByMap(Map<String, Object> columnMap) {
-        return SQL.SELECT(dm.select_table)
-                .column(dm.select_fields)
+        return SQL.SELECT(dm.selectTable)
+                .column(dm.selectFields)
                 .eqMap(columnMap)
                 .getMaps();
     }
 
     public <E> List<E> getBeansByMap(Map<String, Object> columnMap, Class<E> E) {
-        return SQL.SELECT(dm.select_table)
-                .column(dm.select_fields)
+        return SQL.SELECT(dm.selectTable)
+                .column(dm.selectFields)
                 .eqMap(columnMap)
                 .getBeans(E);
     }
 
-    //通过条件构造器，获取多条记录为maps
-    public <E> E getBeanByWhere(SQL sql, Class<E> E) {
-        return SQL.SELECT(dm.select_table)
-                .column(dm.select_fields)
-                .where(sql)
-                .getBean(E);
-    }
-    public Map<String, Object> getMapByWhere(SQL sql) {
-        return SQL.SELECT(dm.select_table)
-                .column(dm.select_fields)
-                .where(sql)
-                .getMap();
-    }
-    public List<Map<String, Object>> getMapsByWhere(SQL sql) {
-        return SQL.SELECT(dm.select_table)
-                .column(dm.select_fields)
-                .where(sql)
-                .getMaps();
+    public SQL upgradeToSelect(SQL sql) {
+        if (sql.isSelect())
+            return sql;
+        if (sql.isNotOnlyWhere()) {
+            sql.whereToSelect().select(dm.selectTable).column(dm.selectFields);
+            return sql;
+        }
+        return SQL.SELECT(dm.selectTable)
+                .column(dm.selectFields)
+                .where(sql);
     }
 
-    public <E> List<E> getBeansByWhere(SQL sql, Class<E> E) {
-        return SQL.SELECT(dm.select_table)
-                .column(dm.select_fields)
-                .where(sql)
-                .getBeans(E);
+    //通过条件构造器，获取多条记录为maps
+    public <E> E getBeanBySql(SQL sql, Class<E> E) {
+        return upgradeToSelect(sql).getBean(E);
     }
+
+    public Map<String, Object> getMapBySql(SQL sql) {
+        return upgradeToSelect(sql).getMap();
+
+    }
+
+    public List<Map<String, Object>> getMapsBySql(SQL sql) {
+        return upgradeToSelect(sql).getMaps();
+
+    }
+
+    //通过条件构造器，获取多条记录为beans
+    public <E> List<E> getBeansBySql(SQL sql, Class<E> E) {
+        return upgradeToSelect(sql).getBeans(E);
+
+    }
+
 
     //判断实体是否存在
-    public  <T>Serializable getEntityId(T entity)
-    {
+    public <T> Serializable getEntityId(T entity) {
         Map<String, Object> fieldMap = resolveEntityFields(entity, true);
-        String id_value=(String) fieldMap.get(dm.table_id);
-        Map map=getMapById(id_value);
-        return (Serializable) map.get(dm.table_id);
+        String id_value = (String) fieldMap.get(dm.tableId);
+        Map map = getMapById(id_value);
+        return (Serializable) map.get(dm.tableId);
     }
+
     //存在--------------
     //通过id判断存在
     public boolean exists(String id) {
-        Map map = SQL.SELECT(dm.select_table)
-                .eq(dm.table_id, id)
+        Map map = SQL.SELECT(dm.selectTable)
+                .eq(dm.tableId, id)
                 .getMap();
         if (map == null || map.isEmpty()) {
             return false;
@@ -353,63 +371,51 @@ public class BaseDao<T extends BaseDm> {
 
     //通过map判断存在
     public boolean existsByMap(Map<String, Object> columnMap) {
-        return SQL.SELECT(dm.select_table)
+        return SQL.SELECT(dm.selectTable)
                 .eqMap(columnMap)
                 .isExists();
     }
-    public boolean existsByWhere(SQL sqlWhere) {
-        return SQL.SELECT(dm.select_table)
-                .where(sqlWhere)
-                .isExists();
+
+    public boolean existsBySql(SQL sql) {
+        return upgradeToSelect(sql).isExists();
+
     }
 
 
     //获取数量------------------------
     //通过map条件计数
     public Long getCountByMap(Map<String, Object> columnMap) {
-        return SQL.SELECT(dm.select_table)
+        return SQL.SELECT(dm.selectTable)
                 .eqMap(columnMap)
                 .getCount().longValue();
     }
 
     //通过name-value计数
     public Long getCountByField(String name, Object value) {
-        return SQL.SELECT(dm.select_table)
+        return SQL.SELECT(dm.selectTable)
                 .eq(name, value)
                 .getCount().longValue();
     }
 
     //通过where构造器计数
-    public Long getCountByWhere(SQL sql) {
-        return SQL.SELECT(dm.select_table)
-                .where(sql)
-                .getCount().longValue();
+    public Long getCountBySql(SQL sql) {
+        return upgradeToSelect(sql).getCount().longValue();
+
     }
 
     //获取页面数据--------------------------------------
-    //page传入sql，普通的翻页
-    public List<Map<String, Object>> pageMapsBySql(PageModel pageModel, SQL sql) {
-        return PAGE.of(pageModel, sql).pageMaps();
-    }
-    public <E> List<E> pageBeansBySql(PageModel pageModel, SQL sql, Class<E> E) {
-        return PAGE.of(pageModel, sql).pageBeans(E);
-    }
 
     //page传入翻页条件，传入条件构造器，普通的翻页
-    public List<Map<String, Object>> pageMapsByWhere(PageModel pageModel, SQL sqlWhere) {
-        return PAGE.of(pageModel).setSql(
-                        SQL.SELECT(dm.select_table)
-                                .column(dm.select_fields)
-                                .where(sqlWhere))
-                .pageMaps();
+    public List<Map<String, Object>> pageMapsBySql(PageModel pageModel, SQL sql) {
+
+        return PAGE.of(pageModel).setSql(upgradeToSelect(sql)).pageMaps();
 
     }
-    public <E> List<E> pageBeansByWhere(PageModel pageModel, SQL sqlWhere, Class<E> E) {
-        return PAGE.of(pageModel).setSql(
-                        SQL.SELECT(dm.select_table)
-                                .column(dm.select_fields)
-                                .where(sqlWhere))
-                .pageBeans(E);
+
+    public <E> List<E> pageBeansBySql(PageModel pageModel, SQL sql, Class<E> E) {
+
+        return PAGE.of(pageModel).setSql(upgradeToSelect(sql)).pageBeans(E);
+
     }
 
     //   page传入翻页条件，传入条件构造器，翻页条件要加上页的起始行id

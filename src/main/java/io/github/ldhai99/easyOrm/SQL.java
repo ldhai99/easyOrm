@@ -4,6 +4,7 @@ package io.github.ldhai99.easyOrm;
 import io.github.ldhai99.easyOrm.Lambda.Field;
 import io.github.ldhai99.easyOrm.Lambda.PropertyGetter;
 import io.github.ldhai99.easyOrm.Lambda.TableNameResolver;
+import io.github.ldhai99.easyOrm.base.TaskType;
 import io.github.ldhai99.easyOrm.executor.DbUtilsExecutor;
 import io.github.ldhai99.easyOrm.executor.Executor;
 import io.github.ldhai99.easyOrm.executor.JdbcTemplateExecutor;
@@ -186,8 +187,8 @@ public class SQL {
         return new SQL().where().where(sql);
     }
 
-    public static SQL ADDSQL(String directSql, Object... values) {
-        return new SQL().addSql(directSql, values);
+    public static SQL ADDSQL(String DynamicSql, Object... values) {
+        return new SQL().addSql(DynamicSql, values);
     }
     public static <T>  SQL ADDSQL(PropertyGetter<T> getter, Object... values) {
 
@@ -258,8 +259,37 @@ public class SQL {
         this.builder.setWhere(name);
         return this;
     }
+    //判断类型-----------------------------------------------------------------------------------
+    public boolean isSelect() {
+        return this.builder.isSelect();
+    }
+    public boolean isInsert() {
+        return this.builder.isInsert();
+    }
+    public boolean isDelete() {
+        return this.builder.isDelete();
+    }
+    public boolean isUpdate() {
+        return this.builder.isUpdate();
+    }
+    public boolean isWhere() {
+        return this.builder.isWhere();
+    }
+    public SQL whereToSelect() {
+        this.builder.whereToSelect();
+        return this;
+    }
+    public boolean isDynamicSql() {
+        return this.builder.isDynamicSql();
+    }
+    public TaskType getTaskType(){
+        return this.builder.getTaskType();
+    }
+    public  boolean isNotOnlyWhere(){
+        return this.builder.isNotOnlyWhere();
+    }
 
-    //查询表----------------------------------------
+    //查询表-------------------------------------------------------------------------------------
     public SQL from(String table) {
         this.builder.from(table);
         return this;
@@ -285,9 +315,28 @@ public class SQL {
     public SQL where(SQL subSql) {
         if (subSql == null)
             return this;
-
+        ensureTaskType(this, TaskType.WHERE);
         this.builder.where(jdbcModel.processSqlName(subSql));
         return this;
+    }
+    private void ensureTaskType(SQL sql, TaskType... expectedTaskTypes) {
+        TaskType actualTaskType = sql.getTaskType();
+        if (actualTaskType == null) {
+            throw new UnsupportedOperationException("Unknown task type.");
+        }
+
+        // 如果实际任务类型是 DYNAMIC_SQL，则默认支持所有操作
+        if (actualTaskType == TaskType.DYNAMIC_SQL) {
+            return; // 默认通过校验
+        }
+
+        // 检查是否符合预期的任务类型
+        if (!Arrays.asList(expectedTaskTypes).contains(actualTaskType)) {
+            throw new UnsupportedOperationException(
+                    String.format("Unsupported task type: %s. This method only supports %s tasks.",
+                            actualTaskType, Arrays.toString(expectedTaskTypes))
+            );
+        }
     }
 // 分组条件-----
     public SQL having(String name) {
@@ -302,9 +351,9 @@ public class SQL {
     }
 
     //直接给出sql和参数名称，后面用set设置值配合使用--------------------------------------------------
-    public SQL addSql(String directSql, Object... values) {
+    public SQL addSql(String DynamicSql, Object... values) {
 
-        this.builder.setDirectSql(jdbcModel.createSqlNameParams(directSql, values));
+        this.builder.setDynamicSql(jdbcModel.createSqlNameParams(DynamicSql, values));
         return this;
     }
     public <T> SQL addSql(PropertyGetter<T> getter, Object... values) {
@@ -319,7 +368,7 @@ public class SQL {
     }
     public SQL addSql(SQL subSql) {
 
-        this.builder.setDirectSql(jdbcModel.processSqlName(subSql));
+        this.builder.setDynamicSql(jdbcModel.processSqlName(subSql));
         return this;
     }
 
@@ -1280,15 +1329,12 @@ public class SQL {
     private void setPlaceholder(String name, String nameParamPlaceholder) {
 
         //更新时候，存set
-        if (builder.getDoState().equals("update")) {
+        if (builder.isUpdate()) {
             this.builder.set(" " + name + " = " + nameParamPlaceholder);
         }
         //增加时候，set存列与值
-        else if (builder.getDoState().equals("insert")) {
-
-
+        else if (builder.isInsert()) {
             this.builder.insertColumn(name, nameParamPlaceholder);
-
         }
 
     }
@@ -1402,99 +1448,110 @@ public class SQL {
     }
 
     //查询数据库-----------------------------------------------------------------------------------
-
+    private void ensureSelectTaskType() {
+        ensureTaskType(this, TaskType.SELECT);
+    }
     //返回单列单行数据
     public String getString() {
+        ensureSelectTaskType(); // 校验任务类型为 SELECT
         return executor.getString(this);
     }
 
 
     public Integer getInteger() {
+        ensureSelectTaskType(); // 校验任务类型为 SELECT
         return executor.getInteger(this);
     }
 
     public Long getLong() {
+        ensureSelectTaskType(); // 校验任务类型为 SELECT
         return executor.getLong(this);
     }
 
 
     public Float getFloat() {
+        ensureSelectTaskType(); // 校验任务类型为 SELECT
         return executor.getFloat(this);
     }
 
     public Double getDouble() {
-
+        ensureSelectTaskType(); // 校验任务类型为 SELECT
         return executor.getDouble(this);
     }
 
     public Number getNumber() {
+        ensureSelectTaskType(); // 校验任务类型为 SELECT
         return executor.getNumber(this);
     }
 
 
     public BigDecimal getBigDecimal() {
-
+        ensureSelectTaskType(); // 校验任务类型为 SELECT
         return executor.getBigDecimal(this);
     }
 
     public Date getDate() {
-
+        ensureSelectTaskType(); // 校验任务类型为 SELECT
         return executor.getDate(this);
     }
 
 
     public <T> T getValue(Class<T> requiredType) {
+        ensureSelectTaskType(); // 校验任务类型为 SELECT
         return executor.getValue(this, requiredType);
     }
 
     //返回单列list数据
     public List<String> getStrings() {
-
+        ensureSelectTaskType(); // 校验任务类型为 SELECT
         return executor.getStrings(this);
     }
 
 
     public List<Integer> getIntegers() {
+        ensureSelectTaskType(); // 校验任务类型为 SELECT
         return executor.getIntegers(this);
     }
 
 
     public List<Long> getLongs() {
-
+        ensureSelectTaskType(); // 校验任务类型为 SELECT
         return executor.getLongs(this);
     }
 
 
     public List<Double> getDoubles() {
+        ensureSelectTaskType(); // 校验任务类型为 SELECT
         return executor.getDoubles(this);
     }
 
 
     public List<Float> getFloats() {
+        ensureSelectTaskType(); // 校验任务类型为 SELECT
         return executor.getFloats(this);
     }
 
 
     public List<Number> getNumbers() {
-
+        ensureSelectTaskType(); // 校验任务类型为 SELECT
         return executor.getNumbers(this);
     }
 
 
     public List<BigDecimal> getBigDecimals() {
-
+        ensureSelectTaskType(); // 校验任务类型为 SELECT
         return executor.getBigDecimals(this);
     }
 
 
     public List<Date> getDates() {
-
+        ensureSelectTaskType(); // 校验任务类型为 SELECT
         return executor.getDates(this);
     }
 
 
     public <T> List<T> getValues(Class<T> requiredType) {
-
+        ensureSelectTaskType(); // 校验任务类型为 SELECT
         return executor.getValues(this, requiredType);
     }
 
@@ -1502,39 +1559,41 @@ public class SQL {
     //返回单行数据
 
     public Map<String, Object> getMap() {
-
+        ensureSelectTaskType(); // 校验任务类型为 SELECT
         return executor.getMap(this);
     }
 
 
     //返回多行数据
     public List<Map<String, Object>> getMaps() {
-
+        ensureSelectTaskType(); // 校验任务类型为 SELECT
         return executor.getMaps(this);
     }
 
 
     //返回Bean实体
     public <T> T getBean(Class<T> T) {
-
+        ensureSelectTaskType(); // 校验任务类型为 SELECT
         return executor.getBean(this, T);
     }
 
 
     //返回Bean list
     public <T> List<T> getBeans(Class<T> T) {
-
+        ensureSelectTaskType(); // 校验任务类型为 SELECT
         return executor.getBeans(this, T);
     }
 
 
     //查询应用-------------判断是否存在------------------------------------------------
     public boolean isExists() {
+        ensureSelectTaskType(); // 校验任务类型为 SELECT
         return this.executor.isExists(this);
     }
 
     //对一个查询给出记录数
     public Number getCount() {
+        ensureSelectTaskType(); // 校验任务类型为 SELECT
         return this.executor.getCount(this);
     }
 

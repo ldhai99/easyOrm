@@ -52,6 +52,10 @@ public class PageModel<T> {
         this.searchCount = true;
 
     }
+    public PageModel(Integer pageNo, Integer pageSize){
+        this();
+        this.setCurrent(pageNo).setSize(pageSize);
+    }
 
     // 静态方法：普通分页
     public static PageModel of() {

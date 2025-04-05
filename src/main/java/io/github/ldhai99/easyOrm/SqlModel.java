@@ -1,7 +1,7 @@
 package io.github.ldhai99.easyOrm;
 
 
-import io.github.ldhai99.easyOrm.tools.DbTools;
+import io.github.ldhai99.easyOrm.base.TaskType;
 import io.github.ldhai99.easyOrm.tools.StringTools;
 
 import java.io.Serializable;
@@ -15,10 +15,10 @@ public class SqlModel implements  Cloneable ,Serializable {
     //增加，删除，修改表名
     private String update_table;
     private String table_id=null;
-    private String doState = "select";
+    private TaskType taskType = TaskType.SELECT;
 
 
-    private List<String> directSqls = new ArrayList();
+    private List<String> dynamicSqls = new ArrayList();
     private List<String> afterSelects = new ArrayList();
     //字段
     private List<String> columns = new ArrayList();
@@ -49,10 +49,10 @@ public class SqlModel implements  Cloneable ,Serializable {
 
 
     protected SqlModel(SqlModel other)  {
-        this.doState=other.doState;
+        this.taskType=other.taskType;
         this.update_table=other.update_table;
 
-        this.directSqls.addAll(other.directSqls);
+        this.dynamicSqls.addAll(other.dynamicSqls);
         this.columns.addAll(other.columns);
         this.tables.addAll(other.tables);
         this.joins.addAll(other.joins);
@@ -79,30 +79,30 @@ public class SqlModel implements  Cloneable ,Serializable {
     //指定任务------------------------------------------------------
     public SqlModel update(String table) {
         this.update_table = table;
-        this.doState = "update";
+        this.taskType = TaskType.UPDATE;
         return this;
     }
 
     public SqlModel delete(String table) {
         this.update_table = table;
-        this.doState = "delete";
+        this.taskType = TaskType.DELETE;
         return this;
     }
 
     public SqlModel insert(String table) {
         this.update_table = table;
-        this.doState = "insert";
+        this.taskType = TaskType.INSERT;
         return this;
     }
 
     public SqlModel where() {
-        this.doState = "where";
+        this.taskType = TaskType.WHERE;
         return this;
     }
 
-    public SqlModel setDirectSql(String directSql) {
-        this.doState = "directSql";
-        directSql( directSql);
+    public SqlModel setDynamicSql(String DynamicSql) {
+        this.taskType = TaskType.DYNAMIC_SQL;
+        DynamicSql( DynamicSql);
         return this;
     }
     public SqlModel setTableId(String idFiled){
@@ -139,8 +139,8 @@ public class SqlModel implements  Cloneable ,Serializable {
 
 
     //增加数据-----------------------------------------------------------------
-    public SqlModel directSql(String name) {
-        this.directSqls.add(name);
+    public SqlModel DynamicSql(String name) {
+        this.dynamicSqls.add(name);
         return this;
     }
     public SqlModel afterSelect(String name) {
@@ -307,22 +307,49 @@ public class SqlModel implements  Cloneable ,Serializable {
     //生成构建结果----------------------------------------------
     public String toString() {
 
-        if (this.getDoState().equals("directSql")) {
-            return this.toDirectSql();
-        } else if (this.getDoState().equals("update")) {
+        if (this.getTaskType()==TaskType.DYNAMIC_SQL) {
+
+            return this.toDynamicSql();
+        } else if (this.getTaskType()==TaskType.UPDATE) {
             return this.toUpdate();
-        } else if (this.getDoState().equals("insert")) {
+        } else if (this.getTaskType()==TaskType.INSERT) {
             return this.toInsert();
-        } else if (this.getDoState().equals("delete")) {
+        } else if (this.getTaskType()==TaskType.DELETE) {
             return this.toDelete();
-        } else if (this.getDoState().equals("where")) {
+        } else if (this.getTaskType()==TaskType.WHERE) {
             return this.toWhere();
         } else
             return this.toSelect();
     }
 
+    public boolean isSelect() {
+        return this.getTaskType()==TaskType.SELECT? true:false;
+    }
 
-
+    public boolean isInsert() {
+        return this.getTaskType()==TaskType.INSERT? true:false;
+    }
+    public boolean isDelete() {
+        return this.getTaskType()==TaskType.DELETE? true:false;
+    }
+    public boolean isUpdate() {
+        return this.getTaskType()==TaskType.UPDATE? true:false;
+    }
+    public boolean isWhere() {
+        return this.getTaskType()==TaskType.WHERE? true:false;
+    }
+    public boolean isDynamicSql() {
+        return this.getTaskType()==TaskType.DYNAMIC_SQL? true:false;
+    }
+    public boolean isNotOnlyWhere(){
+        if(columns.isEmpty()&&tables.isEmpty()&&joins.isEmpty()
+                &&orderBys.isEmpty()&&groupBys.isEmpty()&&havings.isEmpty() && !wheres.isEmpty())
+            return true;
+        return false;
+    }
+    public SqlModel whereToSelect(){
+        return this.setTaskType(TaskType.SELECT);
+    }
     //生成sql------------------------------
 
     public String toSelect() {
@@ -382,9 +409,9 @@ public class SqlModel implements  Cloneable ,Serializable {
         return toNewPara(sql.toString());
     }
 
-    public String toDirectSql() {
+    public String toDynamicSql() {
         StringBuilder sql = new StringBuilder();
-        this.appendList(sql, this.directSqls, "  ", " ");
+        this.appendList(sql, this.dynamicSqls, "  ", " ");
         return toNewPara(sql.toString());
     }
 
@@ -417,10 +444,14 @@ public class SqlModel implements  Cloneable ,Serializable {
         }
 
     }
+    //任务类型----------------------------------
 
-    public String getDoState() {
-        return doState;
+    public TaskType getTaskType() {
+        return taskType;
     }
-
+    public SqlModel setTaskType( TaskType taskType) {
+        this.taskType = taskType;
+        return this;
+    }
 
 }

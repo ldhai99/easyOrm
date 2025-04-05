@@ -4,11 +4,11 @@ import io.github.ldhai99.easyOrm.datamodel.BaseDm;
 
 public class StudentDm extends BaseDm {
     public StudentDm() {
-        this.update_table="student";
-        this.select_table="student";
+        this.updateTable="student";
+        this.selectTable="student";
 
-        this.table_id="id";
-        this.update_fields="student_id, name, password, sex, age";
+        this.tableId="id";
+        this.updateFields="student_id, name, password, sex, age";
 
 
 
