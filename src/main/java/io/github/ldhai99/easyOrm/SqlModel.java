@@ -232,10 +232,31 @@ public class SqlModel implements  Cloneable ,Serializable {
     }
 
 
-    public SqlModel orderBy(String name) {
-        this.orderBy(name, true);
+    public SqlModel orderBy(String orderByString) {
+        if (orderByString == null || orderByString.trim().isEmpty()) {
+            throw new IllegalArgumentException("Order by string cannot be null or empty");
+        }
+        // 按逗号分割多个排序字段
+        String[] orderByParts = orderByString.split(",");
+        for (String part : orderByParts) {
+            part = part.trim();
+            if (!part.isEmpty()) {
+                // 检查是否包含 ASC 或 DESC
+                if (part.toUpperCase().contains(" ASC")) {
+                    String fieldName = part.replace("ASC", "").trim();
+                    this.orderBy(fieldName, true);
+                } else if (part.toUpperCase().contains(" DESC")) {
+                    String fieldName = part.replace("DESC", "").trim();
+                    this.orderBy(fieldName, false);
+                } else {
+                    // 如果没有明确指定排序方向，默认为升序
+                    this.orderBy(part, true);
+                }
+            }
+        }
         return this;
     }
+
 
     public SqlModel orderBy(String name, boolean ascending) {
         if (ascending) {

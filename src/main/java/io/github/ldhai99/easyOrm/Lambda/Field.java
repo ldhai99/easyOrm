@@ -1,26 +1,40 @@
 package io.github.ldhai99.easyOrm.Lambda;
 
+import io.github.ldhai99.easyOrm.tools.StringTools;
+
 import java.lang.invoke.SerializedLambda;
 import java.lang.reflect.Method;
 
 
 public class Field {
+    /**
+     * 获取属性名（字段名）
+     */
+
+    public static <T> String field(PropertyGetter<T> getter) {
+
+        SerializedLambda lambda = extractSerializedLambda(getter);
+        String methodName = lambda.getImplMethodName();
+        String propertyName = extractPropertyName(methodName);
+        return StringTools.camelToSnakeCase(propertyName);
+    }
 
     /**
      * 获取完整的列引用（表名.字段名）
      */
     public static <T> String fullField(PropertyGetter<T> getter) {
 
-            SerializedLambda lambda =extractSerializedLambda(getter);
+        SerializedLambda lambda = extractSerializedLambda(getter);
 
-            String methodName = lambda.getImplMethodName();
-            String propertyName = extractPropertyName(methodName);
+        String methodName = lambda.getImplMethodName();
+        String propertyName = extractPropertyName(methodName);
 
-            Class<?> entityClass = getEntityClass(lambda);
-            String tableName = TableNameResolver.getTableName(entityClass);
-            return tableName + "." + propertyName;
+        Class<?> entityClass = getEntityClass(lambda);
+        String tableName = TableNameResolver.getTableName(entityClass);
+        return StringTools.camelToSnakeCase(tableName) + "." + StringTools.camelToSnakeCase(propertyName);
 
     }
+
     private static <T> SerializedLambda extractSerializedLambda(PropertyGetter<T> getter) {
         try {
             Method method = getter.getClass().getDeclaredMethod("writeReplace");
@@ -30,18 +44,8 @@ public class Field {
             throw new RuntimeException("解析失败，请检查 Lambda 是否可序列化", e);
         }
     }
-    /**
-     * 获取属性名（字段名）
-     */
 
-    public static <T> String field(PropertyGetter<T> getter) {
-
-        SerializedLambda lambda =extractSerializedLambda(getter);
-        String methodName = lambda.getImplMethodName();
-        return extractPropertyName(methodName);
-
-    }
-    public static <T> Class<?> getEntityClass( SerializedLambda lambda) {
+    public static <T> Class<?> getEntityClass(SerializedLambda lambda) {
         try {
 
             String className = lambda.getImplClass().replace('/', '.');
@@ -62,8 +66,6 @@ public class Field {
         }
         throw new IllegalArgumentException("非标准 Getter 方法: " + methodName);
     }
-
-
 
 
 }
