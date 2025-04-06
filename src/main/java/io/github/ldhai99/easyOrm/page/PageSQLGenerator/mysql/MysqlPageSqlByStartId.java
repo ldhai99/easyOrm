@@ -13,7 +13,7 @@ public class MysqlPageSqlByStartId implements PageSQLGenerator {
         if (pageModel.getCountId() == null) {
             throw new IllegalArgumentException("countId 必须指定");
         }
-        
+
         // 克隆原始 SQL 避免污染
         SQL paginationSql = sql.clone();
 
