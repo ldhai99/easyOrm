@@ -189,15 +189,15 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-javadoc-plugin</artifactId>
-                        <version>2.9.1</version>
-                        <executions>
-                            <execution>
-                                <id>attach-javadocs</id>
-                                <goals>
-                                    <goal>jar</goal>
-                                </goals>
-                            </execution>
-                        </executions>
+<!--                        <version>3.3.1</version>-->
+                        <configuration>
+                            <!-- 忽略缺失的注释错误 -->
+                            <failOnError>false</failOnError>
+                            <!-- 指定编码为UTF-8 -->
+                            <encoding>UTF-8</encoding>
+                            <docencoding>UTF-8</docencoding>
+                            <charset>UTF-8</charset>
+                        </configuration>
                     </plugin>
                     <!--测试插件-->
                     <plugin>

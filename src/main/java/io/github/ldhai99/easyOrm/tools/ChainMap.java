@@ -54,6 +54,8 @@ public class ChainMap extends HashMap<String, Object> {
     }
     /**
      * 链式 remove 方法的链式调用版本
+     * @param key
+     * @return
      */
     public ChainMap  delete(String key) {
         remove(key);

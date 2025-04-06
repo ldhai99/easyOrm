@@ -80,10 +80,10 @@ public class BaseDao<T extends BaseDm> {
     // 在 SQL 类中添加以下方法
 
     /**
-     * 插入实体对象（全字段插入，包含空值）
-     *
-     * @param entity 实体对象
-     * @return 当前SQL实例
+     * 插入实体对象
+     * @param <T> 实体类型
+     * @param entity 要插入的实体对象
+     * @return 影响的行数
      */
     public <T> int insert(T entity) {
         return insert(entity, false);

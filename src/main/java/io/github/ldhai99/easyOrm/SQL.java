@@ -549,8 +549,39 @@ public class SQL {
     }
 
     //---默认升序排序
-    public SQL orderBy(String clause) {
-        this.orderBy(clause, true);
+//    public SQL orderBy(String clause) {
+//        this.orderBy(clause, true);
+//        return this;
+//    }
+    /**
+     * 添加多个排序字段，支持直接传入完整的排序字符串。
+     *
+     * @param orderByString 排序字符串，例如 "item.sort_order ASC, item.create_time DESC"
+     * @return 当前 SqlModel 实例
+     */
+    public SQL orderBy(String orderByString) {
+        if (orderByString == null || orderByString.trim().isEmpty()) {
+            throw new IllegalArgumentException("Order by string cannot be null or empty");
+        }
+
+        // 按逗号分割多个排序字段
+        String[] orderByParts = orderByString.split(",");
+        for (String part : orderByParts) {
+            part = part.trim();
+            if (!part.isEmpty()) {
+                // 使用正则表达式匹配 ASC 或 DESC
+                if (part.toUpperCase().matches(".*\\bASC\\b.*")) {
+                    String fieldName = part.replaceAll("(?i)\\bASC\\b", "").trim();
+                    this.orderBy(fieldName, true);
+                } else if (part.toUpperCase().matches(".*\\bDESC\\b.*")) {
+                    String fieldName = part.replaceAll("(?i)\\bDESC\\b", "").trim();
+                    this.orderBy(fieldName, false);
+                } else {
+                    // 如果没有明确指定排序方向，默认为升序
+                    this.orderBy(part, true);
+                }
+            }
+        }
         return this;
     }
 

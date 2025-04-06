@@ -20,8 +20,9 @@ public class StringTools {
         System.out.println(StringTools.snakeToCamelCase(null));            // 输出: null
     }
     /**
-     * 功能：驼峰命名转下划线命名
-     * 小写和大写紧挨一起的地方,加上分隔符,然后全部转小写
+     * 将驼峰命名转换为下划线命名
+     * @param camelCaseString 驼峰格式的字符串
+     * @return 下划线格式的字符串
      */
     public static String camelToSnakeCase(String camelCaseString) {
         if (camelCaseString == null || camelCaseString.isEmpty()) {
