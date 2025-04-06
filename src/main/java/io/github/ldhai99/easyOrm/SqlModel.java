@@ -453,6 +453,11 @@ public class SqlModel implements  Cloneable ,Serializable {
         this.appendList(sql, this.dynamicSqls, "  ", " ");
         return toNewPara(sql.toString());
     }
+    public  String toOrderBy(){
+        StringBuilder sql = new StringBuilder();
+        this.appendList(sql, this.orderBys, " order by ", ", ");
+        return toNewPara(sql.toString());
+    }
 
     public SqlModel paraName(String name, String newName) {
         this.paraNames.add(name);

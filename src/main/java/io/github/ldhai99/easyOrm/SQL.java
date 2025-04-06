@@ -1383,7 +1383,9 @@ public class SQL {
     public String toInsert() {
         return this.builder.toInsert();
     }
-
+    public String toOrderBy() {
+        return this.builder.toOrderBy();
+    }
     //输出sql------------------------------------------
     public String toString() {
 

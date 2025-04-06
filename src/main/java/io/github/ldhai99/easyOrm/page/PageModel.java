@@ -39,6 +39,10 @@ public class PageModel<T> {
     protected String countId = ""; // 用于分页的主键字段
     protected long pageStartId = 0; // 开始行的 ID
 
+
+
+    protected String orderBy = null;
+
     protected PageSQLGenerator pageSqlGenerator = null;
 
     // 构造函数
@@ -332,5 +336,11 @@ public class PageModel<T> {
         this.pageSqlGenerator = ConfigPageSql.getPageSqlByStartId();
         return this;
     }
+    public String getOrderBy() {
+        return orderBy;
+    }
 
+    public void setOrderBy(String orderBy) {
+        this.orderBy = orderBy;
+    }
 }

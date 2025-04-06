@@ -41,7 +41,7 @@ public class PageSQLGeneratorNewTest {
                         .setSize(2)
                         .setPageSqlGenerator(new MysqlPageSql())
                         .getPagedSql());
-        //(select id,name from student order by id asc)   limit 0, 2
+        //select id,name from student order by id asc   limit 0, 2
 
         System.out.println(
                 PAGE.of(sql)
@@ -62,7 +62,7 @@ public class PageSQLGeneratorNewTest {
                         .setPageSqlGenerator(new MysqlPageSqlById())
                         .getPagedSql());
         //select id,name from student where  id in
-        // (select id from  (    (select id from student order by id asc)   limit 0, 2) a )  order by id asc
+        // (select id from  (    select id from student order by id asc   limit 0, 2) a )  order by id asc
 
         System.out.println(
                 PAGE.of(sql)
@@ -76,9 +76,7 @@ public class PageSQLGeneratorNewTest {
     //有起始行翻页PageSqlStartid
     @Test
     public void pageSqlByStartId() throws SQLException {
-
-
-        SQL sql = new SQL(executor).select("student").column("id,name").orderBy("id");
+        SQL sql = SQL.SELECT("student").column("id,name").orderBy("id");
         System.out.println(
                 PAGE.of(sql)
                         .setCurrent(1)
@@ -88,8 +86,6 @@ public class PageSQLGeneratorNewTest {
                         .setPageSqlGenerator(new MysqlPageSqlByStartId())
                         .getPagedSql());
         //(select id,name from student where  id >  :p4e4aea350  order by id asc)    limit 2
-
-
         System.out.println(
                 PAGE.of(sql)
                         .setCurrent(1)
@@ -98,6 +94,5 @@ public class PageSQLGeneratorNewTest {
                         .setPageStartId(2)
                         .setPageSqlGenerator(new MysqlPageSqlByStartId())
                         .pageMaps());
-
     }
 }
