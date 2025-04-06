@@ -2,7 +2,8 @@ package io.github.ldhai99.easyOrm;
 
 
 import io.github.ldhai99.easyOrm.base.TaskType;
-import io.github.ldhai99.easyOrm.tools.StringTools;
+import io.github.ldhai99.easyOrm.tools.SqlTools;
+
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -301,7 +302,7 @@ public class SqlModel implements  Cloneable ,Serializable {
 
         String lastWhere = " ";
         if (wheres1.size() != 0) {
-            lastWhere = StringTools.rightTrim(wheres1.get(wheres1.size() - 1));
+            lastWhere = SqlTools.rightTrim(wheres1.get(wheres1.size() - 1));
         }
 
         String pre = "";

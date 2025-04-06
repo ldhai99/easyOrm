@@ -1,6 +1,8 @@
 package io.github.ldhai99.easyOrm.Lambda;
 
-import io.github.ldhai99.easyOrm.tools.StringTools;
+
+
+import io.github.ldhai99.easyOrm.tools.SqlTools;
 
 import java.lang.invoke.SerializedLambda;
 import java.lang.reflect.Method;
@@ -16,7 +18,7 @@ public class Field {
         SerializedLambda lambda = extractSerializedLambda(getter);
         String methodName = lambda.getImplMethodName();
         String propertyName = extractPropertyName(methodName);
-        return StringTools.camelToSnakeCase(propertyName);
+        return SqlTools.camelToSnakeCase(propertyName);
     }
 
     /**
@@ -31,7 +33,7 @@ public class Field {
 
         Class<?> entityClass = getEntityClass(lambda);
         String tableName = TableNameResolver.getTableName(entityClass);
-        return StringTools.camelToSnakeCase(tableName) + "." + StringTools.camelToSnakeCase(propertyName);
+        return SqlTools.camelToSnakeCase(tableName) + "." + SqlTools.camelToSnakeCase(propertyName);
 
     }
 

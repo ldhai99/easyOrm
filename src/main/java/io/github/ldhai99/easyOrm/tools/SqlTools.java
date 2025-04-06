@@ -1,23 +1,48 @@
 package io.github.ldhai99.easyOrm.tools;
 
-public class StringTools {
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+public class SqlTools {
+    /**
+     * 解析排序子句中的 column 方向（若 column 未参与排序则抛出异常）
+     * @param column 分页主键字段名（如 "id"）
+     * @param orderByClause ORDER BY 子句（如 "id ASC, name DESC"）
+     * @return 是否为升序
+     * @throws IllegalArgumentException 如果 countId 未参与排序
+     */
+    public static boolean parseOrderDirection(String column, String orderByClause) {
+        // 正则匹配 countId 的排序方向（不区分大小写）
+        Pattern pattern = Pattern.compile(
+                "(?i)\\b" + column + "\\s+(ASC|DESC)\\b"
+        );
+        Matcher matcher = pattern.matcher(orderByClause);
+
+        if (matcher.find()) {
+            return "ASC".equalsIgnoreCase(matcher.group(1));
+        } else {
+            throw new IllegalArgumentException(
+                    "分页主键字段 [" + column + "] 必须参与排序，当前 ORDER BY 子句: " + orderByClause
+            );
+        }
+    }
 
     public static  void main(String[] args){
         // 测试驼峰转下划线
-        System.out.println(StringTools.camelToSnakeCase("userId"));       // 输出: user_id
-        System.out.println(StringTools.camelToSnakeCase("userName"));     // 输出: user_name
-        System.out.println(StringTools.camelToSnakeCase("isActiveUser")); // 输出: is_active_user
+        System.out.println(SqlTools.camelToSnakeCase("userId"));       // 输出: user_id
+        System.out.println(SqlTools.camelToSnakeCase("userName"));     // 输出: user_name
+        System.out.println(SqlTools.camelToSnakeCase("isActiveUser")); // 输出: is_active_user
 
         // 测试下划线转驼峰
-        System.out.println(StringTools.snakeToCamelCase("user_id"));       // 输出: userId
-        System.out.println(StringTools.snakeToCamelCase("user_name"));     // 输出: userName
-        System.out.println(StringTools.snakeToCamelCase("is_active_user")); // 输出: isActiveUser
+        System.out.println(SqlTools.snakeToCamelCase("user_id"));       // 输出: userId
+        System.out.println(SqlTools.snakeToCamelCase("user_name"));     // 输出: userName
+        System.out.println(SqlTools.snakeToCamelCase("is_active_user")); // 输出: isActiveUser
 
         // 边界情况
-        System.out.println(StringTools.camelToSnakeCase(""));              // 输出: ""
-        System.out.println(StringTools.snakeToCamelCase(""));              // 输出: ""
-        System.out.println(StringTools.camelToSnakeCase(null));            // 输出: null
-        System.out.println(StringTools.snakeToCamelCase(null));            // 输出: null
+        System.out.println(SqlTools.camelToSnakeCase(""));              // 输出: ""
+        System.out.println(SqlTools.snakeToCamelCase(""));              // 输出: ""
+        System.out.println(SqlTools.camelToSnakeCase(null));            // 输出: null
+        System.out.println(SqlTools.snakeToCamelCase(null));            // 输出: null
     }
     /**
      * 将驼峰命名转换为下划线命名
