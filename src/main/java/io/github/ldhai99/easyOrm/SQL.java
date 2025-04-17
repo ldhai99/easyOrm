@@ -1174,6 +1174,28 @@ public class SQL {
         this.where(namePlacehoder + " " + isNull);
         return this;
     }
+    //四。1、IS empty、IS NOT empty——判断是否为 empty
+
+    public SQL isEmpty(Object name) {
+
+        this.eq(name, "");
+        return this;
+    }
+
+    public <T> SQL isEmpty(PropertyGetter<T> getter) {
+        return isEmpty(Field.field(getter));
+    }
+
+    public SQL isNotEmpty(Object name) {
+
+        this.neq(name, "");
+        return this;
+    }
+
+    public <T> SQL isNotEmpty(PropertyGetter<T> getter) {
+        return isNotEmpty(Field.field(getter));
+    }
+
 
     //五、IN 谓词——OR 的简便用法
     public SQL or() {
