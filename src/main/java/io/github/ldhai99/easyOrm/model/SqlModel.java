@@ -356,7 +356,8 @@ public class SqlModel implements  Cloneable ,Serializable {
     }
 
     public boolean isSelect() {
-        return this.getTaskType()==TaskType.SELECT? true:false;
+        //必须是select且至少有表名，才判断为select任务
+        return this.getTaskType()==TaskType.SELECT && !this.tables.isEmpty()? true:false;
     }
 
     public boolean isInsert() {

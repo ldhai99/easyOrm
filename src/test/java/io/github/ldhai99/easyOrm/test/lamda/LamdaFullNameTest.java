@@ -23,18 +23,32 @@ public class LamdaFullNameTest {
     public  void joinlamda() throws SQLException {
 
         System.out.println(
-                SQL.SELECT(Student.class).fullCol(Student::getAge).fullCol(Student1::getName)
+                SQL.SELECT(Student.class).full(Student::getAge).full(Student1::getName)
                         .join(Student1.class, JoinOn.on(Student1::getName).eq(Student::getName).toString())
                         .getMaps()
         );
         System.out.println(
-                SQL.SELECT(Student.class).fullCol(Student::getAge,Student::getName)
+                SQL.SELECT(Student.class).full(Student::getAge,Student::getName)
                         .join(Student1.class, JoinOn.on(Student1::getName).eq(Student::getName).toString())
                         .getMaps()
         );
         System.out.println(
-                SQL.SELECT(Student.class).fullCol(Student::getAge,Student::getName)
-                        .join(Student1.class,SQL.ADDSQLFULLCOL(Student1::getName).addSql("=").addSqlFullCol(Student::getName))
+                SQL.SELECT(Student.class).full(Student::getAge,Student::getName)
+                        .join(Student1.class,SQL.ADDSQLfull(Student1::getName).addSql("=").addSqlfull(Student::getName))
+                        .getMaps()
+        );
+    }
+    @Test
+    //联合多表查询，用lambda表达式，全名（表名.字段名称）,on条件是全名（表名.字段名称）
+    public  void joinlamda1() throws SQLException {
+        System.out.println(
+                SQL.SELECT(Student.class).full(Student::getAge).full(Student1::getName)
+                        .join(Student1.class, JoinOn.on(Student1::getName).eq(Student::getName).toString())
+
+        );
+        System.out.println(
+                SQL.SELECT(Student.class).full(Student::getAge).full(Student1::getName)
+                        .join(Student1.class, JoinOn.on(Student1::getName).eq(Student::getName).toString())
                         .getMaps()
         );
     }

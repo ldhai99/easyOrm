@@ -12,7 +12,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>io.github.ldhai99</groupId>
     <artifactId>easyOrm</artifactId>
-    <version>3.0.3</version>
+    <version>3.1.0</version>
     <!--    <version>0.0.9-SNAPSHOT</version>-->
 
 
@@ -20,6 +20,7 @@
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.javadoc.skip>false</maven.javadoc.skip>
         <spring-framework.version>5.3.39</spring-framework.version>
     </properties>
 
@@ -139,6 +140,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-release-plugin</artifactId>
+                        <version>2.5.3</version>
                         <configuration>
                             <tagBase>${project.artifactId}-${project.version}</tagBase>
                             <!-- tag分支的名称，project.version只包含版本，不包含SNAPSHOT后缀 -->
@@ -183,18 +185,25 @@
                     </plugin>
 
                     <!--生成API文档插件-->
+                    <!-- 配置 maven-javadoc-plugin -->
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-javadoc-plugin</artifactId>
-
+                        <version>2.9.1</version>
+<!--                        <version>3.5.0</version> &lt;!&ndash; 使用最新版本 &ndash;&gt;-->
                         <configuration>
-                            <!-- 忽略缺失的注释错误 -->
-                            <failOnError>false</failOnError>
-                            <!-- 指定编码为UTF-8 -->
-                            <encoding>UTF-8</encoding>
-                            <docencoding>UTF-8</docencoding>
-                            <charset>UTF-8</charset>
+                            <encoding>UTF-8</encoding> <!-- 源文件编码 -->
+                            <charset>UTF-8</charset> <!-- 输出 HTML 文件的字符集 -->
+                            <docencoding>UTF-8</docencoding> <!-- Javadoc 文档的编码 -->
                         </configuration>
+                        <executions>
+                            <execution>
+                                <id>attach-javadocs</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
                     </plugin>
                     <!--测试插件-->
                     <plugin>

@@ -18,12 +18,12 @@ public class GroupHandler <T extends GroupHandler<T>> extends OrderHandler<T> {
         return groupBy(getter, false);
     }
 
-    public <E> T groupByfullCol(PropertyGetter<E> getter) {
+    public <E> T groupByfull(PropertyGetter<E> getter) {
         return groupBy(getter, true);
     }
 
-    public <E> T groupBy(PropertyGetter<E> getter, boolean usefullCol) {
-        if (usefullCol)
+    public <E> T groupBy(PropertyGetter<E> getter, boolean usefull) {
+        if (usefull)
             return groupBy(Field.fullField(getter));
         else
             return groupBy(Field.field(getter));

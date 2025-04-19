@@ -91,7 +91,7 @@ public class BaseDao<T extends BaseDm> {
 
     /**
      * 插入实体对象（可选是否忽略空值）
-     *
+     *@param <T> 泛型类型，表示实体类的类型
      * @param entity     实体对象
      * @param ignoreNull 是否忽略空值字段
      * @return 当前SQL实例
@@ -171,7 +171,7 @@ public class BaseDao<T extends BaseDm> {
 
     /**
      * 根据主键更新实体对象（自动识别主键字段）
-     *
+     *@param <T> 泛型类型，表示实体类的类型
      * @param entity 实体对象
      * @return 当前SQL实例
      */

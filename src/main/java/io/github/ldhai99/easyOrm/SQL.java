@@ -203,7 +203,7 @@ public class SQL  extends ExecutorHandler<SQL> {
         return ADDSQL(Field.field(getter), values);
 
     }
-    public static <T> SQL ADDSQLFULLCOL(PropertyGetter<T> getter, Object... values) {
+    public static <T> SQL ADDSQLfull(PropertyGetter<T> getter, Object... values) {
 
         return ADDSQL(Field.fullField(getter), values);
 
@@ -221,7 +221,7 @@ public class SQL  extends ExecutorHandler<SQL> {
         this.addSql(Field.field(getter), values);
         return this;
     }
-    public <T> SQL addSqlFullCol(PropertyGetter<T> getter, Object... values) {
+    public <T> SQL addSqlfull(PropertyGetter<T> getter, Object... values) {
 
         this.addSql(Field.fullField(getter), values);
         return this;

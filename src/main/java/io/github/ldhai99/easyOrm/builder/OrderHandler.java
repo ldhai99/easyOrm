@@ -37,12 +37,12 @@ public class OrderHandler<T extends OrderHandler<T>> extends WhereHandler<T> {
         return orderByAsc(getter, false);
     }
 
-    public <E> T orderByAscfullCol(PropertyGetter<E> getter) {
+    public <E> T orderByAscfull(PropertyGetter<E> getter) {
         return orderByAsc(getter, true);
     }
 
-    public <E> T orderByAsc(PropertyGetter<E> getter, boolean usefullCol) {
-        if (usefullCol)
+    public <E> T orderByAsc(PropertyGetter<E> getter, boolean usefull) {
+        if (usefull)
             return orderByAsc(Field.fullField(getter));
         else
             return orderByAsc(Field.field(getter));
@@ -59,12 +59,12 @@ public class OrderHandler<T extends OrderHandler<T>> extends WhereHandler<T> {
         return orderByDesc(getter, false);
     }
 
-    public <E> T orderByDescfullCol(PropertyGetter<E> getter) {
+    public <E> T orderByDescfull(PropertyGetter<E> getter) {
         return orderByDesc(getter, true);
     }
 
-    public <E> T orderByDesc(PropertyGetter<E> getter, boolean usefullCol) {
-        if (usefullCol)
+    public <E> T orderByDesc(PropertyGetter<E> getter, boolean usefull) {
+        if (usefull)
             return orderByDesc(Field.fullField(getter));
         else
             return orderByDesc(Field.field(getter));
@@ -111,12 +111,12 @@ public class OrderHandler<T extends OrderHandler<T>> extends WhereHandler<T> {
         return orderBy(getter, false);
     }
 
-    public <E> T orderByfullCol(PropertyGetter<E> getter) {
+    public <E> T orderByfull(PropertyGetter<E> getter) {
         return orderBy(getter, true);
     }
 
-    public <E> T orderBy(PropertyGetter<E> getter, boolean usefullCol) {
-        if (usefullCol)
+    public <E> T orderBy(PropertyGetter<E> getter, boolean usefull) {
+        if (usefull)
             return orderBy(Field.fullField(getter));
         else
             return orderBy(Field.field(getter));
@@ -133,12 +133,12 @@ public class OrderHandler<T extends OrderHandler<T>> extends WhereHandler<T> {
         return orderBy(getter, ascending, false);
     }
 
-    public <E> T orderByfullCol(PropertyGetter<E> getter, boolean ascending) {
+    public <E> T orderByfull(PropertyGetter<E> getter, boolean ascending) {
         return orderBy(getter, ascending, true);
     }
 
-    public <E> T orderBy(PropertyGetter<E> getter, boolean ascending, boolean usefullCol) {
-        if (usefullCol)
+    public <E> T orderBy(PropertyGetter<E> getter, boolean ascending, boolean usefull) {
+        if (usefull)
             return orderBy(Field.fullField(getter), ascending);
         else
             return orderBy(Field.field(getter), ascending);

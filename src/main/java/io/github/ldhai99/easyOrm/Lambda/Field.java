@@ -10,6 +10,7 @@ import java.lang.reflect.Method;
 
 public class Field {
     /**
+     * @param <T> 泛型类型，表示实体类的类型
      * 获取属性名（字段名）
      */
 

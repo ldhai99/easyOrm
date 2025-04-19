@@ -17,12 +17,12 @@ public class ColumnHandler<T extends ColumnHandler<T>> extends BaseSQL<T> {
         return sum(getter, false);
     }
 
-    public <E> T sumfullCol(PropertyGetter<E> getter) {
+    public <E> T sumfull(PropertyGetter<E> getter) {
         return sum(getter, true);
     }
 
-    public <E> T sum(PropertyGetter<E> getter, boolean usefullCol) {
-        if (usefullCol)
+    public <E> T sum(PropertyGetter<E> getter, boolean usefull) {
+        if (usefull)
             return sum(Field.fullField(getter));
         else
             return sum(Field.field(getter));
@@ -37,12 +37,12 @@ public class ColumnHandler<T extends ColumnHandler<T>> extends BaseSQL<T> {
         return sum(getter, alias, false);
     }
 
-    public <E> T sumfullCol(PropertyGetter<E> getter, String alias) {
+    public <E> T sumfull(PropertyGetter<E> getter, String alias) {
         return sum(getter, alias, true);
     }
 
-    public <E> T sum(PropertyGetter<E> getter, String alias, boolean usefullCol) {
-        if (usefullCol)
+    public <E> T sum(PropertyGetter<E> getter, String alias, boolean usefull) {
+        if (usefull)
             return sum(Field.fullField(getter), alias);
         else
             return sum(Field.field(getter), alias);
@@ -58,12 +58,12 @@ public class ColumnHandler<T extends ColumnHandler<T>> extends BaseSQL<T> {
         return avg(getter, false);
     }
 
-    public <E> T avgfullCol(PropertyGetter<E> getter) {
+    public <E> T avgfull(PropertyGetter<E> getter) {
         return avg(getter, true);
     }
 
-    public <E> T avg(PropertyGetter<E> getter, boolean usefullCol) {
-        if (usefullCol)
+    public <E> T avg(PropertyGetter<E> getter, boolean usefull) {
+        if (usefull)
             return avg(Field.fullField(getter));
         else
             return avg(Field.field(getter));
@@ -78,12 +78,12 @@ public class ColumnHandler<T extends ColumnHandler<T>> extends BaseSQL<T> {
         return avg(getter, alias, false);
     }
 
-    public <E> T avgfullCol(PropertyGetter<E> getter, String alias) {
+    public <E> T avgfull(PropertyGetter<E> getter, String alias) {
         return sum(getter, alias, true);
     }
 
-    public <E> T avg(PropertyGetter<E> getter, String alias, boolean usefullCol) {
-        if (usefullCol)
+    public <E> T avg(PropertyGetter<E> getter, String alias, boolean usefull) {
+        if (usefull)
             return sum(Field.fullField(getter), alias);
         else
             return sum(Field.field(getter), alias);
@@ -99,12 +99,12 @@ public class ColumnHandler<T extends ColumnHandler<T>> extends BaseSQL<T> {
         return max(getter, false);
     }
 
-    public <E> T maxfullCol(PropertyGetter<E> getter) {
+    public <E> T maxfull(PropertyGetter<E> getter) {
         return max(getter, true);
     }
 
-    public <E> T max(PropertyGetter<E> getter, boolean usefullCol) {
-        if (usefullCol)
+    public <E> T max(PropertyGetter<E> getter, boolean usefull) {
+        if (usefull)
             return max(Field.fullField(getter));
         else
             return max(Field.field(getter));
@@ -120,12 +120,12 @@ public class ColumnHandler<T extends ColumnHandler<T>> extends BaseSQL<T> {
         return max(getter, alias, false);
     }
 
-    public <E> T maxfullCol(PropertyGetter<E> getter, String alias) {
+    public <E> T maxfull(PropertyGetter<E> getter, String alias) {
         return max(getter, alias, true);
     }
 
-    public <E> T max(PropertyGetter<E> getter, String alias, boolean usefullCol) {
-        if (usefullCol)
+    public <E> T max(PropertyGetter<E> getter, String alias, boolean usefull) {
+        if (usefull)
             return max(Field.fullField(getter), alias);
         else
             return max(Field.field(getter), alias);
@@ -141,12 +141,12 @@ public class ColumnHandler<T extends ColumnHandler<T>> extends BaseSQL<T> {
         return min(getter, false);
     }
 
-    public <E> T minfullCol(PropertyGetter<E> getter) {
+    public <E> T minfull(PropertyGetter<E> getter) {
         return min(getter, true);
     }
 
-    public <E> T min(PropertyGetter<E> getter, boolean usefullCol) {
-        if (usefullCol)
+    public <E> T min(PropertyGetter<E> getter, boolean usefull) {
+        if (usefull)
             return min(Field.fullField(getter));
         else
             return min(Field.field(getter));
@@ -162,12 +162,12 @@ public class ColumnHandler<T extends ColumnHandler<T>> extends BaseSQL<T> {
         return min(getter, alias, false);
     }
 
-    public <E> T minfullCol(PropertyGetter<E> getter, String alias) {
+    public <E> T minfull(PropertyGetter<E> getter, String alias) {
         return min(getter, alias, true);
     }
 
-    public <E> T min(PropertyGetter<E> getter, String alias, boolean usefullCol) {
-        if (usefullCol)
+    public <E> T min(PropertyGetter<E> getter, String alias, boolean usefull) {
+        if (usefull)
             return min(Field.fullField(getter), alias);
         else
             return min(Field.field(getter), alias);
@@ -194,12 +194,12 @@ public class ColumnHandler<T extends ColumnHandler<T>> extends BaseSQL<T> {
         return aggregate(function, getter, null, false);
     }
 
-    public <E> T aggregatefullCol(String function, PropertyGetter<E> getter) {
+    public <E> T aggregatefull(String function, PropertyGetter<E> getter) {
         return aggregate(function, getter, null, true);
     }
 
-    public <E> T aggregate(String function, PropertyGetter<E> getter, boolean usefullCol) {
-        return aggregate(function, getter, null, usefullCol);
+    public <E> T aggregate(String function, PropertyGetter<E> getter, boolean usefull) {
+        return aggregate(function, getter, null, usefull);
     }
 
     //---aggregate--alis------------
@@ -216,12 +216,12 @@ public class ColumnHandler<T extends ColumnHandler<T>> extends BaseSQL<T> {
         return aggregate(function, getter, alias, false);
     }
 
-    public <E> T aggregatefullCol(String function, PropertyGetter<E> getter, String alias) {
+    public <E> T aggregatefull(String function, PropertyGetter<E> getter, String alias) {
         return aggregate(function, getter, alias, true);
     }
 
-    public <E> T aggregate(String function, PropertyGetter<E> getter, String alias, boolean usefullCol) {
-        if (usefullCol)
+    public <E> T aggregate(String function, PropertyGetter<E> getter, String alias, boolean usefull) {
+        if (usefull)
             return aggregate(function, Field.fullField(getter), alias);
         else
             return aggregate(function, Field.field(getter), alias);
@@ -237,7 +237,7 @@ public class ColumnHandler<T extends ColumnHandler<T>> extends BaseSQL<T> {
         return column(Field.field(getter));
     }
 
-    public <E> T fullCol(PropertyGetter<E> getter) {
+    public <E> T full(PropertyGetter<E> getter) {
         return column(Field.fullField(getter));
     }
 
@@ -248,7 +248,7 @@ public class ColumnHandler<T extends ColumnHandler<T>> extends BaseSQL<T> {
         return self();
     }
 
-    public <E> T fullCol(PropertyGetter<E>... getters) {
+    public <E> T full(PropertyGetter<E>... getters) {
         for (int i = 0; i < getters.length; i++) {
             column(Field.fullField(getters[i]));
         }
@@ -265,7 +265,7 @@ public class ColumnHandler<T extends ColumnHandler<T>> extends BaseSQL<T> {
         return column(Field.field(getter), alias);
     }
 
-    public <E> T fullCol(PropertyGetter<E> getter, String alias) {
+    public <E> T full(PropertyGetter<E> getter, String alias) {
         return column(Field.fullField(getter), alias);
     }
 
@@ -298,7 +298,7 @@ public class ColumnHandler<T extends ColumnHandler<T>> extends BaseSQL<T> {
         return column(Field.field(getter), groupBy);
     }
 
-    public <E> T fullCol(PropertyGetter<E> getter, boolean groupBy) {
+    public <E> T full(PropertyGetter<E> getter, boolean groupBy) {
         return column(Field.fullField(getter), groupBy);
     }
 
