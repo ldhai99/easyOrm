@@ -1,4 +1,6 @@
-package io.github.ldhai99.easyOrm;
+package io.github.ldhai99.easyOrm.model;
+
+import io.github.ldhai99.easyOrm.SQL;
 
 import java.io.Serializable;
 import java.util.*;

@@ -203,7 +203,7 @@ public class QueryTest {
     public void isExists() throws SQLException {
 
         System.out.println(
-                new SQL(executor).select("student").eq("age", 18).isExists()
+                new SQL(executor).select("student").eq("age", 118).isExists()
         );
     }
     //---------返回记录个数-----------
@@ -212,7 +212,7 @@ public class QueryTest {
 
         new SQL(executor).update("student").set("age",18).eq("name", "李四").update();
         System.out.println(
-                new SQL(executor).select("student").eq("age", 18).getCount()
+                new SQL(executor).select("student").eq("age", 118).getCount()
         );
     }
     @Test

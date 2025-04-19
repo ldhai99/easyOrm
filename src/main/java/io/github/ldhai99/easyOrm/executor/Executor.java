@@ -1,6 +1,6 @@
 package io.github.ldhai99.easyOrm.executor;
 
-import io.github.ldhai99.easyOrm.SQL;
+import io.github.ldhai99.easyOrm.builder.ExecutorHandler;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -11,59 +11,55 @@ public interface Executor {
 
     //代理-------------------------------------------------执行类
     //执行增加，删除，修改，返回记录个数
-    public int update(SQL sql)   ;
-    public int delete(SQL sql)   ;
+    public int update(ExecutorHandler sql)   ;
+    public int delete(ExecutorHandler sql)   ;
     //插入，返回主键
-    public Number insert(SQL sql)   ;
+    public Number insert(ExecutorHandler sql)   ;
 
     //执行存储过程及ddl
-    public int execute(SQL sql)   ;
+    public int execute(ExecutorHandler sql)   ;
 
     //查询数据库---------------------------------------------------------
 
     //返回单列单行数据
     //返回字符串
-    public String getString (SQL sql)   ;
+    public String getString (ExecutorHandler sql)   ;
 
     //返回数字型
-    public Number getNumber(SQL sql)   ;
-    public Integer getInteger(SQL sql)   ;
-    public Long getLong(SQL sql)   ;
-    public Float getFloat(SQL sql)   ;
-    public Double getDouble(SQL sql)   ;
-    public  BigDecimal getBigDecimal(SQL sql) ;
+    public Number getNumber(ExecutorHandler sql)   ;
+    public Integer getInteger(ExecutorHandler sql)   ;
+    public Long getLong(ExecutorHandler sql)   ;
+    public Float getFloat(ExecutorHandler sql)   ;
+    public Double getDouble(ExecutorHandler sql)   ;
+    public  BigDecimal getBigDecimal(ExecutorHandler sql) ;
     //返回日期型
-    public Date getDate (SQL sql) ;
-    public < T > T getValue ( SQL sql,Class<T> requiredType)   ;
+    public Date getDate (ExecutorHandler sql) ;
+    public < T > T getValue (ExecutorHandler sql, Class<T> requiredType)   ;
 
 
     //返回单列list数据
-    public List<String> getStrings (SQL sql)   ;
-    public  List<Number> getNumbers (SQL sql) ;
-    public List<Integer> getIntegers(SQL sql)   ;
-    public List<Long> getLongs(SQL sql)   ;
-    public List<Float> getFloats(SQL sql)   ;
-    public List<Double> getDoubles(SQL sql)   ;
+    public List<String> getStrings (ExecutorHandler sql)   ;
+    public  List<Number> getNumbers (ExecutorHandler sql) ;
+    public List<Integer> getIntegers(ExecutorHandler sql)   ;
+    public List<Long> getLongs(ExecutorHandler sql)   ;
+    public List<Float> getFloats(ExecutorHandler sql)   ;
+    public List<Double> getDoubles(ExecutorHandler sql)   ;
 
-    public  List<BigDecimal> getBigDecimals (SQL sql) ;
-    public  List<Date> getDates (SQL sql)   ;
-    public < T > List<T> getValues (SQL sql, Class<T> requiredType)   ;
+    public  List<BigDecimal> getBigDecimals (ExecutorHandler sql) ;
+    public  List<Date> getDates (ExecutorHandler sql)   ;
+    public < T > List<T> getValues (ExecutorHandler sql, Class<T> requiredType)   ;
 
     //返回单行数据
 
-    public Map<String, Object> getMap(SQL sql)  ;
+    public Map<String, Object> getMap(ExecutorHandler sql)  ;
     //返回多行数据
-    public List<Map<String, Object>> getMaps(SQL sql)   ;
+    public List<Map<String, Object>> getMaps(ExecutorHandler sql)   ;
     //返回Bean实体
-    public <T> T getBean(SQL sql,Class<T> T)  ;
+    public <T> T getBean(ExecutorHandler sql, Class<T> T)  ;
 
     //返回Bean list
-    public <T> List<T> getBeans(SQL sql,Class<T> T)  ;
+    public <T> List<T> getBeans(ExecutorHandler sql, Class<T> T)  ;
 
 
-    public boolean isExists(SQL sql)  ;
-
-
-    public Number getCount(SQL sql);
 
 }

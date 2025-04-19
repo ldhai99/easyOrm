@@ -1,7 +1,6 @@
 package io.github.ldhai99.easyOrm.executor;
 
-import io.github.ldhai99.easyOrm.SQL;
-
+import io.github.ldhai99.easyOrm.builder.ExecutorHandler;
 import io.github.ldhai99.easyOrm.tools.DbTools;
 import org.apache.commons.dbutils.BasicRowProcessor;
 import org.apache.commons.dbutils.GenerousBeanProcessor;
@@ -46,7 +45,7 @@ public class DbUtilsExecutor extends AbstractExecutor {
 
     ///QueryRunner,占位符和jdbc一样，参数为对象数组
     //执行增加，删除，修改，返回记录个数
-    public int update(SQL sql)  {
+    public int update(ExecutorHandler sql)  {
         try {
             return qr.update(connection, sql.getJdbcSql(), sql.getParamsList());
         } catch (SQLException e) {
@@ -55,7 +54,7 @@ public class DbUtilsExecutor extends AbstractExecutor {
     }
 
     @Override
-    public int delete(SQL sql) {
+    public int delete(ExecutorHandler sql) {
         try {
             return qr.update(connection, sql.getJdbcSql(), sql.getParamsList());
         } catch (SQLException e) {
@@ -64,7 +63,7 @@ public class DbUtilsExecutor extends AbstractExecutor {
     }
 
     //执行存储过程及ddl
-    public int execute(SQL sql)  {
+    public int execute(ExecutorHandler sql)  {
         try {
             return qr.update(connection,  sql.getJdbcSql(), sql.getParamsList());
         } catch (SQLException e) {
@@ -72,7 +71,7 @@ public class DbUtilsExecutor extends AbstractExecutor {
         }
     }
     //插入，返回主键
-    public Number insert(SQL sql)  {
+    public Number insert(ExecutorHandler sql)  {
         try {
             return qr.insert(connection, sql.getJdbcSql(),new ScalarHandler<Number>(), sql.getParamsList());
         } catch (SQLException e) {
@@ -83,7 +82,7 @@ public class DbUtilsExecutor extends AbstractExecutor {
 
     //返回单列单行数据
 
-    public < T > T getValue ( SQL sql,Class<T> requiredType)  {
+    public < T > T getValue (ExecutorHandler sql, Class<T> requiredType)  {
 
         try {
 
@@ -96,7 +95,7 @@ public class DbUtilsExecutor extends AbstractExecutor {
 
     //返回单列list数据
 
-    public < T > List<T> getValues (SQL sql, Class<T> requiredType) {
+    public < T > List<T> getValues (ExecutorHandler sql, Class<T> requiredType) {
         try {
            //System.out.println(sql);
             return qr.query(connection, sql.getJdbcSql(), new ColumnListHandler<T>(), sql.getParamsList());
@@ -108,7 +107,7 @@ public class DbUtilsExecutor extends AbstractExecutor {
 
     //返回单行数据map
 
-    public Map<String, Object> getMap(SQL sql)  {
+    public Map<String, Object> getMap(ExecutorHandler sql)  {
         try {
             return qr.query(connection, sql.getJdbcSql(), new MapHandler(new BasicRowProcessor(new GenerousBeanProcessor())), sql.getParamsList());
         } catch (SQLException e) {
@@ -116,7 +115,7 @@ public class DbUtilsExecutor extends AbstractExecutor {
         }
     }
     //返回多行数据maps
-    public List<Map<String, Object>> getMaps(SQL sql)  {
+    public List<Map<String, Object>> getMaps(ExecutorHandler sql)  {
 
         try {
             return qr.query(connection, sql.getJdbcSql(), new MapListHandler(new BasicRowProcessor(new GenerousBeanProcessor())), sql.getParamsList());
@@ -126,7 +125,7 @@ public class DbUtilsExecutor extends AbstractExecutor {
 
     }
     //返回Bean实体
-    public <T> T getBean(SQL sql,Class<T> c) {
+    public <T> T getBean(ExecutorHandler sql, Class<T> c) {
         try {
             return qr.query(connection, sql.getJdbcSql(), new BeanHandler<T>(c,new BasicRowProcessor(new GenerousBeanProcessor())), sql.getParamsList());
         } catch (SQLException e) {
@@ -135,7 +134,7 @@ public class DbUtilsExecutor extends AbstractExecutor {
     }
 
     //返回Bean list
-    public <T> List<T> getBeans(SQL sql,Class<T> c) {
+    public <T> List<T> getBeans(ExecutorHandler sql, Class<T> c) {
         try {
             return qr.query(connection, sql.getJdbcSql(), new BeanListHandler<T>(c,new BasicRowProcessor(new GenerousBeanProcessor())), sql.getParamsList());
         } catch (SQLException e) {

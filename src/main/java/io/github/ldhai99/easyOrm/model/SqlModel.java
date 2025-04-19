@@ -1,4 +1,4 @@
-package io.github.ldhai99.easyOrm;
+package io.github.ldhai99.easyOrm.model;
 
 
 import io.github.ldhai99.easyOrm.base.TaskType;
