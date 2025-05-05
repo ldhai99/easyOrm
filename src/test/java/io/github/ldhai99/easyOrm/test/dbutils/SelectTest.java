@@ -122,21 +122,5 @@ public class SelectTest {
                         .getMaps()
         );
     }
-    //union------------------------------------
-    @Test
-    public void union() throws SQLException {
 
-        System.out.println(
-                new SQL(con).select("student").column("name,age").eq("name","张三")
-                        .unionAll(
-                                SQL.SELECT("student").column("name,age").eq("name","张三"))
-                        .unionAll(
-                                SQL.SELECT("student").column("name,age").eq("name","李四"))
-                        .unionAll(
-                                SQL.ADDSQL("select name,age from student "))
-                        .orderBy("age",false)
-
-                        .getMaps()
-        );
-    }
 }

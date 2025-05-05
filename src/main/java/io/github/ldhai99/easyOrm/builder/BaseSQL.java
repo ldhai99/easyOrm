@@ -1,7 +1,6 @@
 package io.github.ldhai99.easyOrm.builder;
 
-import io.github.ldhai99.easyOrm.Lambda.TableNameResolver;
-import io.github.ldhai99.easyOrm.SQL;
+import io.github.ldhai99.easyOrm.dao.core.TableNameResolver;
 import io.github.ldhai99.easyOrm.base.TaskType;
 import io.github.ldhai99.easyOrm.executor.Executor;
 import io.github.ldhai99.easyOrm.model.JdbcModel;

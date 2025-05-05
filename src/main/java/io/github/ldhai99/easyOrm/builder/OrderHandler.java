@@ -1,8 +1,7 @@
 package io.github.ldhai99.easyOrm.builder;
 
-import io.github.ldhai99.easyOrm.Lambda.Field;
+import io.github.ldhai99.easyOrm.dao.core.FieldResolver;
 import io.github.ldhai99.easyOrm.Lambda.PropertyGetter;
-import io.github.ldhai99.easyOrm.SQL;
 
 import java.util.List;
 
@@ -43,9 +42,9 @@ public class OrderHandler<T extends OrderHandler<T>> extends WhereHandler<T> {
 
     public <E> T orderByAsc(PropertyGetter<E> getter, boolean usefull) {
         if (usefull)
-            return orderByAsc(Field.fullField(getter));
+            return orderByAsc(FieldResolver.fullField(getter));
         else
-            return orderByAsc(Field.field(getter));
+            return orderByAsc(FieldResolver.field(getter));
     }
 
     //---降序排序
@@ -65,9 +64,9 @@ public class OrderHandler<T extends OrderHandler<T>> extends WhereHandler<T> {
 
     public <E> T orderByDesc(PropertyGetter<E> getter, boolean usefull) {
         if (usefull)
-            return orderByDesc(Field.fullField(getter));
+            return orderByDesc(FieldResolver.fullField(getter));
         else
-            return orderByDesc(Field.field(getter));
+            return orderByDesc(FieldResolver.field(getter));
     }
 
     //---默认升序排序
@@ -117,9 +116,9 @@ public class OrderHandler<T extends OrderHandler<T>> extends WhereHandler<T> {
 
     public <E> T orderBy(PropertyGetter<E> getter, boolean usefull) {
         if (usefull)
-            return orderBy(Field.fullField(getter));
+            return orderBy(FieldResolver.fullField(getter));
         else
-            return orderBy(Field.field(getter));
+            return orderBy(FieldResolver.field(getter));
     }
 
     //---排序
@@ -139,9 +138,9 @@ public class OrderHandler<T extends OrderHandler<T>> extends WhereHandler<T> {
 
     public <E> T orderBy(PropertyGetter<E> getter, boolean ascending, boolean usefull) {
         if (usefull)
-            return orderBy(Field.fullField(getter), ascending);
+            return orderBy(FieldResolver.fullField(getter), ascending);
         else
-            return orderBy(Field.field(getter), ascending);
+            return orderBy(FieldResolver.field(getter), ascending);
     }
 
 }

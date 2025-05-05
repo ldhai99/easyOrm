@@ -1,9 +1,7 @@
 package io.github.ldhai99.easyOrm.test.lamda;
 
-import io.github.ldhai99.easyOrm.Lambda.JoinOn;
 import io.github.ldhai99.easyOrm.SQL;
 import io.github.ldhai99.easyOrm.test.Student;
-import io.github.ldhai99.easyOrm.test.Student1;
 import io.github.ldhai99.easyOrm.tools.DbTools;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -44,11 +42,37 @@ public class LamdaTest {
                 new SQL(con).select(Student.class).column(Student::getName,Student::getAge).eq( Student::getAge, 18).getMaps()
         );
     }
+
+    //测试@TableField注解---在sex 字段上有@TableField注解
+    @Test
+    public void eqlamdaTableField() throws SQLException {
+
+        System.out.println(
+                new SQL(con).select(Student.class).column(Student::getName,Student::getAge,Student::getSex)
+                        .eq( Student::getAge, 18).getMaps()
+        );
+
+    }
+    @Test
+    public void eqlamdaFullTableField() throws SQLException {
+
+        System.out.println(
+                SQL.SELECT(Student.class).full(Student::getName,Student::getAge,Student::getSex)
+                        .eq( Student::getAge, 18)
+        );
+        System.out.println(
+                SQL.SELECT(Student.class).full(Student::getName,Student::getAge,Student::getSex)
+                        .eq( Student::getAge, 18).getMaps()
+        );
+    }
+    //测试实体中字段与表字段不一致
     @Test
     public void queryStudent() throws SQLException{
 
-        Student student =  new SQL(con).select("student").eq("age", 18).getBean(Student.class);
+        Student student =  SQL.SELECT("student").eq("age", 18).getBean(Student.class);
+        System.out.println( student);
+
+        student =  new SQL(con).select("student").eq("age", 18).getBean(Student.class);
         System.out.println( student);
     }
-
 }

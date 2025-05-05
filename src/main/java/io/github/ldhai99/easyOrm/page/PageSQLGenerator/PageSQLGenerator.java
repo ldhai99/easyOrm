@@ -12,7 +12,7 @@ public interface PageSQLGenerator {
 
     public SQL generatePageSQL(PageModel pageModel, SQL sql);
     /**
-            * 判断分页主键（countId）的排序方向（优先级：PageModel > SQL解析 > 默认升序）
+            * 判断分页主键（countId）的排序方向（优先级：PageModel {@literal >}SQL解析 {@literal >} 默认升序）
             * @param pageModel 分页模型，必须包含 countId（分页主键字段）
             * @param originalSql 原始 SQL 对象
  * @return 是否为升序（true=ASC, false=DESC）

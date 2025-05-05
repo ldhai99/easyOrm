@@ -1,9 +1,7 @@
 package io.github.ldhai99.easyOrm.builder;
 
-import io.github.ldhai99.easyOrm.Lambda.Field;
+import io.github.ldhai99.easyOrm.dao.core.FieldResolver;
 import io.github.ldhai99.easyOrm.Lambda.PropertyGetter;
-import io.github.ldhai99.easyOrm.Lambda.TableNameResolver;
-import io.github.ldhai99.easyOrm.SQL;
 
 public class GroupHandler <T extends GroupHandler<T>> extends OrderHandler<T> {
 
@@ -24,9 +22,9 @@ public class GroupHandler <T extends GroupHandler<T>> extends OrderHandler<T> {
 
     public <E> T groupBy(PropertyGetter<E> getter, boolean usefull) {
         if (usefull)
-            return groupBy(Field.fullField(getter));
+            return groupBy(FieldResolver.fullField(getter));
         else
-            return groupBy(Field.field(getter));
+            return groupBy(FieldResolver.field(getter));
     }
 
 }

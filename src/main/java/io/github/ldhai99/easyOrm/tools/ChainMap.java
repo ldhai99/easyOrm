@@ -7,6 +7,8 @@ public class ChainMap extends HashMap<String, Object> {
 
     /**
      * 静态工厂方法用于从空 Map 创建 ChainMap 的实例
+     * 该方法提供了一种便捷的方式来初始化一个空的 ChainMap 对象
+     * @return 返回一个新的空 ChainMap 实例
      */
     public static ChainMap of() {
         ChainMap  ChainMap = new ChainMap();
@@ -15,6 +17,11 @@ public class ChainMap extends HashMap<String, Object> {
 
     /**
      * 静态工厂方法用于从给定的 Map 创建 ChainMap 的实例
+     * 此方法允许用户将一个现有的 Map 对象作为输入，
+     * 并返回一个包含该 Map 所有映射的 ChainMap 实例
+     *
+     * @param map 用于初始化 ChainMap 的 Map 对象
+     * @return 返回一个新创建的 ChainMap 实例
      */
     public static ChainMap  of(Map map) {
         ChainMap ChainMap = new ChainMap();
@@ -24,6 +31,11 @@ public class ChainMap extends HashMap<String, Object> {
 
     /**
      * 静态工厂方法用于从单个键值对创建 ChainMap 的实例
+     * 这个方法简化了 ChainMap 实例的创建过程，当只需要添加一个键值对时，可以不必直接使用构造函数
+     *
+     * @param key 键值对中的键
+     * @param value 键值对中的值
+     * @return 返回包含指定键值对的新 ChainMap 实例
      */
     public static  ChainMap  of(String key, Object value) {
         ChainMap  ChainMap = new ChainMap();
@@ -42,7 +54,13 @@ public class ChainMap extends HashMap<String, Object> {
     }
 
     /**
-     * 链式 set 方法的链式调用版本
+     * 提供链式调用的set方法，用于在Map中设置键值对
+     * 如果键已经存在，则先删除旧的键值对，再添加新的键值对
+     * 这种设计允许在单个调用中同时完成删除旧值和设置新值的操作，提高了代码的可读性和效率
+     *
+     * @param key 要设置的键
+     * @param value 要设置的值
+     * @return 返回ChainMap对象本身，以支持链式调用
      */
 
     public ChainMap  set(String key, Object value) {

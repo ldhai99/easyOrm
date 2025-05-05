@@ -1,9 +1,8 @@
 package io.github.ldhai99.easyOrm.builder;
 
-import io.github.ldhai99.easyOrm.Lambda.Field;
+import io.github.ldhai99.easyOrm.dao.core.FieldResolver;
 import io.github.ldhai99.easyOrm.Lambda.PropertyGetter;
-import io.github.ldhai99.easyOrm.Lambda.TableNameResolver;
-import io.github.ldhai99.easyOrm.SQL;
+import io.github.ldhai99.easyOrm.dao.core.TableNameResolver;
 
 public class ColumnHandler<T extends ColumnHandler<T>> extends BaseSQL<T> {
     //代理SqlDataModel---------------------------
@@ -23,9 +22,9 @@ public class ColumnHandler<T extends ColumnHandler<T>> extends BaseSQL<T> {
 
     public <E> T sum(PropertyGetter<E> getter, boolean usefull) {
         if (usefull)
-            return sum(Field.fullField(getter));
+            return sum(FieldResolver.fullField(getter));
         else
-            return sum(Field.field(getter));
+            return sum(FieldResolver.field(getter));
     }
 
     //---sum-----alias---------
@@ -43,9 +42,9 @@ public class ColumnHandler<T extends ColumnHandler<T>> extends BaseSQL<T> {
 
     public <E> T sum(PropertyGetter<E> getter, String alias, boolean usefull) {
         if (usefull)
-            return sum(Field.fullField(getter), alias);
+            return sum(FieldResolver.fullField(getter), alias);
         else
-            return sum(Field.field(getter), alias);
+            return sum(FieldResolver.field(getter), alias);
     }
 
     //---avg--------------
@@ -64,9 +63,9 @@ public class ColumnHandler<T extends ColumnHandler<T>> extends BaseSQL<T> {
 
     public <E> T avg(PropertyGetter<E> getter, boolean usefull) {
         if (usefull)
-            return avg(Field.fullField(getter));
+            return avg(FieldResolver.fullField(getter));
         else
-            return avg(Field.field(getter));
+            return avg(FieldResolver.field(getter));
     }
 
     //---avg-----alias---------
@@ -84,9 +83,9 @@ public class ColumnHandler<T extends ColumnHandler<T>> extends BaseSQL<T> {
 
     public <E> T avg(PropertyGetter<E> getter, String alias, boolean usefull) {
         if (usefull)
-            return sum(Field.fullField(getter), alias);
+            return sum(FieldResolver.fullField(getter), alias);
         else
-            return sum(Field.field(getter), alias);
+            return sum(FieldResolver.field(getter), alias);
     }
 
     //---max--------------
@@ -105,9 +104,9 @@ public class ColumnHandler<T extends ColumnHandler<T>> extends BaseSQL<T> {
 
     public <E> T max(PropertyGetter<E> getter, boolean usefull) {
         if (usefull)
-            return max(Field.fullField(getter));
+            return max(FieldResolver.fullField(getter));
         else
-            return max(Field.field(getter));
+            return max(FieldResolver.field(getter));
     }
 
     //---max--alis------------
@@ -126,9 +125,9 @@ public class ColumnHandler<T extends ColumnHandler<T>> extends BaseSQL<T> {
 
     public <E> T max(PropertyGetter<E> getter, String alias, boolean usefull) {
         if (usefull)
-            return max(Field.fullField(getter), alias);
+            return max(FieldResolver.fullField(getter), alias);
         else
-            return max(Field.field(getter), alias);
+            return max(FieldResolver.field(getter), alias);
     }
 
     //---min--------------
@@ -147,9 +146,9 @@ public class ColumnHandler<T extends ColumnHandler<T>> extends BaseSQL<T> {
 
     public <E> T min(PropertyGetter<E> getter, boolean usefull) {
         if (usefull)
-            return min(Field.fullField(getter));
+            return min(FieldResolver.fullField(getter));
         else
-            return min(Field.field(getter));
+            return min(FieldResolver.field(getter));
     }
 
     //---min--alis------------
@@ -168,9 +167,9 @@ public class ColumnHandler<T extends ColumnHandler<T>> extends BaseSQL<T> {
 
     public <E> T min(PropertyGetter<E> getter, String alias, boolean usefull) {
         if (usefull)
-            return min(Field.fullField(getter), alias);
+            return min(FieldResolver.fullField(getter), alias);
         else
-            return min(Field.field(getter), alias);
+            return min(FieldResolver.field(getter), alias);
     }
 
     //---count--------------
@@ -222,9 +221,9 @@ public class ColumnHandler<T extends ColumnHandler<T>> extends BaseSQL<T> {
 
     public <E> T aggregate(String function, PropertyGetter<E> getter, String alias, boolean usefull) {
         if (usefull)
-            return aggregate(function, Field.fullField(getter), alias);
+            return aggregate(function, FieldResolver.fullField(getter), alias);
         else
-            return aggregate(function, Field.field(getter), alias);
+            return aggregate(function, FieldResolver.field(getter), alias);
     }
 
     //-------------------------查询列----------------------------------------------------
@@ -234,23 +233,24 @@ public class ColumnHandler<T extends ColumnHandler<T>> extends BaseSQL<T> {
     }
 
     public <E> T column(PropertyGetter<E> getter) {
-        return column(Field.field(getter));
+        return column(FieldResolver.field(getter));
     }
 
+
     public <E> T full(PropertyGetter<E> getter) {
-        return column(Field.fullField(getter));
+        return column(FieldResolver.fullField(getter));
     }
 
     public <E> T column(PropertyGetter<E>... getters) {
         for (int i = 0; i < getters.length; i++) {
-            column(Field.field(getters[i]));
+            column(FieldResolver.field(getters[i]));
         }
         return self();
     }
 
     public <E> T full(PropertyGetter<E>... getters) {
         for (int i = 0; i < getters.length; i++) {
-            column(Field.fullField(getters[i]));
+            column(FieldResolver.fullField(getters[i]));
         }
         return self();
     }
@@ -262,11 +262,11 @@ public class ColumnHandler<T extends ColumnHandler<T>> extends BaseSQL<T> {
     }
 
     public <E> T column(PropertyGetter<E> getter, String alias) {
-        return column(Field.field(getter), alias);
+        return column(FieldResolver.field(getter), alias);
     }
 
     public <E> T full(PropertyGetter<E> getter, String alias) {
-        return column(Field.fullField(getter), alias);
+        return column(FieldResolver.fullField(getter), alias);
     }
 
     //---表.字段 列别名-----------------------
@@ -281,11 +281,11 @@ public class ColumnHandler<T extends ColumnHandler<T>> extends BaseSQL<T> {
     }
 
     public <E> T column(String tableAlias, PropertyGetter<E> getter, String alias) {
-        return column(tableAlias, Field.field(getter), alias);
+        return column(tableAlias, FieldResolver.field(getter), alias);
     }
 
     public <E> T column(Class<?> clazz, PropertyGetter<E> getter, String alias) {
-        return column(TableNameResolver.getTableName(clazz), Field.field(getter), alias);
+        return column(TableNameResolver.getTableName(clazz), FieldResolver.field(getter), alias);
     }
 
     //---列加分组-----------------------
@@ -295,11 +295,11 @@ public class ColumnHandler<T extends ColumnHandler<T>> extends BaseSQL<T> {
     }
 
     public <E> T column(PropertyGetter<E> getter, boolean groupBy) {
-        return column(Field.field(getter), groupBy);
+        return column(FieldResolver.field(getter), groupBy);
     }
 
     public <E> T full(PropertyGetter<E> getter, boolean groupBy) {
-        return column(Field.fullField(getter), groupBy);
+        return column(FieldResolver.fullField(getter), groupBy);
     }
 
     //子查询列----------------------------------------------------

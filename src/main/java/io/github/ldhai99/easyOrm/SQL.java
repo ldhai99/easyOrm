@@ -1,9 +1,9 @@
 package io.github.ldhai99.easyOrm;
 
 
-import io.github.ldhai99.easyOrm.Lambda.Field;
+import io.github.ldhai99.easyOrm.dao.core.FieldResolver;
 import io.github.ldhai99.easyOrm.Lambda.PropertyGetter;
-import io.github.ldhai99.easyOrm.Lambda.TableNameResolver;
+import io.github.ldhai99.easyOrm.dao.core.TableNameResolver;
 
 import io.github.ldhai99.easyOrm.builder.ExecutorHandler;
 import io.github.ldhai99.easyOrm.executor.DbUtilsExecutor;
@@ -198,14 +198,17 @@ public class SQL  extends ExecutorHandler<SQL> {
     public static SQL ADDSQL(String DynamicSql, Object... values) {
         return new SQL().addSql(DynamicSql, values);
     }
-    public static <T>  SQL ADDSQL(PropertyGetter<T> getter, Object... values) {
+    public static SQL ADDSQL(SQL subSql) {
+        return new SQL().addSql(subSql);
+    }
+    public static <T>  SQL ADDSQL(PropertyGetter<T> getter) {
 
-        return ADDSQL(Field.field(getter), values);
+        return ADDSQL(FieldResolver.field(getter));
 
     }
-    public static <T> SQL ADDSQLfull(PropertyGetter<T> getter, Object... values) {
+    public static <T> SQL ADDFull(PropertyGetter<T> getter) {
 
-        return ADDSQL(Field.fullField(getter), values);
+        return ADDSQL(FieldResolver.fullField(getter));
 
     }
 
@@ -218,12 +221,12 @@ public class SQL  extends ExecutorHandler<SQL> {
     }
     public <T> SQL addSql(PropertyGetter<T> getter, Object... values) {
 
-        this.addSql(Field.field(getter), values);
+        this.addSql(FieldResolver.field(getter), values);
         return this;
     }
-    public <T> SQL addSqlfull(PropertyGetter<T> getter, Object... values) {
+    public <T> SQL addFull(PropertyGetter<T> getter, Object... values) {
 
-        this.addSql(Field.fullField(getter), values);
+        this.addSql(FieldResolver.fullField(getter), values);
         return this;
     }
     public SQL addSql(SQL subSql) {

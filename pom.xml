@@ -195,6 +195,8 @@
                             <encoding>UTF-8</encoding> <!-- 源文件编码 -->
                             <charset>UTF-8</charset> <!-- 输出 HTML 文件的字符集 -->
                             <docencoding>UTF-8</docencoding> <!-- Javadoc 文档的编码 -->
+                            <!-- 忽略所有 Javadoc 检查 -->
+                            <additionalparam>-Xdoclint:none</additionalparam>
                         </configuration>
                         <executions>
                             <execution>

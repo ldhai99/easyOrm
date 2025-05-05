@@ -1,6 +1,6 @@
 package io.github.ldhai99.easyOrm.test.lamda;
 
-import io.github.ldhai99.easyOrm.Lambda.JoinOn;
+import io.github.ldhai99.easyOrm.join.JoinOn;
 import io.github.ldhai99.easyOrm.SQL;
 import io.github.ldhai99.easyOrm.test.Student;
 import io.github.ldhai99.easyOrm.test.Student1;
@@ -32,15 +32,25 @@ public class LamdaFullNameTest {
                         .join(Student1.class, JoinOn.on(Student1::getName).eq(Student::getName).toString())
                         .getMaps()
         );
+
+    }
+    @Test
+    public  void joinlamdaAdd() throws SQLException {
+
         System.out.println(
                 SQL.SELECT(Student.class).full(Student::getAge,Student::getName)
-                        .join(Student1.class,SQL.ADDSQLfull(Student1::getName).addSql("=").addSqlfull(Student::getName))
+                        .join(Student1.class,SQL.ADDFull(Student1::getName).addSql("=").addFull(Student::getName))
+
+        );
+        System.out.println(
+                SQL.SELECT(Student.class).full(Student::getAge,Student::getName)
+                        .join(Student1.class,SQL.ADDFull(Student1::getName).addSql("=").addFull(Student::getName))
                         .getMaps()
         );
     }
     @Test
     //联合多表查询，用lambda表达式，全名（表名.字段名称）,on条件是全名（表名.字段名称）
-    public  void joinlamda1() throws SQLException {
+    public  void joinOnLamda() throws SQLException {
         System.out.println(
                 SQL.SELECT(Student.class).full(Student::getAge).full(Student1::getName)
                         .join(Student1.class, JoinOn.on(Student1::getName).eq(Student::getName).toString())

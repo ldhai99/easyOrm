@@ -1,11 +1,15 @@
  package io.github.ldhai99.easyOrm.test;
 
+ import io.github.ldhai99.easyOrm.annotation.TableField;
+ import io.github.ldhai99.easyOrm.annotation.TableName;
+
  import java.util.Date;
 
  //生成get/set/toString/hash/equals等
 
 //开启链式调用，即Student user = new Student().setId(1).setName("张三").setAge(88);
  //@Accessors(chain = true)
+ @TableName("student")
  public class Student implements  Cloneable{
 
 
@@ -18,10 +22,12 @@
 	 // 姓名
 	 private String name;
 	 // 性别
+	 @TableField("sex")
 	 private String sex;
 	 // 性别
 	 private int age;
 	 //创建时间
+	 @TableField("create_time")
 	 private Date createTime;
 
 	public String toString() {

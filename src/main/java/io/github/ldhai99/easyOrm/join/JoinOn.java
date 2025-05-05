@@ -1,4 +1,7 @@
-package io.github.ldhai99.easyOrm.Lambda;
+package io.github.ldhai99.easyOrm.join;
+
+import io.github.ldhai99.easyOrm.Lambda.PropertyGetter;
+import io.github.ldhai99.easyOrm.dao.core.FieldResolver;
 
 public class JoinOn {
     StringBuilder on=new StringBuilder();
@@ -8,7 +11,7 @@ public class JoinOn {
     public static <T> JoinOn on(PropertyGetter<T> getter)
     {
         JoinOn joinOn=new JoinOn();
-        joinOn.add(Field.fullField(getter));
+        joinOn.add(FieldResolver.fullField(getter));
         return joinOn;
     }
 
@@ -18,14 +21,14 @@ public class JoinOn {
 
     }
     public  <T> JoinOn add(PropertyGetter<T> getter){
-        on.append(Field.fullField(getter));
+        on.append(FieldResolver.fullField(getter));
         return this;
 
     }
     public  <T> JoinOn eq(PropertyGetter<T> getter)
     {
         this.add(" = ");
-        this.add(Field.fullField(getter));
+        this.add(FieldResolver.fullField(getter));
 
         return this;
     }

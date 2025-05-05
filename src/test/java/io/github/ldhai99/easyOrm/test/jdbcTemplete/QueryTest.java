@@ -145,6 +145,9 @@ public class QueryTest {
         System.out.println(
                 new SQL(executor).select("student").column("name").eq("age", 18).getStrings()
         );
+        System.out.println(
+                SQL.SELECT("student").column("name").eq("age", 18).getStrings()
+        );
     }
 
     @Test

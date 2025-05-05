@@ -1,6 +1,7 @@
 package io.github.ldhai99.easyOrm.executor;
 
 import io.github.ldhai99.easyOrm.builder.ExecutorHandler;
+import io.github.ldhai99.easyOrm.dao.core.BeanConverter;
 import io.github.ldhai99.easyOrm.tools.DbTools;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -105,10 +106,14 @@ public class JdbcTemplateExecutor extends AbstractExecutor {
         }
     }
 
-    public <T> List<T> getBeans(ExecutorHandler sql, Class<T> T)  {
+    public <T> List<T> getBeans(ExecutorHandler sql, Class<T> clazz)  {
 
-        return template.query(sql.toString(), sql.getParameterMap(), new BeanPropertyRowMapper<T>(T));
+        //return template.query(sql.toString(), sql.getParameterMap(), new BeanPropertyRowMapper<T>(clazz));
+// 先查询 Map 列表
+        List<Map<String, Object>> mapList = template.queryForList(sql.toString(), sql.getParameterMap());
 
+        // ✅ 通过工具方法转换为 Java Bean 列表，内部使用 MappingResolver
+        return BeanConverter.convertMapListToBeanList(mapList, clazz);
     }
 
 }

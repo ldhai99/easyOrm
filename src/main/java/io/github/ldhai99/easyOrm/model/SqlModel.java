@@ -221,7 +221,7 @@ public class SqlModel implements  Cloneable ,Serializable {
     }
 
     public SqlModel distinct() {
-        this.afterSelects.add("distinct");
+        this.afterSelects.add(" distinct ");
         return this;
     }
 

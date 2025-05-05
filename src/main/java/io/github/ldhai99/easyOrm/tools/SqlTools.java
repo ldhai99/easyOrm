@@ -56,21 +56,11 @@ public class SqlTools {
      */
     public static String camelToSnakeCase(String camelCaseString) {
         if (camelCaseString == null || camelCaseString.isEmpty()) {
-            return camelCaseString; // 空字符串直接返回
+            return camelCaseString;
         }
-        StringBuilder result = new StringBuilder();
-        for (int i = 0; i < camelCaseString.length(); i++) {
-            char currentChar = camelCaseString.charAt(i);
-            if (Character.isUpperCase(currentChar)) {
-                if (i > 0) {
-                    result.append("_"); // 在大写字母前添加下划线
-                }
-                result.append(Character.toLowerCase(currentChar));
-            } else {
-                result.append(currentChar);
-            }
-        }
-        return result.toString();
+        return camelCaseString.replaceAll("([a-z0-9])([A-Z])", "$1_$2")  // 小写/数字 + 大写 → 加下划线
+                .replaceAll("([A-Z])([A-Z][a-z])", "$1_$2") // 大写 + 大写+小写 → 加下划线（处理连续大写）
+                .toLowerCase();
     }
 
     /**
@@ -78,22 +68,38 @@ public class SqlTools {
      * 将下划线替换为空格,将字符串根据空格分割成数组,再将每个单词首字母大写
      */
     public static String snakeToCamelCase(String snakeCaseString) {
+
         if (snakeCaseString == null || snakeCaseString.isEmpty()) {
-            return snakeCaseString; // 空字符串直接返回
+            return snakeCaseString;
         }
-        StringBuilder result = new StringBuilder();
-        String[] parts = snakeCaseString.toLowerCase().split("_");
-        for (int i = 0; i < parts.length; i++) {
-            if (parts[i].isEmpty()) {
-                continue; // 跳过多余的下划线
+        boolean startsWithUnderscore = snakeCaseString.startsWith("_");
+        String[] parts = snakeCaseString.split("_");
+        StringBuilder sb = new StringBuilder();
+        boolean firstPart = true;
+        for (String part : parts) {
+            if (part.isEmpty()) {
+                continue;
             }
-            if (i == 0) {
-                result.append(parts[i]); // 第一个单词保持小写
+            if (firstPart) {
+                // 第一个非空部分首字母小写
+                sb.append(Character.toLowerCase(part.charAt(0)));
+                if (part.length() > 1) {
+                    sb.append(part.substring(1).toLowerCase());
+                }
+                firstPart = false;
             } else {
-                result.append(capitalize(parts[i])); // 后续单词首字母大写
+                // 后续部分首字母大写
+                sb.append(Character.toUpperCase(part.charAt(0)));
+                if (part.length() > 1) {
+                    sb.append(part.substring(1).toLowerCase());
+                }
             }
         }
-        return result.toString();
+        // 保留前导下划线
+        if (startsWithUnderscore) {
+            sb.insert(0, '_');
+        }
+        return sb.toString();
     }
     public static boolean isNotEmpty(Object object) {
         return !isEmpty(object);
