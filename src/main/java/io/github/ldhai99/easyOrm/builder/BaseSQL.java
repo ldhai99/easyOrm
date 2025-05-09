@@ -170,7 +170,7 @@ public class BaseSQL <T extends BaseSQL<T>>{
     public T where(T subSql) {
         if (subSql == null)
             return self();
-        ensureTaskType(self(), TaskType.WHERE);
+        ensureTaskType(subSql, TaskType.WHERE);
         this.builder.where(jdbcModel.processSqlName(subSql));
         return self();
     }
