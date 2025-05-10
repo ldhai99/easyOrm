@@ -66,7 +66,7 @@ public class WhereOnlyTest {
                 .setValue("value",value) ;
     }
     public SQL eqMonth1(String name,String value){
-        return  SQL.ADDSQL("TIMESTAMPDIFF(MONTH,:name,:value)=0")
+        return  SQL.ADDSql("TIMESTAMPDIFF(MONTH,:name,:value)=0")
                 .setValue$("name",name)
                 .setValue("value",value) ;
     }

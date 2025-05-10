@@ -195,20 +195,20 @@ public class SQL  extends ExecutorHandler<SQL> {
         return new SQL().where().where(sql);
     }
 
-    public static SQL ADDSQL(String DynamicSql, Object... values) {
+    public static SQL ADDSql(String DynamicSql, Object... values) {
         return new SQL().addSql(DynamicSql, values);
     }
-    public static SQL ADDSQL(SQL subSql) {
+    public static SQL ADDSql(SQL subSql) {
         return new SQL().addSql(subSql);
     }
-    public static <T>  SQL ADDSQL(PropertyGetter<T> getter) {
+    public static <T>  SQL ADDSql(PropertyGetter<T> getter) {
 
-        return ADDSQL(FieldResolver.field(getter));
+        return ADDSql(FieldResolver.field(getter));
 
     }
     public static <T> SQL ADDFull(PropertyGetter<T> getter) {
 
-        return ADDSQL(FieldResolver.fullField(getter));
+        return ADDSql(FieldResolver.fullField(getter));
 
     }
 
@@ -261,7 +261,7 @@ public class SQL  extends ExecutorHandler<SQL> {
 
     public SQL union(String union, SQL subSql) {
         return new SQL(this.executor).from(
-                SQL.ADDSQL(" :arg0 " + union + " :arg1")
+                SQL.ADDSql(" :arg0 " + union + " :arg1")
                         .setValue("arg0", this)
                         .setValue("arg1", subSql), "a");
     }

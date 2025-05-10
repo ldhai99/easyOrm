@@ -32,7 +32,7 @@ public class SetSubSql {
         System.out.print(new SQL(executor).select("student").column("age").eq("name", "李四").getMaps());
 
         new SQL(executor).update(" student ")
-                .set("age", SQL.ADDSQL("round(?)", 19.4))
+                .set("age", SQL.ADDSql("round(?)", 19.4))
                 .eq("name", "李四").update();
 
         System.out.print(new SQL(executor).select("student").column("age").eq("name", "李四").getMaps());
@@ -71,14 +71,14 @@ public class SetSubSql {
 
         new SQL(executor).update(" student ")
                 .join("student1", "student1.name=student.name")
-                .set("student.age", SQL.ADDSQL("student1.age"))
+                .set("student.age", SQL.ADDSql("student1.age"))
                 .eq("student.name", "李四").update();
 
         System.out.print(new SQL(executor).select("student").column("age").eq("name", "李四").getMaps());
         System.out.print(
                 new SQL(executor).update(" student ")
                         .leftJoin("student1", "student1.name=student.name")
-                        .set("student.age", SQL.ADDSQL("student1.age"))
+                        .set("student.age", SQL.ADDSql("student1.age"))
                         .eq("student.name", "李四")
         );
         new SQL(executor).update("student").set("age", 18).eq("name", "李四").update();
