@@ -384,6 +384,14 @@ public class SqlModel implements  Cloneable ,Serializable {
     public SqlModel whereToSelect(){
         return this.setTaskType(TaskType.SELECT);
     }
+    public boolean isMultiTableQuery() {
+        // 仅SELECT任务需要考虑多表
+        if (taskType != TaskType.SELECT) {
+            return false;
+        }
+        // 多表条件：FROM多个表或存在JOIN子句
+        return tables.size() > 1 || !joins.isEmpty();
+    }
     //生成sql------------------------------
 
     public String toSelect() {

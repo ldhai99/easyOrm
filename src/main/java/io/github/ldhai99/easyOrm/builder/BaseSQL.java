@@ -1,5 +1,7 @@
 package io.github.ldhai99.easyOrm.builder;
 
+import io.github.ldhai99.easyOrm.Lambda.PropertyGetter;
+import io.github.ldhai99.easyOrm.dao.core.FieldResolver;
 import io.github.ldhai99.easyOrm.dao.core.TableNameResolver;
 import io.github.ldhai99.easyOrm.base.TaskType;
 import io.github.ldhai99.easyOrm.executor.Executor;
@@ -130,6 +132,9 @@ public class BaseSQL <T extends BaseSQL<T>>{
     public boolean isWhere() {
         return self().builder.isWhere();
     }
+    public  boolean isMultiTableQuery(){
+        return self().builder.isMultiTableQuery();
+    }
     public T whereToSelect() {
         this.builder.whereToSelect();
         return self();
@@ -142,6 +147,10 @@ public class BaseSQL <T extends BaseSQL<T>>{
     }
     public  boolean isNotOnlyWhere(){
         return self().builder.isNotOnlyWhere();
+    }
+    protected  <E> String resolveColumn(PropertyGetter<E> getter) {
+
+        return self().isMultiTableQuery()? FieldResolver.fullField(getter) : FieldResolver.field(getter);
     }
 
     //查询表-------------------------------------------------------------------------------------

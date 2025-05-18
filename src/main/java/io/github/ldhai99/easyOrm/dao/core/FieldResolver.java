@@ -4,7 +4,7 @@ package io.github.ldhai99.easyOrm.dao.core;
 import io.github.ldhai99.easyOrm.Lambda.PropertyGetter;
 import io.github.ldhai99.easyOrm.annotation.TableField;
 import io.github.ldhai99.easyOrm.dao.LambdaResolver;
-import io.github.ldhai99.easyOrm.dao.ReflectionUtils;
+import io.github.ldhai99.easyOrm.dao.orm.ClassFieldExplorer;
 import io.github.ldhai99.easyOrm.tools.SqlTools;
 
 import java.lang.invoke.SerializedLambda;
@@ -34,7 +34,7 @@ public class FieldResolver {
             String propertyName = LambdaResolver.methodToProperty(methodName);
             // 通过反射获取字段上的 @TableField 注解
             Class<?> entityClass = LambdaResolver.getEntityClass(lambda);
-            Field field = ReflectionUtils.findField(entityClass, propertyName);
+            Field field = ClassFieldExplorer.findField(entityClass, propertyName);
             return resolveColumnName(field);
         } catch (Exception e) {
             // 注解解析失败时回退到原逻辑
@@ -58,7 +58,7 @@ public class FieldResolver {
         String propertyName = LambdaResolver.methodToProperty(methodName);
 
         Class<?> entityClass = LambdaResolver.getEntityClass(lambda);
-        Field field = ReflectionUtils.findField(entityClass, propertyName);
+        Field field = ClassFieldExplorer.findField(entityClass, propertyName);
         String tableName = TableNameResolver.getTableName(entityClass);
         return SqlTools.camelToSnakeCase(tableName) + "." + resolveColumnName(field);
 

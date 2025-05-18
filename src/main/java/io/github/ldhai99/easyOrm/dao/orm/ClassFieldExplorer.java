@@ -1,11 +1,10 @@
-package io.github.ldhai99.easyOrm.dao;
+package io.github.ldhai99.easyOrm.dao.orm;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ReflectionUtils {
+public class ClassFieldExplorer {
 
     /**
      * 递归查找类及其父类的字段（包括私有字段）

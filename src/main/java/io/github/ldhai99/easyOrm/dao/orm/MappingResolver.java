@@ -1,4 +1,4 @@
-package io.github.ldhai99.easyOrm.dao;
+package io.github.ldhai99.easyOrm.dao.orm;
 
 import io.github.ldhai99.easyOrm.dao.core.FieldResolver;
 
@@ -44,6 +44,6 @@ public class MappingResolver {
      * 递归获取类及其父类的所有字段（包括私有字段）
      */
     private static List<Field> getAllFields(Class<?> clazz) {
-        return ReflectionUtils.getAllFields(clazz);
+        return ClassFieldExplorer.getAllFields(clazz);
     }
 }

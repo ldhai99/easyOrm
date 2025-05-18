@@ -1,6 +1,5 @@
 package io.github.ldhai99.easyOrm.builder;
 
-import io.github.ldhai99.easyOrm.dao.core.FieldResolver;
 import io.github.ldhai99.easyOrm.Lambda.PropertyGetter;
 import io.github.ldhai99.easyOrm.dao.core.TableNameResolver;
 import io.github.ldhai99.easyOrm.SQL;
@@ -114,7 +113,8 @@ public class WhereHandler<T extends WhereHandler<T>> extends SetHandler<T> {
     }
 
     public <E> T where(PropertyGetter<E> getter, Object value) {
-        return where(FieldResolver.field(getter), value);
+
+        return where(resolveColumn(getter), value);
     }
 
     public T eqMap(Map<String, Object> columnMap) {
@@ -133,7 +133,7 @@ public class WhereHandler<T extends WhereHandler<T>> extends SetHandler<T> {
     // 新增支持Lambda的eq方法
 // 支持泛型的 eq 方法<E> String field(PropertyGetter<E> getter)
     public <E> T eq(PropertyGetter<E> getter, Object value) {
-        return eq(FieldResolver.field(getter), value);
+        return eq(resolveColumn(getter), value);
     }
 
     public T eqIfNotNull(Object name, Object value) {
@@ -143,7 +143,7 @@ public class WhereHandler<T extends WhereHandler<T>> extends SetHandler<T> {
     }
 
     public <E> T eqIfNotNull(PropertyGetter<E> getter, Object value) {
-        return eqIfNotNull(FieldResolver.field(getter), value);
+        return eqIfNotNull(resolveColumn(getter), value);
     }
     public T eqIfNotEmpty(Object name, Object value) {
         if(SqlTools.isEmpty(value))
@@ -152,7 +152,7 @@ public class WhereHandler<T extends WhereHandler<T>> extends SetHandler<T> {
     }
 
     public <E> T eqIfNotEmpty(PropertyGetter<E> getter, Object value) {
-        return eqIfNotEmpty(FieldResolver.field(getter), value);
+        return eqIfNotEmpty(resolveColumn(getter), value);
     }
 
     public T neq(Object name, Object value) {
@@ -160,7 +160,7 @@ public class WhereHandler<T extends WhereHandler<T>> extends SetHandler<T> {
     }
 
     public <E> T neq(PropertyGetter<E> getter, Object value) {
-        return neq(FieldResolver.field(getter), value);
+        return neq(resolveColumn(getter), value);
     }
 
     public T gt(Object name, Object value) {
@@ -168,7 +168,7 @@ public class WhereHandler<T extends WhereHandler<T>> extends SetHandler<T> {
     }
 
     public <E> T gt(PropertyGetter<E> getter, Object value) {
-        return gt(FieldResolver.field(getter), value);
+        return gt(resolveColumn(getter), value);
     }
 
     public T gte(Object name, Object value) {
@@ -176,7 +176,7 @@ public class WhereHandler<T extends WhereHandler<T>> extends SetHandler<T> {
     }
 
     public <E> T gte(PropertyGetter<E> getter, Object value) {
-        return gte(FieldResolver.field(getter), value);
+        return gte(resolveColumn(getter), value);
     }
 
     public T lt(Object name, Object value) {
@@ -184,7 +184,7 @@ public class WhereHandler<T extends WhereHandler<T>> extends SetHandler<T> {
     }
 
     public <E> T lt(PropertyGetter<E> getter, Object value) {
-        return lt(FieldResolver.field(getter), value);
+        return lt(resolveColumn(getter), value);
     }
 
     public T lte(Object name, Object value) {
@@ -192,7 +192,7 @@ public class WhereHandler<T extends WhereHandler<T>> extends SetHandler<T> {
     }
 
     public <E> T lte(PropertyGetter<E> getter, Object value) {
-        return lte(FieldResolver.field(getter), value);
+        return lte(resolveColumn(getter), value);
     }
 
     //name+operator+value
@@ -210,7 +210,7 @@ public class WhereHandler<T extends WhereHandler<T>> extends SetHandler<T> {
     }
 
     public <E> T like(PropertyGetter<E> getter, Object value) {
-        return like(FieldResolver.field(getter), value);
+        return like(resolveColumn(getter), value);
     }
 
     public T like_(Object name, Object value) {
@@ -218,7 +218,7 @@ public class WhereHandler<T extends WhereHandler<T>> extends SetHandler<T> {
     }
 
     public <E> T like_(PropertyGetter<E> getter, Object value) {
-        return like_(FieldResolver.field(getter), value);
+        return like_(resolveColumn(getter), value);
     }
 
     public T notLike(Object name, Object value) {
@@ -226,7 +226,7 @@ public class WhereHandler<T extends WhereHandler<T>> extends SetHandler<T> {
     }
 
     public <E> T notLike(PropertyGetter<E> getter, Object value) {
-        return notLike(FieldResolver.field(getter), value);
+        return notLike(resolveColumn(getter), value);
     }
 
     public T likeLeft(Object name, Object value) {
@@ -234,7 +234,7 @@ public class WhereHandler<T extends WhereHandler<T>> extends SetHandler<T> {
     }
 
     public <E> T likeLeft(PropertyGetter<E> getter, Object value) {
-        return likeLeft(FieldResolver.field(getter), value);
+        return likeLeft(resolveColumn(getter), value);
     }
 
     public T likeRight(Object name, Object value) {
@@ -242,7 +242,7 @@ public class WhereHandler<T extends WhereHandler<T>> extends SetHandler<T> {
     }
 
     public <E> T likeRight(PropertyGetter<E> getter, Object value) {
-        return likeRight(FieldResolver.field(getter), value);
+        return likeRight(resolveColumn(getter), value);
     }
 
     public T notLikeLeft(Object name, Object value) {
@@ -250,7 +250,7 @@ public class WhereHandler<T extends WhereHandler<T>> extends SetHandler<T> {
     }
 
     public <E> T notLikeLeft(PropertyGetter<E> getter, Object value) {
-        return notLikeLeft(FieldResolver.field(getter), value);
+        return notLikeLeft(resolveColumn(getter), value);
     }
 
     public T notLikeRight(Object name, Object value) {
@@ -258,7 +258,7 @@ public class WhereHandler<T extends WhereHandler<T>> extends SetHandler<T> {
     }
 
     public <E> T notLikeRight(PropertyGetter<E> getter, Object value) {
-        return notLikeRight(FieldResolver.field(getter), value);
+        return notLikeRight(resolveColumn(getter), value);
     }
 
     protected T likeOperator(Object name, String operator, Object value) {
@@ -304,7 +304,7 @@ public class WhereHandler<T extends WhereHandler<T>> extends SetHandler<T> {
     }
 
     public <E> T between(PropertyGetter<E> getter, Object value1, Object value2) {
-        return between(FieldResolver.field(getter), value1, value2);
+        return between(resolveColumn(getter), value1, value2);
     }
 
     public T notBetween(Object name, Object value1, Object value2) {
@@ -315,7 +315,7 @@ public class WhereHandler<T extends WhereHandler<T>> extends SetHandler<T> {
     }
 
     public <E> T notBetween(PropertyGetter<E> getter, Object value1, Object value2) {
-        return notBetween(FieldResolver.field(getter), value1, value2);
+        return notBetween(resolveColumn(getter), value1, value2);
     }
 
     protected T between(Object name, String between, Object value1, Object value2) {
@@ -336,7 +336,7 @@ public class WhereHandler<T extends WhereHandler<T>> extends SetHandler<T> {
             return eq(name, value);
     }
     public <E> T isNullElseEq(PropertyGetter<E> getter, Object value) {
-        return isNullElseEq(FieldResolver.field(getter),value);
+        return isNullElseEq(resolveColumn(getter),value);
     }
     public T isNull(Object name,Object value) {
         if(value==null)
@@ -345,7 +345,7 @@ public class WhereHandler<T extends WhereHandler<T>> extends SetHandler<T> {
             return self();
     }
     public <E> T isNull(PropertyGetter<E> getter,Object value) {
-        return isNull(FieldResolver.field(getter),value);
+        return isNull(resolveColumn(getter),value);
     }
     public T isNull(Object name) {
 
@@ -354,7 +354,7 @@ public class WhereHandler<T extends WhereHandler<T>> extends SetHandler<T> {
     }
 
     public <E> T isNull(PropertyGetter<E> getter) {
-        return isNull(FieldResolver.field(getter));
+        return isNull(resolveColumn(getter));
     }
     //-------4.2 IS not NULL----------------------------
     public T isNotNull(Object name,Object value) {
@@ -364,7 +364,7 @@ public class WhereHandler<T extends WhereHandler<T>> extends SetHandler<T> {
             return self();
     }
     public <E> T isNotNull(PropertyGetter<E> getter,Object value) {
-        return isNotNull(FieldResolver.field(getter),value);
+        return isNotNull(resolveColumn(getter),value);
     }
     public T isNotNull(Object name) {
 
@@ -373,7 +373,7 @@ public class WhereHandler<T extends WhereHandler<T>> extends SetHandler<T> {
     }
 
     public <E> T isNotNull(PropertyGetter<E> getter) {
-        return isNotNull(FieldResolver.field(getter));
+        return isNotNull(resolveColumn(getter));
     }
     //-------4.0 IS  NULL
     protected T isNull(Object name, String isNull) {
@@ -389,7 +389,7 @@ public class WhereHandler<T extends WhereHandler<T>> extends SetHandler<T> {
             return eq(name, value);
     }
     public <E> T isEmptyElseEq(PropertyGetter<E> getter, Object value) {
-        return isEmptyElseEq(FieldResolver.field(getter),value);
+        return isEmptyElseEq(resolveColumn(getter),value);
     }
     public T isEmpty(Object name, Object value) {
         if(SqlTools.isEmpty(value))
@@ -398,10 +398,10 @@ public class WhereHandler<T extends WhereHandler<T>> extends SetHandler<T> {
             return self();
     }
     public <E> T isEmpty(PropertyGetter<E> getter, Object value) {
-        return isEmpty(FieldResolver.field(getter),value);
+        return isEmpty(resolveColumn(getter),value);
     }
     public <E> T isEmpty(PropertyGetter<E> getter) {
-        return isEmpty(FieldResolver.field(getter));
+        return isEmpty(resolveColumn(getter));
     }
     public T isEmpty(Object name) {
         this.begin().eq(name, "").or().isNull(name).end();
@@ -416,7 +416,7 @@ public class WhereHandler<T extends WhereHandler<T>> extends SetHandler<T> {
             return self();
     }
     public <E> T isNotEmpty(PropertyGetter<E> getter, Object value) {
-        return isNotEmpty(FieldResolver.field(getter),  value);
+        return isNotEmpty(resolveColumn(getter),  value);
     }
 
     //不为空，不为null，并且不为''
@@ -427,7 +427,7 @@ public class WhereHandler<T extends WhereHandler<T>> extends SetHandler<T> {
     }
 
     public <E> T isNotEmpty(PropertyGetter<E> getter) {
-        return isNotEmpty(FieldResolver.field(getter));
+        return isNotEmpty(resolveColumn(getter));
     }
 
 
@@ -448,7 +448,7 @@ public class WhereHandler<T extends WhereHandler<T>> extends SetHandler<T> {
     }
 
     public <E> T in(PropertyGetter<E> getter, List<?> values) {
-        return in(FieldResolver.field(getter), values);
+        return in(resolveColumn(getter), values);
     }
 
     public T in(Object name, Object... values) {
@@ -457,7 +457,7 @@ public class WhereHandler<T extends WhereHandler<T>> extends SetHandler<T> {
     }
 
     public <E> T in(PropertyGetter<E> getter, Object... values) {
-        return in(FieldResolver.field(getter), values);
+        return in(resolveColumn(getter), values);
     }
 
     public T in(Object name, T subSql) {
@@ -466,7 +466,7 @@ public class WhereHandler<T extends WhereHandler<T>> extends SetHandler<T> {
     }
 
     public <E> T in(PropertyGetter<E> getter, T subSql) {
-        return in(FieldResolver.field(getter), subSql);
+        return in(resolveColumn(getter), subSql);
     }
 
     public T notIn(Object name, List<?> values) {
@@ -474,7 +474,7 @@ public class WhereHandler<T extends WhereHandler<T>> extends SetHandler<T> {
     }
 
     public <E> T notIn(PropertyGetter<E> getter, List<?> values) {
-        return notIn(FieldResolver.field(getter), values);
+        return notIn(resolveColumn(getter), values);
     }
 
     public T notIn(Object name, T subSql) {
@@ -483,7 +483,7 @@ public class WhereHandler<T extends WhereHandler<T>> extends SetHandler<T> {
     }
 
     public <E> T notIn(PropertyGetter<E> getter, T subSql) {
-        return notIn(FieldResolver.field(getter), subSql);
+        return notIn(resolveColumn(getter), subSql);
     }
 
     public T notIn(Object name, Object... values) {
@@ -492,7 +492,7 @@ public class WhereHandler<T extends WhereHandler<T>> extends SetHandler<T> {
     }
 
     public <E> T notIn(PropertyGetter<E> getter, Object... values) {
-        return notIn(FieldResolver.field(getter), values);
+        return notIn(resolveColumn(getter), values);
     }
 
     //七、EXIST 谓词
