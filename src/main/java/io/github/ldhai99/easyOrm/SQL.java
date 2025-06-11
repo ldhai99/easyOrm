@@ -195,41 +195,41 @@ public class SQL  extends ExecutorHandler<SQL> {
         return new SQL().where().where(sql);
     }
 
-    public static SQL ADDSql(String DynamicSql, Object... values) {
-        return new SQL().addSql(DynamicSql, values);
+    public static SQL FRAGMENT(String DynamicSql, Object... values) {
+        return new SQL().append(DynamicSql, values);
     }
-    public static SQL ADDSql(SQL subSql) {
-        return new SQL().addSql(subSql);
+    public static SQL FRAGMENT(SQL subSql) {
+        return new SQL().append(subSql);
     }
-    public static <T>  SQL ADDSql(PropertyGetter<T> getter) {
+    public static <T>  SQL FRAGMENT(PropertyGetter<T> getter) {
 
-        return ADDSql(FieldResolver.field(getter));
+        return FRAGMENT(FieldResolver.fullField(getter));
 
     }
-    public static <T> SQL ADDFull(PropertyGetter<T> getter) {
+    public static <T> SQL FRAGMENTColumn(PropertyGetter<T> getter) {
 
-        return ADDSql(FieldResolver.fullField(getter));
+        return new SQL().append(FieldResolver.field(getter));
 
     }
 
 
     //直接给出sql和参数名称，后面用set设置值配合使用--------------------------------------------------
-    public SQL addSql(String DynamicSql, Object... values) {
+    public SQL append(String DynamicSql, Object... values) {
 
         this.builder.setDynamicSql(jdbcModel.createSqlNameParams(DynamicSql, values));
         return this;
     }
-    public <T> SQL addSql(PropertyGetter<T> getter, Object... values) {
+    public <T> SQL append(PropertyGetter<T> getter) {
 
-        this.addSql(FieldResolver.field(getter), values);
+        this.append(FieldResolver.fullField(getter));
         return this;
     }
-    public <T> SQL addFull(PropertyGetter<T> getter, Object... values) {
+    public <T> SQL addColumn(PropertyGetter<T> getter) {
 
-        this.addSql(FieldResolver.fullField(getter), values);
+        this.append(FieldResolver.field(getter));
         return this;
     }
-    public SQL addSql(SQL subSql) {
+    public SQL append(SQL subSql) {
 
         this.builder.setDynamicSql(jdbcModel.processSqlName(subSql));
         return this;
@@ -246,7 +246,7 @@ public class SQL  extends ExecutorHandler<SQL> {
 
 //    public SQL last(Object last) {
 //        return new SQL(this.executor)
-//                .addSql(" :arg0  :arg1")
+//                .append(" :arg0  :arg1")
 //                .setValue$("arg0", this)
 //                .setValue$("arg1", last);
 //    }
@@ -261,7 +261,7 @@ public class SQL  extends ExecutorHandler<SQL> {
 
     public SQL union(String union, SQL subSql) {
         return new SQL(this.executor).from(
-                SQL.ADDSql(" :arg0 " + union + " :arg1")
+                SQL.FRAGMENT(" :arg0 " + union + " :arg1")
                         .setValue("arg0", this)
                         .setValue("arg1", subSql), "a");
     }
@@ -302,8 +302,12 @@ public class SQL  extends ExecutorHandler<SQL> {
         ensureSelectTaskType(); // 校验任务类型为 SELECT
         return isExists(self());
     }
-    public boolean isExists(SQL sql)  {
-        SQL sql1 =SQL.SELECT("dual").column("1").exists(sql);
+    public static boolean isExists( SQL ...sql )  {
+        SQL sql1 =SQL.SELECT("dual").column("1").exists(sql[0]);
+        for (int i=1;i<sql.length;i++){
+            sql1.or().exists(sql[i]);
+        }
+
         if (sql1.getMaps().size() >= 1)
             return true;
         else

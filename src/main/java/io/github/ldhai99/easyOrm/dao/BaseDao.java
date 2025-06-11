@@ -1,6 +1,6 @@
 package io.github.ldhai99.easyOrm.dao;
 
-import io.github.ldhai99.easyOrm.dao.orm.EntityToDbMapper;
+import io.github.ldhai99.easyOrm.dao.orm.EntityValueMapper;
 import io.github.ldhai99.easyOrm.page.PageSQLGenerator.mysql.MysqlPageSqlByStartId;
 import io.github.ldhai99.easyOrm.page.PAGE;
 import io.github.ldhai99.easyOrm.tools.SnowflakeId;
@@ -98,7 +98,7 @@ public class BaseDao<T extends BaseDm> {
      * @return 当前SQL实例
      */
     public <T> int insert(T entity, boolean ignoreNull) {
-        Map<String, Object> fieldMap = EntityToDbMapper.mapToDatabaseFields(entity, ignoreNull);
+        Map<String, Object> fieldMap = EntityValueMapper.toColumnValues(entity, ignoreNull);
         return insert(fieldMap);
     }
 
@@ -177,14 +177,14 @@ public class BaseDao<T extends BaseDm> {
      * @return 当前SQL实例
      */
     public <T> int update(T entity) {
-        Map<String, Object> fieldMap = EntityToDbMapper.mapToDatabaseFields(entity, true);
+        Map<String, Object> fieldMap = EntityValueMapper.toColumnValues(entity, true);
 
         return this.updateById(fieldMap);
 
     }
 
     public <T> int update(T entity, boolean ignoreNull) {
-        Map<String, Object> fieldMap = EntityToDbMapper.mapToDatabaseFields(entity, ignoreNull);
+        Map<String, Object> fieldMap = EntityValueMapper.toColumnValues(entity, ignoreNull);
 
         return this.updateById(fieldMap);
 
@@ -351,7 +351,7 @@ public class BaseDao<T extends BaseDm> {
 
     //判断实体是否存在
     public <T> Serializable getEntityId(T entity) {
-        Map<String, Object> fieldMap = EntityToDbMapper.mapToDatabaseFields(entity, true);
+        Map<String, Object> fieldMap = EntityValueMapper.toColumnValues(entity, true);
         String id_value = (String) fieldMap.get(dm.tableId);
         Map map = getMapById(id_value);
         return (Serializable) map.get(dm.tableId);

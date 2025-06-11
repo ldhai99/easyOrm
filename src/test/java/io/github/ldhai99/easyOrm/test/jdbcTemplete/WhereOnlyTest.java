@@ -52,23 +52,13 @@ public class WhereOnlyTest {
         );
     }
 
-    @Test
-    public void funcTest() throws SQLException {
-        System.out.println(
-                new SQL(executor).select("student").column("name,create_time")
-                        .where(this.eqMonth1("create_time","2022-12-01")).getMaps()
-        );
-    }
+
     //常用函数
     public SQL eqMonth(String name,String value){
         return  SQL.WHERE().eq("TIMESTAMPDIFF(MONTH,:name,:value)",0)
                 .setValue$("name",name)
                 .setValue("value",value) ;
     }
-    public SQL eqMonth1(String name,String value){
-        return  SQL.ADDSql("TIMESTAMPDIFF(MONTH,:name,:value)=0")
-                .setValue$("name",name)
-                .setValue("value",value) ;
-    }
+
 
 }

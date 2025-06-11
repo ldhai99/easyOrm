@@ -57,11 +57,11 @@ public class LamdaTest {
     public void eqlamdaFullTableField() throws SQLException {
 
         System.out.println(
-                SQL.SELECT(Student.class).full(Student::getName,Student::getAge,Student::getSex)
+                SQL.SELECT(Student.class).column(Student::getName,Student::getAge,Student::getSex)
                         .eq( Student::getAge, 18)
         );
         System.out.println(
-                SQL.SELECT(Student.class).full(Student::getName,Student::getAge,Student::getSex)
+                SQL.SELECT(Student.class).column(Student::getName,Student::getAge,Student::getSex)
                         .eq( Student::getAge, 18).getMaps()
         );
     }

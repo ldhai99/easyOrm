@@ -13,18 +13,9 @@ public class GroupHandler <T extends GroupHandler<T>> extends OrderHandler<T> {
     }
 
     public <E> T groupBy(PropertyGetter<E> getter) {
-        return groupBy(getter, false);
+        return groupBy(FieldResolver.fullField(getter));
     }
 
-    public <E> T groupByfull(PropertyGetter<E> getter) {
-        return groupBy(getter, true);
-    }
 
-    public <E> T groupBy(PropertyGetter<E> getter, boolean usefull) {
-        if (usefull)
-            return groupBy(FieldResolver.fullField(getter));
-        else
-            return groupBy(FieldResolver.field(getter));
-    }
 
 }

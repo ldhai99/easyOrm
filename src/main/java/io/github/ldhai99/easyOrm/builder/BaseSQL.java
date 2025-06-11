@@ -150,7 +150,7 @@ public class BaseSQL <T extends BaseSQL<T>>{
     }
     protected  <E> String resolveColumn(PropertyGetter<E> getter) {
 
-        return self().isMultiTableQuery()? FieldResolver.fullField(getter) : FieldResolver.field(getter);
+        return FieldResolver.fullField(getter);
     }
 
     //查询表-------------------------------------------------------------------------------------

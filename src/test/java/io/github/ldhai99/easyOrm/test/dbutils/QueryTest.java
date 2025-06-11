@@ -205,6 +205,9 @@ public class QueryTest {
         System.out.println(
                 new SQL(con).select("student").eq("age", 18).isExists()
         );
+        System.out.println(
+                new SQL(con).select("student").eq("age", 118).isExists()
+        );
     }
     //---------返回记录个数-----------
     @Test

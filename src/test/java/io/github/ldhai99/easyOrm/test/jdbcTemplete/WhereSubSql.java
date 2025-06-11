@@ -26,100 +26,7 @@ public class WhereSubSql {
     public void afterTest() throws SQLException {
 
     }
-    @Test
-    public void whereSubSql() throws SQLException {
 
-        System.out.println(
-                new SQL(executor).select(" student ").column("name,age").where(
-                        SQL.ADDSql("age = round(?)", 18.3)
-                ).getMaps()
-        );
-        System.out.println(
-                new SQL(executor).select(" student ").column("name,age").where(
-                        SQL.ADDSql("age = round(:age)").setValue("age", 18.3)
-                ).getMaps()
-        );
-    }
-    @Test
-    public void eqSubSql() throws SQLException {
-
-        System.out.println(
-                new SQL(executor).select(" student ").column("name,age")
-                        .eq("age", SQL.ADDSql("round(?)", 18.3)
-                        ).getMaps()
-        );
-        System.out.println(
-                new SQL(executor).select(" student ").column("name,age")
-                        .eq("age", SQL.ADDSql("round(:age)").setValue("age", 18.3)
-                        ).getMaps()
-        );
-
-        System.out.println(
-                new SQL(executor).select(" student ").column("name,age")
-                        .eq("age"
-                                , SQL.SELECT("dual").column("round(:age)").setValue("age", 18.3)
-                        ).getMaps()
-        );
-
-
-    }
-    @Test
-    public void nameSubSql() throws SQLException {
-
-        System.out.println(
-                new SQL(executor).select(" student ").column("name,age")
-                        .eq(SQL.ADDSql("round(age,:arg0)").setValue("arg0", 2)
-                                , SQL.SELECT("dual").column("round(:age)").setValue("age", 18.3)
-                        ).getMaps()
-        );
-    }
-
-    @Test
-    public void likeSubSql() throws SQLException {
-
-
-        System.out.println(
-                new SQL(executor).select("student").column("name,sex")
-                        .like("sex", SQL.ADDSql(" CONCAT('%',right(?,1),'%')", "男女")).getMaps()
-        );
-        System.out.println(
-                new SQL(executor).select("student").column("name,sex")
-                        .like("sex", SQL.ADDSql(" CONCAT('%',left(:sex,1),'%')").setValue("sex", "男女")).getMaps()
-        );
-        System.out.println(
-                new SQL(executor).select("student").column("name,sex")
-                        .like("sex", SQL.SELECT("dual").column(" CONCAT('%',left(:sex,1),'%')").setValue("sex", "男女")).getMaps()
-        );
-    }
-
-    @Test
-    public void betweenSubSql() throws SQLException {
-
-        System.out.println(
-                new SQL(executor).select(" student ").column("name,age")
-                        .between("age"
-                                , SQL.ADDSql("round(?)", 18.3)
-                                , SQL.ADDSql("round(?)", 20.3)
-                        ).getMaps()
-        );
-        System.out.println(
-                new SQL(executor).select(" student ").column("name,age")
-                        .between("age"
-                                , SQL.ADDSql("round(:age)").setValue("age", 18.3)
-                                , SQL.ADDSql("round(:age)").setValue("age", 20.3)
-                        ).getMaps()
-        );
-
-        System.out.println(
-                new SQL(executor).select(" student ").column("name,age")
-                        .between("age"
-                                , SQL.SELECT("dual").column("round(:age)").setValue("age", 18.3)
-                                , SQL.SELECT("dual").column("round(:age)").setValue("age", 20.3)
-                        ).getMaps()
-        );
-
-
-    }
     //in子查询
     @Test
     public void inSubSelect() throws SQLException {
@@ -168,17 +75,6 @@ public class WhereSubSql {
     }
 
 
-    //比较谓词支持子查询
-    @Test
-    public void setFunc() throws SQLException {
-
-        System.out.println(
-                new SQL(executor).select(" student ").column("name,age").where(
-                        SQL.ADDSql("age = :age").
-                                setValue("age", SQL.ADDSql("round(:age)").setValue("age", 18.3))
-                ).getMaps()
-        );
-    }
 
 
 

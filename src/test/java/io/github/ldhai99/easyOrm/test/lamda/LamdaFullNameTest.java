@@ -23,28 +23,28 @@ public class LamdaFullNameTest {
     public  void joinlamda() throws SQLException {
 
         System.out.println(
-                SQL.SELECT(Student.class).full(Student::getAge).full(Student1::getName)
+                SQL.SELECT(Student.class).column(Student::getAge).column(Student1::getName)
                         .join(Student1.class, JoinOn.on(Student1::getName).eq(Student::getName).toString())
                         .getMaps()
         );
         System.out.println(
-                SQL.SELECT(Student.class).full(Student::getAge,Student::getName)
+                SQL.SELECT(Student.class).column(Student::getAge,Student::getName)
                         .join(Student1.class, JoinOn.on(Student1::getName).eq(Student::getName).toString())
                         .getMaps()
         );
 
     }
     @Test
-    public  void joinlamdaAdd() throws SQLException {
+    public  void joinlamdaappend() throws SQLException {
 
         System.out.println(
-                SQL.SELECT(Student.class).full(Student::getAge,Student::getName)
-                        .join(Student1.class,SQL.ADDFull(Student1::getName).addSql("=").addFull(Student::getName))
+                SQL.SELECT(Student.class).column(Student::getAge,Student::getName)
+                        .join(Student1.class,SQL.FRAGMENT(Student1::getName).append("=").append(Student::getName))
 
         );
         System.out.println(
-                SQL.SELECT(Student.class).full(Student::getAge,Student::getName)
-                        .join(Student1.class,SQL.ADDFull(Student1::getName).addSql("=").addFull(Student::getName))
+                SQL.SELECT(Student.class).column(Student::getAge,Student::getName)
+                        .join(Student1.class,SQL.FRAGMENT(Student1::getName).append("=").append(Student::getName))
                         .getMaps()
         );
     }
@@ -52,12 +52,12 @@ public class LamdaFullNameTest {
     //联合多表查询，用lambda表达式，全名（表名.字段名称）,on条件是全名（表名.字段名称）
     public  void joinOnLamda() throws SQLException {
         System.out.println(
-                SQL.SELECT(Student.class).full(Student::getAge).full(Student1::getName)
+                SQL.SELECT(Student.class).column(Student::getAge).column(Student1::getName)
                         .join(Student1.class, JoinOn.on(Student1::getName).eq(Student::getName).toString())
 
         );
         System.out.println(
-                SQL.SELECT(Student.class).full(Student::getAge).full(Student1::getName)
+                SQL.SELECT(Student.class).column(Student::getAge).column(Student1::getName)
                         .join(Student1.class, JoinOn.on(Student1::getName).eq(Student::getName).toString())
                         .getMaps()
         );

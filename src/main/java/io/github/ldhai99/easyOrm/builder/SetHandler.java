@@ -49,7 +49,7 @@ public class SetHandler <T extends SetHandler<T>> extends ColumnHandler<T> {
     }
 
     public <E> T set(PropertyGetter<E> getter, Object value) {
-        return set(FieldResolver.field(getter), value);
+        return set(FieldResolver.fullField(getter), value);
     }
 
     //不为空时候更新
@@ -62,7 +62,7 @@ public class SetHandler <T extends SetHandler<T>> extends ColumnHandler<T> {
     }
 
     public <E> T setIfNotNull(PropertyGetter<E> getter, Object value) {
-        return setIfNotNull(FieldResolver.field(getter), value);
+        return setIfNotNull(FieldResolver.fullField(getter), value);
     }
 
     public T set(String name, Object value, String datatype) {
@@ -71,7 +71,7 @@ public class SetHandler <T extends SetHandler<T>> extends ColumnHandler<T> {
     }
 
     public <E> T set(PropertyGetter<E> getter, Object value, String datatype) {
-        return set(FieldResolver.field(getter), value, datatype);
+        return set(FieldResolver.fullField(getter), value, datatype);
     }
 
     public T set(String name, Object value, String datatype, boolean allowNull) {
@@ -80,7 +80,7 @@ public class SetHandler <T extends SetHandler<T>> extends ColumnHandler<T> {
     }
 
     public <E> T set(PropertyGetter<E> getter, Object value, String datatype, boolean allowNull) {
-        return set(FieldResolver.field(getter), value, datatype, allowNull);
+        return set(FieldResolver.fullField(getter), value, datatype, allowNull);
     }
 
     public T set(String name, DbParameter pmt) {
@@ -90,7 +90,7 @@ public class SetHandler <T extends SetHandler<T>> extends ColumnHandler<T> {
     }
 
     public <E> T set(PropertyGetter<E> getter, DbParameter pmt) {
-        return set(FieldResolver.field(getter), pmt);
+        return set(FieldResolver.fullField(getter), pmt);
     }
 
     protected T set1(String name, Object subSql) {
@@ -123,7 +123,7 @@ public class SetHandler <T extends SetHandler<T>> extends ColumnHandler<T> {
     }
 
     public <E> T setValue(PropertyGetter<E> getter, Object subSql) {
-        return setValue(FieldResolver.field(getter), subSql);
+        return setValue(FieldResolver.fullField(getter), subSql);
     }
 
     public T setValue$(String name, Object subSql) {
@@ -134,7 +134,7 @@ public class SetHandler <T extends SetHandler<T>> extends ColumnHandler<T> {
     }
 
     public <E> T setValue$(PropertyGetter<E> getter, Object subSql) {
-        return setValue$(FieldResolver.field(getter), subSql);
+        return setValue$(FieldResolver.fullField(getter), subSql);
     }
 
 

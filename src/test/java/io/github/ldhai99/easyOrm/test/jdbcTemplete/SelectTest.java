@@ -140,7 +140,7 @@ public class SelectTest {
                         .unionAll(
                                 SQL.SELECT("student").column("name,age").eq("name","李四"))
                         .unionAll(
-                                SQL.ADDSql("select name,age from student "))
+                                SQL.FRAGMENT("select name,age from student "))
                         .orderBy("age",false)
 
                         .getMaps()

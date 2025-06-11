@@ -33,19 +33,9 @@ public class OrderHandler<T extends OrderHandler<T>> extends WhereHandler<T> {
     }
 
     public <E> T orderByAsc(PropertyGetter<E> getter) {
-        return orderByAsc(getter, false);
+        return orderByAsc(FieldResolver.fullField(getter));
     }
 
-    public <E> T orderByAscfull(PropertyGetter<E> getter) {
-        return orderByAsc(getter, true);
-    }
-
-    public <E> T orderByAsc(PropertyGetter<E> getter, boolean usefull) {
-        if (usefull)
-            return orderByAsc(FieldResolver.fullField(getter));
-        else
-            return orderByAsc(FieldResolver.field(getter));
-    }
 
     //---降序排序
     public T orderByDesc(String clause) {
@@ -55,19 +45,9 @@ public class OrderHandler<T extends OrderHandler<T>> extends WhereHandler<T> {
 
 
     public <E> T orderByDesc(PropertyGetter<E> getter) {
-        return orderByDesc(getter, false);
+        return orderByDesc(FieldResolver.fullField(getter));
     }
 
-    public <E> T orderByDescfull(PropertyGetter<E> getter) {
-        return orderByDesc(getter, true);
-    }
-
-    public <E> T orderByDesc(PropertyGetter<E> getter, boolean usefull) {
-        if (usefull)
-            return orderByDesc(FieldResolver.fullField(getter));
-        else
-            return orderByDesc(FieldResolver.field(getter));
-    }
 
     //---默认升序排序
 //    public T orderBy(String clause) {
@@ -107,19 +87,9 @@ public class OrderHandler<T extends OrderHandler<T>> extends WhereHandler<T> {
     }
 
     public <E> T orderBy(PropertyGetter<E> getter) {
-        return orderBy(getter, false);
+        return orderBy(FieldResolver.fullField(getter));
     }
 
-    public <E> T orderByfull(PropertyGetter<E> getter) {
-        return orderBy(getter, true);
-    }
-
-    public <E> T orderBy(PropertyGetter<E> getter, boolean usefull) {
-        if (usefull)
-            return orderBy(FieldResolver.fullField(getter));
-        else
-            return orderBy(FieldResolver.field(getter));
-    }
 
     //---排序
     public T orderBy(String clause, boolean ascending) {
@@ -129,18 +99,8 @@ public class OrderHandler<T extends OrderHandler<T>> extends WhereHandler<T> {
 
 
     public <E> T orderByColumn(PropertyGetter<E> getter, boolean ascending) {
-        return orderBy(getter, ascending, false);
+        return orderBy(FieldResolver.fullField(getter), ascending);
     }
 
-    public <E> T orderByfull(PropertyGetter<E> getter, boolean ascending) {
-        return orderBy(getter, ascending, true);
-    }
-
-    public <E> T orderBy(PropertyGetter<E> getter, boolean ascending, boolean usefull) {
-        if (usefull)
-            return orderBy(FieldResolver.fullField(getter), ascending);
-        else
-            return orderBy(FieldResolver.field(getter), ascending);
-    }
 
 }

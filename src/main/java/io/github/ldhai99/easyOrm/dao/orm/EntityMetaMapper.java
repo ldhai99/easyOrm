@@ -8,12 +8,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class MappingResolver {
+public class EntityMetaMapper {
     // 正向映射：属性 -> 列
     /**
      * 获取 Java 属性名到数据库列名的映射
      */
-    public static Map<String, String> getPropToColumnMap(Class<?> clazz) {
+    public static Map<String, String> propertyToColumn(Class<?> clazz) {
         Map<String, String> map = new HashMap<>();
         for (Field field : getAllFields(clazz)) {
             if (Modifier.isStatic(field.getModifiers())) {
@@ -29,7 +29,7 @@ public class MappingResolver {
     /**
      * 获取数据库列名到 Java 属性名的映射
      */
-    public static Map<String, String> getColumnToPropMap(Class<?> clazz) {
+    public static Map<String, String> columnToProperty(Class<?> clazz) {
         Map<String, String> map = new HashMap<>();
         for (Field field : getAllFields(clazz)) {
             if (Modifier.isStatic(field.getModifiers())) {

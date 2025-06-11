@@ -23,7 +23,7 @@ public class DatabaseResultMapper {
     public static <T> T mapRowToBean(Map<String, Object> data, Class<T> targetClass) {
         try {
             T bean = targetClass.getDeclaredConstructor().newInstance();
-            Map<String, String> columnToPropMap = MappingResolver.getColumnToPropMap(targetClass);
+            Map<String, String> columnToPropMap = EntityMetaMapper.columnToProperty(targetClass);
 
             for (Map.Entry<String, Object> entry : data.entrySet()) {
                 String columnName = entry.getKey();

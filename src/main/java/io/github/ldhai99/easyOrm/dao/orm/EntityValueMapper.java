@@ -5,15 +5,21 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 
-public class EntityToDbMapper {
+public class EntityValueMapper {
+    /**
+     * 将实体对象映射为 <列名, 值> 的 Map
+     */
+    public static <T> Map<String, Object> toColumnValues(T entity) {
+        return toColumnValues(entity, false);
+    }
     /**
      * 解析实体类字段为数据库字段名和值的映射
      */
-    public static <T> Map<String, Object> mapToDatabaseFields(T entity, boolean ignoreNull) {
+    public static <T> Map<String, Object> toColumnValues(T entity, boolean ignoreNull) {
         try {
             Map<String, Object> fieldMap = new LinkedHashMap<>();
             Class<?> clazz = entity.getClass();
-            Map<String, String> propToColumnMap = MappingResolver.getPropToColumnMap(clazz);
+            Map<String, String> propToColumnMap = EntityMetaMapper.propertyToColumn(clazz);
 
             for (Map.Entry<String, String> entry : propToColumnMap.entrySet()) {
                 String propertyName = entry.getKey();

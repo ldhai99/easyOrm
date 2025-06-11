@@ -11,35 +11,35 @@ public class JoinOn {
     public static <T> JoinOn on(PropertyGetter<T> getter)
     {
         JoinOn joinOn=new JoinOn();
-        joinOn.add(FieldResolver.fullField(getter));
+        joinOn.append(FieldResolver.fullField(getter));
         return joinOn;
     }
 
-    protected JoinOn add(String expr){
+    protected JoinOn append(String expr){
         on.append(expr);
         return this;
 
     }
-    public  <T> JoinOn add(PropertyGetter<T> getter){
+    public  <T> JoinOn append(PropertyGetter<T> getter){
         on.append(FieldResolver.fullField(getter));
         return this;
 
     }
     public  <T> JoinOn eq(PropertyGetter<T> getter)
     {
-        this.add(" = ");
-        this.add(FieldResolver.fullField(getter));
+        this.append(" = ");
+        this.append(FieldResolver.fullField(getter));
 
         return this;
     }
     public JoinOn and(PropertyGetter<?> leftField) {
         on.append(" AND ");
-        return add(leftField);
+        return append(leftField);
     }
 
     public JoinOn or(PropertyGetter<?> leftField) {
         on.append(" OR ");
-        return add(leftField);
+        return append(leftField);
     }
     public String toString()
     {
