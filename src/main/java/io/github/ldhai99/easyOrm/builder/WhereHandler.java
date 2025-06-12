@@ -205,14 +205,20 @@ public class WhereHandler<T extends WhereHandler<T>> extends SetHandler<T> {
     }
 
     //二、LIKE 谓词——字符串的部分一致查询
+    //-----like------
     public T like(Object name, Object value) {
         return likeOperator(name, "like", value);
     }
-
+    public T notLike(Object name, Object value) {
+        return likeOperator(name, "notLike", value);
+    }
     public <E> T like(PropertyGetter<E> getter, Object value) {
         return like(resolveColumn(getter), value);
     }
-
+    public <E> T notLike(PropertyGetter<E> getter, Object value) {
+        return notLike(resolveColumn(getter), value);
+    }
+    //-----like_------
     public T like_(Object name, Object value) {
         return likeOperator(name, "like_", value);
     }
@@ -221,45 +227,67 @@ public class WhereHandler<T extends WhereHandler<T>> extends SetHandler<T> {
         return like_(resolveColumn(getter), value);
     }
 
-    public T notLike(Object name, Object value) {
-        return likeOperator(name, "notLike", value);
-    }
 
-    public <E> T notLike(PropertyGetter<E> getter, Object value) {
-        return notLike(resolveColumn(getter), value);
-    }
-
+    //-----likeLeft------
     public T likeLeft(Object name, Object value) {
         return likeOperator(name, "likeLeft", value);
+    }
+    public T endsWith(Object name, Object value) {
+        return likeLeft(name, value);
+    }
+    public T notLikeLeft(Object name, Object value) {
+        return likeOperator(name, "notLikeLeft", value);
+    }
+    public T notEndsWith(Object name, Object value) {
+        return notLikeLeft(name, value);
     }
 
     public <E> T likeLeft(PropertyGetter<E> getter, Object value) {
         return likeLeft(resolveColumn(getter), value);
     }
-
-    public T likeRight(Object name, Object value) {
-        return likeOperator(name, "likeRight", value);
-    }
-
-    public <E> T likeRight(PropertyGetter<E> getter, Object value) {
-        return likeRight(resolveColumn(getter), value);
-    }
-
-    public T notLikeLeft(Object name, Object value) {
-        return likeOperator(name, "notLikeLeft", value);
+    public <E> T endsWith(PropertyGetter<E> getter, Object value) {
+        return  likeLeft(getter, value);
     }
 
     public <E> T notLikeLeft(PropertyGetter<E> getter, Object value) {
         return notLikeLeft(resolveColumn(getter), value);
     }
+    public <E> T notEndsWith(PropertyGetter<E> getter, Object value) {
+        return  notLikeLeft(getter, value);
+    }
+
+    //-----likeRight------
+    public T likeRight(Object name, Object value) {
+        return likeOperator(name, "likeRight", value);
+    }
+    public T startsWith(Object name, Object value) {
+        return likeRight(name, value);
+    }
 
     public T notLikeRight(Object name, Object value) {
         return likeOperator(name, "notLikeRight", value);
+    }
+    public T notStartsWith(Object name, Object value) {
+        return notLikeRight(name, value);
+    }
+
+    public <E> T likeRight(PropertyGetter<E> getter, Object value) {
+        return likeRight(resolveColumn(getter), value);
+    }
+    public <E> T startsWith(PropertyGetter<E> getter, Object value) {
+        return likeRight(getter, value);
+
     }
 
     public <E> T notLikeRight(PropertyGetter<E> getter, Object value) {
         return notLikeRight(resolveColumn(getter), value);
     }
+    public <E> T notStartsWith(PropertyGetter<E> getter, Object value) {
+        return notLikeRight(getter, value);
+
+    }
+
+    //----------------基础-------------------------
 
     protected T likeOperator(Object name, String operator, Object value) {
 
@@ -271,16 +299,17 @@ public class WhereHandler<T extends WhereHandler<T>> extends SetHandler<T> {
 
             if (operator.equalsIgnoreCase("like"))
                 newvalue = "%" + oldValue + "%";
-            else if (operator.equalsIgnoreCase("notlike")) {
-                newvalue = " not %" + oldValue + "%";
+            else if (operator.equalsIgnoreCase("notLike")) {
+                newvalue = "%" + oldValue + "%";
             } else if (operator.equalsIgnoreCase("likeRight")) {
                 newvalue = oldValue + "%";
-            } else if (operator.equalsIgnoreCase("likeLeft")) {
+            }else if (operator.equalsIgnoreCase("notLikeRight")) {
+                newvalue =  oldValue + "%";
+            }
+            else if (operator.equalsIgnoreCase("likeLeft")) {
                 newvalue = "%" + oldValue;
-            } else if (operator.equalsIgnoreCase("notlikeRight")) {
-                newvalue = " not " + oldValue + "%";
-            } else if (operator.equalsIgnoreCase("notlikeLeft")) {
-                newvalue = " not %" + oldValue;
+            } else if (operator.equalsIgnoreCase("notLikeLeft")) {
+                newvalue = "  %" + oldValue;
             } else if (operator.equalsIgnoreCase("like_")) {
                 newvalue = oldValue;
             }
@@ -288,7 +317,7 @@ public class WhereHandler<T extends WhereHandler<T>> extends SetHandler<T> {
         String namePlacehoder = jdbcModel.processSqlName(name);
         String valuePlacehoder = jdbcModel.processSqlValue(newvalue);
 
-        if (operator.equalsIgnoreCase("notlike")) {
+        if (operator.contains("notLike")) {
             this.where(namePlacehoder + " not like " + valuePlacehoder);
         } else {
             this.where(namePlacehoder + " like " + valuePlacehoder);

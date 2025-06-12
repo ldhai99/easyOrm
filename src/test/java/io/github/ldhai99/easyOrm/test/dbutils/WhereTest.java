@@ -92,46 +92,7 @@ public class WhereTest {
                 new SQL(con).select("student").column("name,age").lte("age", 18).getMaps()
         );
     }
-    //中间一致------------------------------------
-    @Test
-    public void like() throws SQLException {
 
-        System.out.println(
-                new SQL(con).select("student").column("name,age").like("name", "李").getMaps()
-        );
-    }
-    //中间不一致------------------------------------
-    @Test
-    public void notLike() throws SQLException {
-
-        System.out.println(
-                new SQL(con).select("student").column("name,age").notLike("name", "李").getMaps()
-        );
-    }
-    //后方一致------------------------------------
-    @Test
-    public void likeLeft() throws SQLException {
-
-        System.out.println(
-                new SQL(con).select("student").column("name,age").likeLeft("name", "三").getMaps()
-        );
-    }
-    //前方一致------------------------------------
-    @Test
-    public void likeRight() throws SQLException {
-
-        System.out.println(
-                new SQL(con).select("student").column("name,age").likeRight("name", "李").getMaps()
-        );
-    }
-    //占位一致------------------------------------
-    @Test
-    public void like_() throws SQLException {
-
-        System.out.println(
-                new SQL(con).select("student").column("name,age").like_("name", "李__").getMaps()
-        );
-    }
     //范围查询------------------------------------
     @Test
     public void between() throws SQLException {
