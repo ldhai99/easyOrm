@@ -209,14 +209,30 @@ public class WhereHandler<T extends WhereHandler<T>> extends SetHandler<T> {
     public T like(Object name, Object value) {
         return likeOperator(name, "like", value);
     }
+    public T contains(Object name, Object value) {
+        return like(name, value);
+
+    }
     public T notLike(Object name, Object value) {
         return likeOperator(name, "notLike", value);
+    }
+    public T notContains(Object name, Object value) {
+        return notLike(name, value);
+
     }
     public <E> T like(PropertyGetter<E> getter, Object value) {
         return like(resolveColumn(getter), value);
     }
+    public <E> T contains(PropertyGetter<E> getter, Object value) {
+        return like(getter, value);
+
+    }
     public <E> T notLike(PropertyGetter<E> getter, Object value) {
         return notLike(resolveColumn(getter), value);
+    }
+    public <E> T notContains(PropertyGetter<E> getter, Object value) {
+        return notLike(getter, value);
+
     }
     //-----like_------
     public T like_(Object name, Object value) {
