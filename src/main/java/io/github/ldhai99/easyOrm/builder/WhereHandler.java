@@ -273,13 +273,13 @@ public class WhereHandler<T extends WhereHandler<T>> extends SetHandler<T> {
                 newvalue = "%" + oldValue + "%";
             else if (operator.equalsIgnoreCase("notlike")) {
                 newvalue = " not %" + oldValue + "%";
-            } else if (operator.equalsIgnoreCase("likeLeft")) {
-                newvalue = oldValue + "%";
             } else if (operator.equalsIgnoreCase("likeRight")) {
+                newvalue = oldValue + "%";
+            } else if (operator.equalsIgnoreCase("likeLeft")) {
                 newvalue = "%" + oldValue;
-            } else if (operator.equalsIgnoreCase("notlikeLeft")) {
-                newvalue = " not " + oldValue + "%";
             } else if (operator.equalsIgnoreCase("notlikeRight")) {
+                newvalue = " not " + oldValue + "%";
+            } else if (operator.equalsIgnoreCase("notlikeLeft")) {
                 newvalue = " not %" + oldValue;
             } else if (operator.equalsIgnoreCase("like_")) {
                 newvalue = oldValue;
