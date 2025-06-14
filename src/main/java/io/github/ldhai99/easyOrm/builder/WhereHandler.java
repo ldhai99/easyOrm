@@ -7,7 +7,7 @@ import io.github.ldhai99.easyOrm.tools.SqlTools;
 
 import java.util.*;
 
-public class WhereHandler<T extends WhereHandler<T>> extends SetHandler<T> {
+public abstract class WhereHandler<T extends WhereHandler<T>> extends SetHandler<T> {
 //0、通用查询-----------age=18----------------------------------------------------
 
     //----------多表连接------------------------------
@@ -26,11 +26,11 @@ public class WhereHandler<T extends WhereHandler<T>> extends SetHandler<T> {
         return join(TableNameResolver.getTableName(clazz), on);
     }
 
-    public T join(String table, T subSql) {
+    public T join(String table, BaseSQL subSql) {
         return this.join( table, jdbcModel.processSqlName(subSql));
 
     }
-    public T join(Class clazz, T subSql) {
+    public T join(Class clazz, BaseSQL subSql) {
 
         return self().join(TableNameResolver.getTableName(clazz),subSql);
     }
@@ -45,11 +45,11 @@ public class WhereHandler<T extends WhereHandler<T>> extends SetHandler<T> {
     }
 
 
-    public T leftJoin(String table, T subSql) {
+    public T leftJoin(String table, BaseSQL subSql) {
         return this.leftJoin( table, jdbcModel.processSqlName(subSql));
 
     }
-    public T leftJoin(Class clazz, T subSql) {
+    public T leftJoin(Class clazz, BaseSQL subSql) {
 
         return self().leftJoin(TableNameResolver.getTableName(clazz),subSql);
     }
@@ -65,11 +65,11 @@ public class WhereHandler<T extends WhereHandler<T>> extends SetHandler<T> {
     }
 
 
-    public T rightJoin(String table, T subSql) {
+    public T rightJoin(String table, BaseSQL subSql) {
         return this.rightJoin( table, jdbcModel.processSqlName(subSql));
 
     }
-    public T rightJoin(Class clazz, T subSql) {
+    public T rightJoin(Class clazz, BaseSQL subSql) {
 
         return self().rightJoin(TableNameResolver.getTableName(clazz),subSql);
     }
@@ -85,11 +85,11 @@ public class WhereHandler<T extends WhereHandler<T>> extends SetHandler<T> {
 
 
 
-    public T fullJoin(String table, T subSql) {
+    public T fullJoin(String table, BaseSQL subSql) {
         return this.fullJoin( table, jdbcModel.processSqlName(subSql));
 
     }
-    public T fullJoin(Class clazz, T subSql) {
+    public T fullJoin(Class clazz, BaseSQL subSql) {
 
         return self().fullJoin(TableNameResolver.getTableName(clazz),subSql);
     }
@@ -310,7 +310,7 @@ public class WhereHandler<T extends WhereHandler<T>> extends SetHandler<T> {
         Object newvalue = value;
 
         //对值预处理
-        if (!(value instanceof SQL)) {
+        if (!(value instanceof BaseSQL)) {
             String oldValue = (String) value;
 
             if (operator.equalsIgnoreCase("like"))
@@ -505,12 +505,12 @@ public class WhereHandler<T extends WhereHandler<T>> extends SetHandler<T> {
         return in(resolveColumn(getter), values);
     }
 
-    public T in(Object name, T subSql) {
+    public T in(Object name, BaseSQL subSql) {
 
         return nameOperatorValue(name, "in", subSql);
     }
 
-    public <E> T in(PropertyGetter<E> getter, T subSql) {
+    public <E> T in(PropertyGetter<E> getter, BaseSQL subSql) {
         return in(resolveColumn(getter), subSql);
     }
 
@@ -522,12 +522,12 @@ public class WhereHandler<T extends WhereHandler<T>> extends SetHandler<T> {
         return notIn(resolveColumn(getter), values);
     }
 
-    public T notIn(Object name, T subSql) {
+    public T notIn(Object name, BaseSQL subSql) {
 
         return nameOperatorValue(name, "not in", subSql);
     }
 
-    public <E> T notIn(PropertyGetter<E> getter, T subSql) {
+    public <E> T notIn(PropertyGetter<E> getter, BaseSQL subSql) {
         return notIn(resolveColumn(getter), subSql);
     }
 
@@ -542,16 +542,16 @@ public class WhereHandler<T extends WhereHandler<T>> extends SetHandler<T> {
 
     //七、EXIST 谓词
     //
-    public T exists(T subSQL) {
+    public T exists(BaseSQL subSQL) {
         return operatorValue("exists", subSQL);
     }
 
-    public T notExists(T subSQL) {
+    public T notExists(BaseSQL subSQL) {
         return operatorValue("not exists", subSQL);
     }
 
     //operator+value------exists（value）-------
-    protected T operatorValue(String operator, T subSQL) {
+    protected T operatorValue(String operator, BaseSQL subSQL) {
         this.where(String.format("  %s %s ", operator, jdbcModel.processSqlValue(subSQL)));
         return self();
     }

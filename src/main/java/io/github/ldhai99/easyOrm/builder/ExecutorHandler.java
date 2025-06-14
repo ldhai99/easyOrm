@@ -1,14 +1,12 @@
 package io.github.ldhai99.easyOrm.builder;
 
-import io.github.ldhai99.easyOrm.SQL;
 import io.github.ldhai99.easyOrm.base.TaskType;
-
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-public class ExecutorHandler<T extends ExecutorHandler<T>> extends GroupHandler<T> {
+public abstract class ExecutorHandler<T extends ExecutorHandler<T>> extends BaseSQL<T> {
 
 
     //代理-------------------------------------------------执行类
@@ -22,18 +20,18 @@ public class ExecutorHandler<T extends ExecutorHandler<T>> extends GroupHandler<
 
     //更新
     public int update() {
-        return executor.update(self());
+        return getExecutor().update(self());
     }
 
     //增加，返回主键
     public Number insert() {
-        return executor.insert(self());
+        return getExecutor().insert(self());
     }
 
     //执行存储过程
     public int execute() {
 
-        return executor.execute(self());
+        return getExecutor().execute(self());
     }
     //查询数据库-----------------------------------------------------------------------------------
     public void ensureSelectTaskType() {
@@ -42,105 +40,105 @@ public class ExecutorHandler<T extends ExecutorHandler<T>> extends GroupHandler<
     //返回单列单行数据
     public String getString() {
         ensureSelectTaskType(); // 校验任务类型为 SELECT
-        return executor.getString(self());
+        return getExecutor().getString(self());
     }
 
 
     public Integer getInteger() {
         ensureSelectTaskType(); // 校验任务类型为 SELECT
-        return executor.getInteger(self());
+        return getExecutor().getInteger(self());
     }
 
     public Long getLong() {
         ensureSelectTaskType(); // 校验任务类型为 SELECT
-        return executor.getLong(self());
+        return getExecutor().getLong(self());
     }
 
 
     public Float getFloat() {
         ensureSelectTaskType(); // 校验任务类型为 SELECT
-        return executor.getFloat(self());
+        return getExecutor().getFloat(self());
     }
 
     public Double getDouble() {
         ensureSelectTaskType(); // 校验任务类型为 SELECT
-        return executor.getDouble(self());
+        return getExecutor().getDouble(self());
     }
 
     public Number getNumber() {
         ensureSelectTaskType(); // 校验任务类型为 SELECT
-        return executor.getNumber(self());
+        return getExecutor().getNumber(self());
     }
 
 
     public BigDecimal getBigDecimal() {
         ensureSelectTaskType(); // 校验任务类型为 SELECT
-        return executor.getBigDecimal(self());
+        return getExecutor().getBigDecimal(self());
     }
 
     public Date getDate() {
         ensureSelectTaskType(); // 校验任务类型为 SELECT
-        return executor.getDate(self());
+        return getExecutor().getDate(self());
     }
 
 
     public <T> T getValue(Class<T> requiredType) {
         ensureSelectTaskType(); // 校验任务类型为 SELECT
-        return executor.getValue(self(), requiredType);
+        return getExecutor().getValue(self(), requiredType);
     }
 
     //返回单列list数据
     public List<String> getStrings() {
         ensureSelectTaskType(); // 校验任务类型为 SELECT
-        return executor.getStrings(self());
+        return getExecutor().getStrings(self());
     }
 
 
     public List<Integer> getIntegers() {
         ensureSelectTaskType(); // 校验任务类型为 SELECT
-        return executor.getIntegers(self());
+        return getExecutor().getIntegers(self());
     }
 
 
     public List<Long> getLongs() {
         ensureSelectTaskType(); // 校验任务类型为 SELECT
-        return executor.getLongs(self());
+        return getExecutor().getLongs(self());
     }
 
 
     public List<Double> getDoubles() {
         ensureSelectTaskType(); // 校验任务类型为 SELECT
-        return executor.getDoubles(self());
+        return getExecutor().getDoubles(self());
     }
 
 
     public List<Float> getFloats() {
         ensureSelectTaskType(); // 校验任务类型为 SELECT
-        return executor.getFloats(self());
+        return getExecutor().getFloats(self());
     }
 
 
     public List<Number> getNumbers() {
         ensureSelectTaskType(); // 校验任务类型为 SELECT
-        return executor.getNumbers(self());
+        return getExecutor().getNumbers(self());
     }
 
 
     public List<BigDecimal> getBigDecimals() {
         ensureSelectTaskType(); // 校验任务类型为 SELECT
-        return executor.getBigDecimals(self());
+        return getExecutor().getBigDecimals(self());
     }
 
 
     public List<Date> getDates() {
         ensureSelectTaskType(); // 校验任务类型为 SELECT
-        return executor.getDates(self());
+        return getExecutor().getDates(self());
     }
 
 
     public <T> List<T> getValues(Class<T> requiredType) {
         ensureSelectTaskType(); // 校验任务类型为 SELECT
-        return executor.getValues(self(), requiredType);
+        return getExecutor().getValues(self(), requiredType);
     }
 
 
@@ -148,28 +146,28 @@ public class ExecutorHandler<T extends ExecutorHandler<T>> extends GroupHandler<
 
     public Map<String, Object> getMap() {
         ensureSelectTaskType(); // 校验任务类型为 SELECT
-        return executor.getMap(self());
+        return getExecutor().getMap(self());
     }
 
 
     //返回多行数据
     public List<Map<String, Object>> getMaps() {
         ensureSelectTaskType(); // 校验任务类型为 SELECT
-        return executor.getMaps(self());
+        return getExecutor().getMaps(self());
     }
 
 
     //返回Bean实体
     public <T> T getBean(Class<T> T) {
         ensureSelectTaskType(); // 校验任务类型为 SELECT
-        return executor.getBean(self(), T);
+        return getExecutor().getBean(self(), T);
     }
 
 
     //返回Bean list
     public <T> List<T> getBeans(Class<T> T) {
         ensureSelectTaskType(); // 校验任务类型为 SELECT
-        return executor.getBeans(self(), T);
+        return getExecutor().getBeans(self(), T);
     }
 
 

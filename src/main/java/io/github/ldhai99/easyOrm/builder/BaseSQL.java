@@ -1,22 +1,64 @@
 package io.github.ldhai99.easyOrm.builder;
 
 import io.github.ldhai99.easyOrm.Lambda.PropertyGetter;
+import io.github.ldhai99.easyOrm.SQL;
 import io.github.ldhai99.easyOrm.dao.core.FieldResolver;
 import io.github.ldhai99.easyOrm.dao.core.TableNameResolver;
 import io.github.ldhai99.easyOrm.base.TaskType;
+import io.github.ldhai99.easyOrm.executor.DbUtilsExecutor;
 import io.github.ldhai99.easyOrm.executor.Executor;
 import io.github.ldhai99.easyOrm.model.JdbcModel;
 import io.github.ldhai99.easyOrm.model.SqlModel;
+import io.github.ldhai99.easyOrm.tools.DbTools;
 
+import javax.sql.DataSource;
+import java.sql.Connection;
 import java.util.Arrays;
 import java.util.Map;
 
-public class BaseSQL <T extends BaseSQL<T>>{
+public abstract class BaseSQL <T extends BaseSQL<T>>{
 
     protected SqlModel builder = new SqlModel();
     protected JdbcModel jdbcModel = new JdbcModel();
 
-    protected Executor executor;
+
+    //克隆
+
+    // 克隆构造函数
+//    public BaseSQL(BaseSQL<T> source) {
+//        // 深拷贝 SqlModel
+//        this.builder = source.builder.clone();
+//
+//        // 深拷贝 JdbcModel
+//        this.jdbcModel = new JdbcModel();
+//        this.jdbcModel.mergeParameterMap(source);
+//
+//        // 共享 Executor（通常不需要深拷贝）
+//        this.executor = source.executor;
+//    }
+
+//克隆方法
+    @SuppressWarnings("unchecked")
+    public T clone() {
+        try {
+            // 创建新实例
+            T clone = (T) super.clone();
+
+            // 深拷贝 builder
+            clone.builder = this.builder.clone();
+
+            // 深拷贝 jdbcModel
+            clone.jdbcModel = new JdbcModel();
+            clone.jdbcModel.mergeParameterMap(this);
+
+            // 共享 executor（通常不需要深拷贝）
+            clone.executor = this.executor;
+
+            return clone;
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError("BaseSQL should be cloneable", e);
+        }
+    }
     // 返回当前实例的泛型类型
     @SuppressWarnings("unchecked")
     protected T self() {
@@ -59,7 +101,7 @@ public class BaseSQL <T extends BaseSQL<T>>{
         return select(TableNameResolver.getTableName(clazz));
     }
 
-    public T select(T subSql, String alias) {
+    public T select(BaseSQL subSql, String alias) {
         return self().from(subSql, alias);
     }
 
@@ -164,7 +206,7 @@ public class BaseSQL <T extends BaseSQL<T>>{
     }
 
     //子查询表
-    public T from(T subSql, String alias) {
+    public T from(BaseSQL subSql, String alias) {
 
         this.builder.from(jdbcModel.processSqlName(subSql) + alias + " ");
         return self();
@@ -176,14 +218,14 @@ public class BaseSQL <T extends BaseSQL<T>>{
         return self();
     }
 
-    public T where(T subSql) {
+    public T where(BaseSQL subSql) {
         if (subSql == null)
             return self();
         ensureTaskType(subSql, TaskType.WHERE);
         this.builder.where(jdbcModel.processSqlName(subSql));
         return self();
     }
-    protected void ensureTaskType(T sql, TaskType... expectedTaskTypes) {
+    protected void ensureTaskType(BaseSQL sql, TaskType... expectedTaskTypes) {
         TaskType actualTaskType = sql.getTaskType();
         if (actualTaskType == null) {
             throw new UnsupportedOperationException("Unknown task type.");
@@ -208,7 +250,7 @@ public class BaseSQL <T extends BaseSQL<T>>{
         return self();
     }
 
-    public T having(T subSql) {
+    public T having(BaseSQL subSql) {
 
         this.builder.having(jdbcModel.processSqlName(subSql));
         return self();
@@ -239,5 +281,68 @@ public class BaseSQL <T extends BaseSQL<T>>{
     }
     public String toOrderBy() {
         return this.builder.toOrderBy();
+    }
+
+    //参数设置--------------------------------------------
+
+    public T setValue(String name, Object subSql) {
+
+        //设置占位符号
+        this.builder.paraName(name, jdbcModel.processSqlValue(subSql));
+        return self();
+    }
+
+    public <E> T setValue(PropertyGetter<E> getter, Object subSql) {
+        return setValue(FieldResolver.fullField(getter), subSql);
+    }
+
+    public T setValue$(String name, Object subSql) {
+
+        //设置占位符号
+        this.builder.paraName(name, jdbcModel.processSqlName(subSql));
+        return self();
+    }
+
+    public <E> T setValue$(PropertyGetter<E> getter, Object subSql) {
+        return setValue$(FieldResolver.fullField(getter), subSql);
+    }
+    //执行器-------------------------------------------------------------------------------------
+    public Executor getExecutor() {
+        if (executor == null)
+            createExecutor();
+        return executor;
+    }
+
+    public void setExecutor(Executor executor) {
+        this.executor = executor;
+    }
+
+    protected Executor executor;
+    //默认执行器为JdbcTemplateMapper
+    public T createExecutor() {
+        executor = DbTools.getExecutor();
+        return self();
+    }
+
+    public T createExecutor(Connection connection) {
+
+        executor = new DbUtilsExecutor(connection);
+        return self();
+
+    }
+
+    public T createExecutor(DataSource dataSource) {
+        executor = new DbUtilsExecutor(dataSource);
+        return self();
+    }
+
+    public T createExecutor(Executor executor) {
+        this.executor = executor;
+        return self();
+    }
+    // 基础初始化
+    protected void initComponents() {
+        this.builder = new SqlModel();
+        this.jdbcModel = new JdbcModel();
     }
 }

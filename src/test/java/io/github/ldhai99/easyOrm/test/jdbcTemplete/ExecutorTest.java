@@ -2,11 +2,11 @@ package io.github.ldhai99.easyOrm.test.jdbcTemplete;
 
 
 import io.github.ldhai99.easyOrm.SQL;
+import io.github.ldhai99.easyOrm.core.DynamicSQL;
 import io.github.ldhai99.easyOrm.test.Student;
 
 
 import io.github.ldhai99.easyOrm.executor.Executor;
-import io.github.ldhai99.easyOrm.executor.JdbcTemplateExecutor;
 import io.github.ldhai99.easyOrm.tools.DbTools;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -167,18 +167,18 @@ public class ExecutorTest {
             e.printStackTrace();
         }
 
-        new SQL(npjt)
+        new DynamicSQL(npjt)
                 .append("delete from student where name=:name")
-                .set("name", "李四")
+                .setValue("name", "李四")
                 .execute();
 
-        new SQL(npjt)
+        new DynamicSQL(npjt)
                 .append("insert into student(id,name,password,age,sex,student_id,create_time) " +
                         "values(:id,:name,:password,:age,:sex,:student_id,:create_time)")
-                .set("id", 0).set("age", 19)
-                .set("name", "李四").set("sex", "女")
-                .set("student_id", "20190102")
-                .set("password", "666").set("create_time", new Date())
+                .setValue("id", 0).setValue("age", 19)
+                .setValue("name", "李四").setValue("sex", "女")
+                .setValue("student_id", "20190102")
+                .setValue("password", "666").setValue("create_time", new Date())
                 .execute();
 
 
@@ -186,10 +186,10 @@ public class ExecutorTest {
                 .eq("name", "李四").getBean(Student.class);
         System.out.println(student);
 
-        new SQL(npjt)
+        new DynamicSQL(npjt)
                 .append("update student set age=:age   where name=:name")
-                .set("age", "18")
-                .set("name", "李四")
+                .setValue("age", "18")
+                .setValue("name", "李四")
                 .execute();
         student = (Student)new SQL(npjt).select("student")
                 .eq("name", "李四").getBean(Student.class);

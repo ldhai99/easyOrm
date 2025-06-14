@@ -3,7 +3,7 @@ package io.github.ldhai99.easyOrm.builder;
 import io.github.ldhai99.easyOrm.dao.core.FieldResolver;
 import io.github.ldhai99.easyOrm.Lambda.PropertyGetter;
 
-public class GroupHandler <T extends GroupHandler<T>> extends OrderHandler<T> {
+public abstract class GroupHandler <T extends GroupHandler<T>> extends WhereHandler<T> {
 
     //分组-----groupBy---
 

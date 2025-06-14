@@ -1,6 +1,7 @@
 package io.github.ldhai99.easyOrm.model;
 
 import io.github.ldhai99.easyOrm.SQL;
+import io.github.ldhai99.easyOrm.builder.BaseSQL;
 
 import java.io.Serializable;
 import java.util.*;
@@ -141,8 +142,8 @@ public class JdbcModel implements  Serializable {
         }
     }
     public String processSqlName(Object value) {
-        if (value instanceof SQL) {
-            SQL sql = (SQL) value;
+        if (value instanceof BaseSQL) {
+            BaseSQL sql = (BaseSQL) value;
             //合并参数值
             mergeParameterMap(sql);
             //占位-替换
@@ -161,8 +162,8 @@ public class JdbcModel implements  Serializable {
     }
     public String processSqlValue(Object value) {
         //处理Sql类型
-        if (value instanceof SQL) {
-            SQL sql = (SQL) value;
+        if (value instanceof BaseSQL) {
+            BaseSQL sql = (BaseSQL) value;
             //合并参数值
             mergeParameterMap(sql);
             //占位-替换
@@ -217,7 +218,7 @@ public class JdbcModel implements  Serializable {
         sb.append(close);
         return sb.toString();
     }
-    public void mergeParameterMap(SQL subSQL) {
+    public void mergeParameterMap(BaseSQL subSQL) {
         //合并参数Map
         // Map<String, Object> map = new HashMap<>(this.getParameterMap());
 

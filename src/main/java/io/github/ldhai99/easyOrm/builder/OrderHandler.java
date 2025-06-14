@@ -5,7 +5,7 @@ import io.github.ldhai99.easyOrm.Lambda.PropertyGetter;
 
 import java.util.List;
 
-public class OrderHandler<T extends OrderHandler<T>> extends WhereHandler<T> {
+public abstract class OrderHandler<T extends OrderHandler<T>> extends GroupHandler<T> {
 
     //-----------------------排序----------------------------------------------------
     //---多组排序

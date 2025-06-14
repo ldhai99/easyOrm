@@ -1,8 +1,7 @@
 package io.github.ldhai99.easyOrm.test.jdbcTemplete;
 
 
-import io.github.ldhai99.easyOrm.SQL;
-
+import io.github.ldhai99.easyOrm.core.DynamicSQL;
 import io.github.ldhai99.easyOrm.test.Student;
 import io.github.ldhai99.easyOrm.executor.Executor;
 
@@ -61,14 +60,14 @@ public class UpdateNameQueryTest {
 
     public int updateStudent(Student student) throws SQLException{
         String sql = "update student1 set age = :age where id = :id";
-        return new SQL(executor).append(sql).setValue("id",student.getId())
+        return new DynamicSQL(executor).append(sql).setValue("id",student.getId())
                 .setValue("age",student.getAge())
                 .update();
     }
 
     public int deleteStudentByName(String name) throws SQLException {
         String sql = "delete from student1 where name = :name";
-        return new SQL(executor).append(sql)
+        return new DynamicSQL(executor).append(sql)
                 .setValue("name",name)
                 .update();
     }
@@ -76,7 +75,7 @@ public class UpdateNameQueryTest {
     public int insert(Student student) throws SQLException{
         String sql = "INSERT  INTO student1(id,student_id,name,password,sex,age, create_time) " +
                 "values (:id,:student_id,:name,:password,:sex,:age, :create_time)";
-        return new SQL(executor).append(sql)
+        return new DynamicSQL(executor).append(sql)
                 .setValue("id",student.getId())
                 .setValue("student_id",student.getStudentId())
                 .setValue("name",student.getName())
@@ -89,7 +88,7 @@ public class UpdateNameQueryTest {
 
 
     public Student queryStudent(String name) throws SQLException{
-        Student student = (Student)new SQL(executor).append("select * from student1 where name=:name")
+        Student student = (Student)new DynamicSQL(executor).append("select * from student1 where name=:name")
                 .setValue("name",name)
                 .getBean(Student.class);
         return student;

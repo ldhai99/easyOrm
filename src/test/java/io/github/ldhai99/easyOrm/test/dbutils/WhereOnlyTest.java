@@ -2,6 +2,7 @@ package io.github.ldhai99.easyOrm.test.dbutils;
 
 
 import io.github.ldhai99.easyOrm.SQL;
+import io.github.ldhai99.easyOrm.core.DynamicSQL;
 import io.github.ldhai99.easyOrm.tools.DbTools;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -64,8 +65,8 @@ public class WhereOnlyTest {
                 .setValue$("name",name)
                 .setValue("value",value) ;
     }
-    public SQL eqMonth1(String name,String value){
-        return  SQL.FRAGMENT("TIMESTAMPDIFF(MONTH,:name,:value)=0")
+    public DynamicSQL eqMonth1(String name, String value){
+        return  SQL.Dynamic("TIMESTAMPDIFF(MONTH,:name,:value)=0")
                 .setValue$("name",name)
                 .setValue("value",value) ;
     }

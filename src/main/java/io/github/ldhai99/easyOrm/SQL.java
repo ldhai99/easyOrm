@@ -1,17 +1,14 @@
 package io.github.ldhai99.easyOrm;
 
 
-import io.github.ldhai99.easyOrm.dao.core.FieldResolver;
+import io.github.ldhai99.easyOrm.builder.BaseSQL;
+import io.github.ldhai99.easyOrm.builder.OrderHandler;
+import io.github.ldhai99.easyOrm.core.DynamicSQL;
 import io.github.ldhai99.easyOrm.Lambda.PropertyGetter;
 import io.github.ldhai99.easyOrm.dao.core.TableNameResolver;
 
-import io.github.ldhai99.easyOrm.builder.ExecutorHandler;
-import io.github.ldhai99.easyOrm.executor.DbUtilsExecutor;
 import io.github.ldhai99.easyOrm.executor.Executor;
 import io.github.ldhai99.easyOrm.executor.JdbcTemplateExecutor;
-import io.github.ldhai99.easyOrm.model.JdbcModel;
-import io.github.ldhai99.easyOrm.model.SqlModel;
-import io.github.ldhai99.easyOrm.tools.DbTools;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import javax.sql.DataSource;
@@ -19,7 +16,7 @@ import java.sql.Connection;
 import java.util.*;
 
 
-public class SQL  extends ExecutorHandler<SQL> {
+public class SQL  extends OrderHandler<SQL> {
     private static final long serialVersionUID = 1L;
 
 
@@ -45,13 +42,10 @@ public class SQL  extends ExecutorHandler<SQL> {
         System.out.println(read.getParameterMap());
 
     }
-    // 基础初始化
-    private void initComponents() {
-        this.builder = new SqlModel();
-        this.jdbcModel = new JdbcModel();
-    }
+
     //构造方法
     public SQL() {
+
         initComponents();
         createExecutor();
     }
@@ -80,40 +74,6 @@ public class SQL  extends ExecutorHandler<SQL> {
         executor = new JdbcTemplateExecutor(template);
     }
 
-
-    //克隆
-    protected SQL(SQL sql) {
-        this.builder = sql.builder.clone();
-        this.jdbcModel.mergeParameterMap(sql);
-        this.executor = sql.executor;
-    }
-
-    public SQL clone() {
-        return new SQL(this);
-    }
-
-    //默认执行器为JdbcTemplateMapper
-    public SQL createExecutor() {
-        executor = DbTools.getExecutor();
-        return this;
-    }
-
-    public SQL createExecutor(Connection connection) {
-
-        executor = new DbUtilsExecutor(connection);
-        return this;
-
-    }
-
-    public SQL createExecutor(DataSource dataSource) {
-        executor = new DbUtilsExecutor(dataSource);
-        return this;
-    }
-
-    public SQL createExecutor(Executor executor) {
-        this.executor = executor;
-        return this;
-    }
 
     //大学，构造，并传入执行器
     public static SQL ofExecutor(Connection connection) {
@@ -155,7 +115,7 @@ public class SQL  extends ExecutorHandler<SQL> {
         return SELECT(TableNameResolver.getTableName(clazz));
     }
 
-    public static SQL SELECT(SQL subSql, String alias) {
+    public static SQL SELECT(BaseSQL subSql, String alias) {
         return new SQL().select(subSql, alias);
     }
 
@@ -194,45 +154,46 @@ public class SQL  extends ExecutorHandler<SQL> {
     public static SQL WHERE(SQL sql) {
         return new SQL().where().where(sql);
     }
+// ============== DynamicSQL 工厂方法 ============== //
 
-    public static SQL FRAGMENT(String DynamicSql, Object... values) {
-        return new SQL().append(DynamicSql, values);
-    }
-    public static SQL FRAGMENT(SQL subSql) {
-        return new SQL().append(subSql);
-    }
-    public static <T>  SQL FRAGMENT(PropertyGetter<T> getter) {
-
-        return FRAGMENT(FieldResolver.fullField(getter));
-
-    }
-    public static <T> SQL FRAGMENTColumn(PropertyGetter<T> getter) {
-
-        return new SQL().append(FieldResolver.field(getter));
-
+    public static DynamicSQL dynamic() {
+        return new DynamicSQL();
     }
 
-
-    //直接给出sql和参数名称，后面用set设置值配合使用--------------------------------------------------
-    public SQL append(String DynamicSql, Object... values) {
-
-        this.builder.setDynamicSql(jdbcModel.createSqlNameParams(DynamicSql, values));
-        return this;
+    public static DynamicSQL dynamic(Connection conn) {
+        return new DynamicSQL(conn);
     }
-    public <T> SQL append(PropertyGetter<T> getter) {
 
-        this.append(FieldResolver.fullField(getter));
-        return this;
+    public static DynamicSQL dynamic(DataSource ds) {
+        return new DynamicSQL(ds);
     }
-    public <T> SQL addColumn(PropertyGetter<T> getter) {
 
-        this.append(FieldResolver.field(getter));
-        return this;
+    public static DynamicSQL dynamic(Executor exec) {
+        return new DynamicSQL(exec);
     }
-    public SQL append(SQL subSql) {
 
-        this.builder.setDynamicSql(jdbcModel.processSqlName(subSql));
-        return this;
+    public static DynamicSQL dynamic(NamedParameterJdbcTemplate template) {
+        return new DynamicSQL(template);
+    }
+    /**
+     * 快速创建参数化动态 SQL
+     */
+    public static DynamicSQL Dynamic(String DynamicSql, Object... values) {
+        return DynamicSQL.of(DynamicSql, values);
+    }
+    public static DynamicSQL Dynamic(BaseSQL subSql) {
+        return DynamicSQL.of(subSql);
+    }
+    public static <T> DynamicSQL Dynamic(PropertyGetter<T> getter) {
+
+        return DynamicSQL.of(getter);
+
+    }
+    //用于表名不知道情况下，只列出列名，不要表名，比如一个查询结果作为表
+    public static <T> DynamicSQL DynamicColumn(PropertyGetter<T> getter) {
+
+        return DynamicSQL.ofColumn(getter);
+
     }
 
     public SQL distinct() {
@@ -251,17 +212,17 @@ public class SQL  extends ExecutorHandler<SQL> {
 //                .setValue$("arg1", last);
 //    }
 
-    public SQL union(SQL subSql) {
+    public SQL union(BaseSQL subSql) {
         return union("union", subSql);
     }
 
-    public SQL unionAll(SQL subSql) {
+    public SQL unionAll(BaseSQL subSql) {
         return union("union all", subSql);
     }
 
-    public SQL union(String union, SQL subSql) {
+    public SQL union(String union, BaseSQL subSql) {
         return new SQL(this.executor).from(
-                SQL.FRAGMENT(" :arg0 " + union + " :arg1")
+                SQL.Dynamic(" :arg0 " + union + " :arg1")
                         .setValue("arg0", this)
                         .setValue("arg1", subSql), "a");
     }
