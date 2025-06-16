@@ -45,12 +45,12 @@ public class SetValueSubSql {
         System.out.println(
                 new DynamicSQL(executor)
                         .append("select name,age from student where age = :arg1")
-                        .setValue("arg1", 18)
+                        .setParameter("arg1", 18)
         );
         System.out.println(
                 new DynamicSQL(executor)
                         .append("select name,age from student where age = :arg1")
-                        .setValue("arg1", 18).getMaps()
+                        .setParameter("arg1", 18).getMaps()
         );
     }
     @Test
@@ -59,14 +59,14 @@ public class SetValueSubSql {
         System.out.println(
                 new DynamicSQL(executor)
                         .append("select name,age from student where :arg0 = :arg1")
-                        .setValue$("arg0", "age")
-                        .setValue("arg1", 18)
+                        .setParameter$("arg0", "age")
+                        .setParameter("arg1", 18)
         );
         System.out.println(
                 new DynamicSQL(executor)
                         .append("select name,age from student where :arg0 = :arg1")
-                        .setValue$("arg0", "age")
-                        .setValue("arg1", 18)
+                        .setParameter$("arg0", "age")
+                        .setParameter("arg1", 18)
                         .getMaps()
         );
     }
@@ -76,19 +76,19 @@ public class SetValueSubSql {
 
         System.out.println(
                 new DynamicSQL(executor)
-                        .append("select :field").setValue$("field","name,age")
-                        .append(" from :table").setValue$("table","student")
+                        .append("select :field").setParameter$("field","name,age")
+                        .append(" from :table").setParameter$("table","student")
                         .append(" where :arg0 = :arg1")
-                        .setValue$("arg0", "age")
-                        .setValue("arg1", 18)
+                        .setParameter$("arg0", "age")
+                        .setParameter("arg1", 18)
         );
         System.out.println(
                 new DynamicSQL(executor)
-                        .append("select :field").setValue$("field","name,age")
-                        .append(" from :table").setValue$("table","student")
+                        .append("select :field").setParameter$("field","name,age")
+                        .append(" from :table").setParameter$("table","student")
                         .append(" where :arg0 = :arg1")
-                        .setValue$("arg0", "age")
-                        .setValue("arg1", 18)
+                        .setParameter$("arg0", "age")
+                        .setParameter("arg1", 18)
 
                         .getMaps()
         );
@@ -105,14 +105,14 @@ public class SetValueSubSql {
 
 
                 new DynamicSQL(executor).append(" insert into student1(id,student_id,name,age,sex,create_time) :arg1")
-                        .setValue("arg1", SQL.SELECT("student")
+                        .setParameter("arg1", SQL.SELECT("student")
                                 .column("id,student_id,name,age,sex,create_time")
                                 .eq("name", "李四"))
                         .update();
 
         System.out.print(new SQL(executor).select("student1").column("id,name,age").eq("name", "李四").getMaps());
         System.out.println(new DynamicSQL(executor).append(" insert into student1(id,student_id,name,age,sex,create_time) :arg1")
-                .setValue("arg1", SQL.SELECT("student")
+                .setParameter("arg1", SQL.SELECT("student")
                         .column("id,student_id,name,age,sex,create_time")
                         .eq("name", "李四")));
 
@@ -128,7 +128,7 @@ public class SetValueSubSql {
                         .max("age", "max")//最大
                         .avg("age", "avg")//平均
                         .groupBy("sex")
-                        .having("avg(age)>=:age").setValue("age", 18)
+                        .having("avg(age)>=:age").setParameter("age", 18)
                         .getMaps()
         );
     }

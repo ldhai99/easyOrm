@@ -60,15 +60,15 @@ public class UpdateNameQueryTest {
 
     public int updateStudent(Student student) throws SQLException{
         String sql = "update student1 set age = :age where id = :id";
-        return new DynamicSQL(executor).append(sql).setValue("id",student.getId())
-                .setValue("age",student.getAge())
+        return new DynamicSQL(executor).append(sql).setParameter("id",student.getId())
+                .setParameter("age",student.getAge())
                 .update();
     }
 
     public int deleteStudentByName(String name) throws SQLException {
         String sql = "delete from student1 where name = :name";
         return new DynamicSQL(executor).append(sql)
-                .setValue("name",name)
+                .setParameter("name",name)
                 .update();
     }
 
@@ -76,20 +76,20 @@ public class UpdateNameQueryTest {
         String sql = "INSERT  INTO student1(id,student_id,name,password,sex,age, create_time) " +
                 "values (:id,:student_id,:name,:password,:sex,:age, :create_time)";
         return new DynamicSQL(executor).append(sql)
-                .setValue("id",student.getId())
-                .setValue("student_id",student.getStudentId())
-                .setValue("name",student.getName())
-                .setValue("password",student.getPassword())
-                .setValue("sex",student.getSex())
-                .setValue("age",student.getAge())
-                .setValue("create_time",student.getCreateTime())
+                .setParameter("id",student.getId())
+                .setParameter("student_id",student.getStudentId())
+                .setParameter("name",student.getName())
+                .setParameter("password",student.getPassword())
+                .setParameter("sex",student.getSex())
+                .setParameter("age",student.getAge())
+                .setParameter("create_time",student.getCreateTime())
                 .update();
     }
 
 
     public Student queryStudent(String name) throws SQLException{
         Student student = (Student)new DynamicSQL(executor).append("select * from student1 where name=:name")
-                .setValue("name",name)
+                .setParameter("name",name)
                 .getBean(Student.class);
         return student;
     }

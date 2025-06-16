@@ -10,8 +10,8 @@ public class PostrePageSqlById implements PageSQLGenerator {
         return sql.clone().setWhere("").in(pageModel.getCountId(),
                 SQL.SELECT(sql.clone().setColumn(pageModel.getCountId())
                                         .last("limit :records offset :start")
-                                        .setValue$("start", pageModel.getPageStartRow())
-                                        .setValue$("records", pageModel.getSize())
+                                        .setParameter$("start", pageModel.getPageStartRow())
+                                        .setParameter$("records", pageModel.getSize())
                                 , "a")
                         .column("id"));
     }

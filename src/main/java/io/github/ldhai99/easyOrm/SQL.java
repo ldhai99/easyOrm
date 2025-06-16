@@ -156,7 +156,7 @@ public class SQL  extends OrderHandler<SQL> {
     }
 // ============== DynamicSQL 工厂方法 ============== //
 
-    public static DynamicSQL dynamic() {
+    public static DynamicSQL Dynamic() {
         return new DynamicSQL();
     }
 
@@ -164,15 +164,15 @@ public class SQL  extends OrderHandler<SQL> {
         return new DynamicSQL(conn);
     }
 
-    public static DynamicSQL dynamic(DataSource ds) {
+    public static DynamicSQL Dynamic(DataSource ds) {
         return new DynamicSQL(ds);
     }
 
-    public static DynamicSQL dynamic(Executor exec) {
+    public static DynamicSQL Dynamic(Executor exec) {
         return new DynamicSQL(exec);
     }
 
-    public static DynamicSQL dynamic(NamedParameterJdbcTemplate template) {
+    public static DynamicSQL Dynamic(NamedParameterJdbcTemplate template) {
         return new DynamicSQL(template);
     }
     /**
@@ -223,8 +223,8 @@ public class SQL  extends OrderHandler<SQL> {
     public SQL union(String union, BaseSQL subSql) {
         return new SQL(this.executor).from(
                 SQL.Dynamic(" :arg0 " + union + " :arg1")
-                        .setValue("arg0", this)
-                        .setValue("arg1", subSql), "a");
+                        .setParameter("arg0", this)
+                        .setParameter("arg1", subSql), "a");
     }
 
     public SQL forUpdate() {

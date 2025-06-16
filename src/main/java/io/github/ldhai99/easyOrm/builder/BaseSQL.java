@@ -1,7 +1,6 @@
 package io.github.ldhai99.easyOrm.builder;
 
 import io.github.ldhai99.easyOrm.Lambda.PropertyGetter;
-import io.github.ldhai99.easyOrm.SQL;
 import io.github.ldhai99.easyOrm.dao.core.FieldResolver;
 import io.github.ldhai99.easyOrm.dao.core.TableNameResolver;
 import io.github.ldhai99.easyOrm.base.TaskType;
@@ -285,26 +284,26 @@ public abstract class BaseSQL <T extends BaseSQL<T>>{
 
     //参数设置--------------------------------------------
 
-    public T setValue(String name, Object subSql) {
+    public T setParameter(String name, Object subSql) {
 
         //设置占位符号
         this.builder.paraName(name, jdbcModel.processSqlValue(subSql));
         return self();
     }
 
-    public <E> T setValue(PropertyGetter<E> getter, Object subSql) {
-        return setValue(FieldResolver.fullField(getter), subSql);
+    public <E> T setParameter(PropertyGetter<E> getter, Object subSql) {
+        return setParameter(FieldResolver.fullField(getter), subSql);
     }
 
-    public T setValue$(String name, Object subSql) {
+    public T setParameter$(String name, Object subSql) {
 
         //设置占位符号
         this.builder.paraName(name, jdbcModel.processSqlName(subSql));
         return self();
     }
 
-    public <E> T setValue$(PropertyGetter<E> getter, Object subSql) {
-        return setValue$(FieldResolver.fullField(getter), subSql);
+    public <E> T setParameter$(PropertyGetter<E> getter, Object subSql) {
+        return setParameter$(FieldResolver.fullField(getter), subSql);
     }
     //执行器-------------------------------------------------------------------------------------
     public Executor getExecutor() {

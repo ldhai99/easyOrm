@@ -11,8 +11,8 @@ public class MysqlPageSqlById implements PageSQLGenerator {
                 SQL.SELECT(
                         sql.clone().setColumn(pageModel.getCountId())
                                         .last("limit :start, :records")
-                                        .setValue$("start",pageModel.getPageStartRow())
-                                        .setValue$("records",pageModel.getSize())
+                                        .setParameter$("start",pageModel.getPageStartRow())
+                                        .setParameter$("records",pageModel.getSize())
                                 ,"a")
                         .column("id"));
     }

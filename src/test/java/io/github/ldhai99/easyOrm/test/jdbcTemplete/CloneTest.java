@@ -78,14 +78,14 @@ public class CloneTest {
 
         System.out.println(
                 sql.clone().last("limit :start, :records")
-                        .setValue$("start", 2)
-                        .setValue$("records", 2)
+                        .setParameter$("start", 2)
+                        .setParameter$("records", 2)
 
         );
         System.out.println(
                 sql.clone().last("limit :start ,:records")
-                        .setValue$("start", 2)
-                        .setValue$("records", 2).getMaps()
+                        .setParameter$("start", 2)
+                        .setParameter$("records", 2).getMaps()
 
         );
 

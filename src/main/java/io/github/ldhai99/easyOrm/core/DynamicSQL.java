@@ -82,4 +82,9 @@ public class DynamicSQL extends ExecutorHandler<DynamicSQL> {
         this.append(FieldResolver.fullField(getter));
         return this;
     }
+    // 增强参数处理
+    public DynamicSQL bind(String paramName, Object value) {
+        setParameter(paramName, value);
+        return this;
+    }
 }

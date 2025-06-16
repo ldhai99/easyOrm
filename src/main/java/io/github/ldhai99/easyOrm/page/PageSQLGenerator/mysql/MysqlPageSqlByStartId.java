@@ -33,7 +33,7 @@ public class MysqlPageSqlByStartId implements PageSQLGenerator {
         // 追加 LIMIT 子句
         return paginationSql
                 .last(" LIMIT :records")
-                .setValue$("records", pageModel.getSize());
+                .setParameter$("records", pageModel.getSize());
     }
 
 }

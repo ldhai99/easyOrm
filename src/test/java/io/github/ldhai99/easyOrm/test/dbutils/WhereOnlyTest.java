@@ -62,13 +62,13 @@ public class WhereOnlyTest {
     //常用函数
     public SQL eqMonth(String name,String value){
         return  SQL.WHERE().eq("TIMESTAMPDIFF(MONTH,:name,:value)",0)
-                .setValue$("name",name)
-                .setValue("value",value) ;
+                .setParameter$("name",name)
+                .setParameter("value",value) ;
     }
     public DynamicSQL eqMonth1(String name, String value){
         return  SQL.Dynamic("TIMESTAMPDIFF(MONTH,:name,:value)=0")
-                .setValue$("name",name)
-                .setValue("value",value) ;
+                .setParameter$("name",name)
+                .setParameter("value",value) ;
     }
 
 }

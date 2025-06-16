@@ -169,16 +169,16 @@ public class ExecutorTest {
 
         new DynamicSQL(npjt)
                 .append("delete from student where name=:name")
-                .setValue("name", "李四")
+                .setParameter("name", "李四")
                 .execute();
 
         new DynamicSQL(npjt)
                 .append("insert into student(id,name,password,age,sex,student_id,create_time) " +
                         "values(:id,:name,:password,:age,:sex,:student_id,:create_time)")
-                .setValue("id", 0).setValue("age", 19)
-                .setValue("name", "李四").setValue("sex", "女")
-                .setValue("student_id", "20190102")
-                .setValue("password", "666").setValue("create_time", new Date())
+                .setParameter("id", 0).setParameter("age", 19)
+                .setParameter("name", "李四").setParameter("sex", "女")
+                .setParameter("student_id", "20190102")
+                .setParameter("password", "666").setParameter("create_time", new Date())
                 .execute();
 
 
@@ -188,8 +188,8 @@ public class ExecutorTest {
 
         new DynamicSQL(npjt)
                 .append("update student set age=:age   where name=:name")
-                .setValue("age", "18")
-                .setValue("name", "李四")
+                .setParameter("age", "18")
+                .setParameter("name", "李四")
                 .execute();
         student = (Student)new SQL(npjt).select("student")
                 .eq("name", "李四").getBean(Student.class);

@@ -10,6 +10,6 @@ public class PostrePageSqlByStartId implements PageSQLGenerator {
         return  sql.clone()
                 .gt(pageModel.getCountId(),pageModel.getPageStartId())
                 .last(" limit :records")
-                .setValue$("records",pageModel.getSize());
+                .setParameter$("records",pageModel.getSize());
     }
 }
