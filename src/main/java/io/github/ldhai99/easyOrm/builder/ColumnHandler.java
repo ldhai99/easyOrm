@@ -217,16 +217,111 @@ public abstract class ColumnHandler<T extends ColumnHandler<T>> extends Executor
 
 
     //---count--------------
+    /**
+     * 添加 COUNT(*) 计数
+     *
+     * @return 当前对象（链式调用）
+     */
     public T count() {
-        this.builder.column("count(" + "*" + ") ");
-        return self();
+        return aggregate("count", "*", null);
     }
 
-    //---count--alis------------
-    public T count(String alias) {
-        this.builder.column("count(" + "*" + ") " + alias + " ");
-        return self();
+    /**
+     * 添加 COUNT(*) 计数并指定别名
+     *
+     * @param alias 结果别名
+     * @return 当前对象（链式调用）
+     */
+    public T countWithAlias(String alias) {
+        return aggregate("count", "*", alias);
     }
+
+    /**
+     * 添加指定字段的 COUNT 计数
+     *
+     * @param column 要计数的字段名
+     * @return 当前对象（链式调用）
+     */
+    public T count(String column) {
+        return aggregate("count", column, null);
+    }
+
+    /**
+     * 添加指定字段的 COUNT 计数并指定别名
+     *
+     * @param column 要计数的字段名
+     * @param alias  结果别名
+     * @return 当前对象（链式调用）
+     */
+    public T count(String column, String alias) {
+        return aggregate("count", column, alias);
+    }
+
+    /**
+     * 添加指定属性的 COUNT 计数（类型安全）
+     *
+     * @param getter 属性获取器
+     * @return 当前对象（链式调用）
+     */
+    public <E> T count(PropertyGetter<E> getter) {
+        return count(FieldResolver.fullField(getter));
+    }
+
+    /**
+     * 添加指定属性的 COUNT 计数并指定别名（类型安全）
+     *
+     * @param getter 属性获取器
+     * @param alias  结果别名
+     * @return 当前对象（链式调用）
+     */
+    public <E> T count(PropertyGetter<E> getter, String alias) {
+        return count(FieldResolver.fullField(getter), alias);
+    }
+
+    /**
+     * 添加 DISTINCT COUNT 计数
+     *
+     * @param column 要计数的字段名
+     * @return 当前对象（链式调用）
+     */
+    public T countDistinct(String column) {
+        return aggregate("count", " DISTINCT " + column, null);
+    }
+
+    /**
+     * 添加 DISTINCT COUNT 计数并指定别名
+     *
+     * @param column 要计数的字段名
+     * @param alias  结果别名
+     * @return 当前对象（链式调用）
+     */
+    public T countDistinct(String column, String alias) {
+        return aggregate("count", " DISTINCT " + column, alias);
+    }
+
+    /**
+     * 添加指定属性的 DISTINCT COUNT 计数（类型安全）
+     *
+     * @param getter 属性获取器
+     * @return 当前对象（链式调用）
+     */
+    public <E> T countDistinct(PropertyGetter<E> getter) {
+        return countDistinct(FieldResolver.fullField(getter));
+    }
+
+    /**
+     * 添加指定属性的 DISTINCT COUNT 计数并指定别名（类型安全）
+     *
+     * @param getter 属性获取器
+     * @param alias  结果别名
+     * @return 当前对象（链式调用）
+     */
+    public <E> T countDistinct(PropertyGetter<E> getter, String alias) {
+        return countDistinct(FieldResolver.fullField(getter), alias);
+    }
+
+// ================ 核心聚合方法 ================ //
+
 
     //---aggregate--------------
     public T aggregate(String function, String column) {
@@ -238,16 +333,25 @@ public abstract class ColumnHandler<T extends ColumnHandler<T>> extends Executor
     }
 
 
-
-
-
     //---aggregate--alis------------
-    public T aggregate(String function, String column, String alias) {
-        String alias1 = alias;
-        if (alias1 == null)
-            alias1 = column;
-        this.builder.column(" " + function + "(" + column + ") " + alias1 + " ");
 
+
+    /**
+     * 通用聚合方法实现
+     *
+     * @param function 聚合函数名
+     * @param column   字段名或表达式
+     * @param alias    结果别名
+     * @return 当前对象（链式调用）
+     */
+    public T aggregate(String function, String column, String alias) {
+        String expression = function + "(" + column + ")";
+
+        if (alias != null && !alias.trim().isEmpty()) {
+            expression += " AS " + alias;
+        }
+
+        this.builder.column(expression);
         return self();
     }
 

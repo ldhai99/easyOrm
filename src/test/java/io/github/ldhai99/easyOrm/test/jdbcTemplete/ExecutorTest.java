@@ -2,7 +2,7 @@ package io.github.ldhai99.easyOrm.test.jdbcTemplete;
 
 
 import io.github.ldhai99.easyOrm.SQL;
-import io.github.ldhai99.easyOrm.core.DynamicSQL;
+import io.github.ldhai99.easyOrm.dynamic.DynamicSQL;
 import io.github.ldhai99.easyOrm.test.Student;
 
 
@@ -168,12 +168,12 @@ public class ExecutorTest {
         }
 
         new DynamicSQL(npjt)
-                .append("delete from student where name=:name")
+                .addSql("delete from student where name=:name")
                 .setParameter("name", "李四")
                 .execute();
 
         new DynamicSQL(npjt)
-                .append("insert into student(id,name,password,age,sex,student_id,create_time) " +
+                .addSql("insert into student(id,name,password,age,sex,student_id,create_time) " +
                         "values(:id,:name,:password,:age,:sex,:student_id,:create_time)")
                 .setParameter("id", 0).setParameter("age", 19)
                 .setParameter("name", "李四").setParameter("sex", "女")
@@ -187,7 +187,7 @@ public class ExecutorTest {
         System.out.println(student);
 
         new DynamicSQL(npjt)
-                .append("update student set age=:age   where name=:name")
+                .addSql("update student set age=:age   where name=:name")
                 .setParameter("age", "18")
                 .setParameter("name", "李四")
                 .execute();

@@ -3,7 +3,7 @@ package io.github.ldhai99.easyOrm;
 
 import io.github.ldhai99.easyOrm.builder.BaseSQL;
 import io.github.ldhai99.easyOrm.builder.OrderHandler;
-import io.github.ldhai99.easyOrm.core.DynamicSQL;
+import io.github.ldhai99.easyOrm.dynamic.DynamicSQL;
 import io.github.ldhai99.easyOrm.Lambda.PropertyGetter;
 import io.github.ldhai99.easyOrm.dao.core.TableNameResolver;
 
@@ -156,43 +156,43 @@ public class SQL  extends OrderHandler<SQL> {
     }
 // ============== DynamicSQL 工厂方法 ============== //
 
-    public static DynamicSQL Dynamic() {
+    public static DynamicSQL ADDSQL() {
         return new DynamicSQL();
     }
 
-    public static DynamicSQL dynamic(Connection conn) {
+    public static DynamicSQL ADDSQL(Connection conn) {
         return new DynamicSQL(conn);
     }
 
-    public static DynamicSQL Dynamic(DataSource ds) {
+    public static DynamicSQL ADDSQL(DataSource ds) {
         return new DynamicSQL(ds);
     }
 
-    public static DynamicSQL Dynamic(Executor exec) {
+    public static DynamicSQL ADDSQL(Executor exec) {
         return new DynamicSQL(exec);
     }
 
-    public static DynamicSQL Dynamic(NamedParameterJdbcTemplate template) {
+    public static DynamicSQL ADDSQL(NamedParameterJdbcTemplate template) {
         return new DynamicSQL(template);
     }
     /**
      * 快速创建参数化动态 SQL
      */
-    public static DynamicSQL Dynamic(String DynamicSql, Object... values) {
-        return DynamicSQL.of(DynamicSql, values);
+    public static DynamicSQL ADDSQL(String DynamicSql, Object... values) {
+        return DynamicSQL.ADDSQL(DynamicSql, values);
     }
-    public static DynamicSQL Dynamic(BaseSQL subSql) {
-        return DynamicSQL.of(subSql);
+    public static DynamicSQL ADDSQL(BaseSQL subSql) {
+        return DynamicSQL.ADDSQL(subSql);
     }
-    public static <T> DynamicSQL Dynamic(PropertyGetter<T> getter) {
+    public static <T> DynamicSQL ADDSQL(PropertyGetter<T> getter) {
 
-        return DynamicSQL.of(getter);
+        return DynamicSQL.ADDSQL(getter);
 
     }
     //用于表名不知道情况下，只列出列名，不要表名，比如一个查询结果作为表
-    public static <T> DynamicSQL DynamicColumn(PropertyGetter<T> getter) {
+    public static <T> DynamicSQL ADDColumn(PropertyGetter<T> getter) {
 
-        return DynamicSQL.ofColumn(getter);
+        return DynamicSQL.ADDColumn(getter);
 
     }
 
@@ -222,7 +222,7 @@ public class SQL  extends OrderHandler<SQL> {
 
     public SQL union(String union, BaseSQL subSql) {
         return new SQL(this.executor).from(
-                SQL.Dynamic(" :arg0 " + union + " :arg1")
+                SQL.ADDSQL(" :arg0 " + union + " :arg1")
                         .setParameter("arg0", this)
                         .setParameter("arg1", subSql), "a");
     }

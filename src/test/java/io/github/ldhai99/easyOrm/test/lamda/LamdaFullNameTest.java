@@ -39,12 +39,12 @@ public class LamdaFullNameTest {
 
         System.out.println(
                 SQL.SELECT(Student.class).column(Student::getAge,Student::getName)
-                        .join(Student1.class,SQL.Dynamic(Student1::getName).append("=").append(Student::getName))
+                        .join(Student1.class,SQL.ADDSQL(Student1::getName).addSql("=").addSql(Student::getName))
 
         );
         System.out.println(
                 SQL.SELECT(Student.class).column(Student::getAge,Student::getName)
-                        .join(Student1.class,SQL.Dynamic(Student1::getName).append("=").append(Student::getName))
+                        .join(Student1.class,SQL.ADDSQL(Student1::getName).addSql("=").addSql(Student::getName))
                         .getMaps()
         );
     }

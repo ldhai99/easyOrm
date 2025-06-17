@@ -3,7 +3,7 @@ package io.github.ldhai99.easyOrm.test.jdbcTemplete;
 
 import io.github.ldhai99.easyOrm.SQL;
 
-import io.github.ldhai99.easyOrm.core.DynamicSQL;
+import io.github.ldhai99.easyOrm.dynamic.DynamicSQL;
 import io.github.ldhai99.easyOrm.executor.Executor;
 
 import io.github.ldhai99.easyOrm.tools.DbTools;
@@ -34,7 +34,7 @@ public class SetValueSubSql {
     public void setSql() throws SQLException {
 
         System.out.println(
-                new DynamicSQL(executor).append("select name,age from student where age = ?", 18).getMaps()
+                new DynamicSQL(executor).addSql("select name,age from student where age = ?", 18).getMaps()
         );
     }
 
@@ -44,12 +44,12 @@ public class SetValueSubSql {
 
         System.out.println(
                 new DynamicSQL(executor)
-                        .append("select name,age from student where age = :arg1")
+                        .addSql("select name,age from student where age = :arg1")
                         .setParameter("arg1", 18)
         );
         System.out.println(
                 new DynamicSQL(executor)
-                        .append("select name,age from student where age = :arg1")
+                        .addSql("select name,age from student where age = :arg1")
                         .setParameter("arg1", 18).getMaps()
         );
     }
@@ -58,13 +58,13 @@ public class SetValueSubSql {
 
         System.out.println(
                 new DynamicSQL(executor)
-                        .append("select name,age from student where :arg0 = :arg1")
+                        .addSql("select name,age from student where :arg0 = :arg1")
                         .setParameter$("arg0", "age")
                         .setParameter("arg1", 18)
         );
         System.out.println(
                 new DynamicSQL(executor)
-                        .append("select name,age from student where :arg0 = :arg1")
+                        .addSql("select name,age from student where :arg0 = :arg1")
                         .setParameter$("arg0", "age")
                         .setParameter("arg1", 18)
                         .getMaps()
@@ -76,17 +76,17 @@ public class SetValueSubSql {
 
         System.out.println(
                 new DynamicSQL(executor)
-                        .append("select :field").setParameter$("field","name,age")
-                        .append(" from :table").setParameter$("table","student")
-                        .append(" where :arg0 = :arg1")
+                        .addSql("select :field").setParameter$("field","name,age")
+                        .addSql(" from :table").setParameter$("table","student")
+                        .addSql(" where :arg0 = :arg1")
                         .setParameter$("arg0", "age")
                         .setParameter("arg1", 18)
         );
         System.out.println(
                 new DynamicSQL(executor)
-                        .append("select :field").setParameter$("field","name,age")
-                        .append(" from :table").setParameter$("table","student")
-                        .append(" where :arg0 = :arg1")
+                        .addSql("select :field").setParameter$("field","name,age")
+                        .addSql(" from :table").setParameter$("table","student")
+                        .addSql(" where :arg0 = :arg1")
                         .setParameter$("arg0", "age")
                         .setParameter("arg1", 18)
 
@@ -104,14 +104,14 @@ public class SetValueSubSql {
         new SQL(executor).delete("student1").eq("name", "李四").update();
 
 
-                new DynamicSQL(executor).append(" insert into student1(id,student_id,name,age,sex,create_time) :arg1")
+                new DynamicSQL(executor).addSql(" insert into student1(id,student_id,name,age,sex,create_time) :arg1")
                         .setParameter("arg1", SQL.SELECT("student")
                                 .column("id,student_id,name,age,sex,create_time")
                                 .eq("name", "李四"))
                         .update();
 
         System.out.print(new SQL(executor).select("student1").column("id,name,age").eq("name", "李四").getMaps());
-        System.out.println(new DynamicSQL(executor).append(" insert into student1(id,student_id,name,age,sex,create_time) :arg1")
+        System.out.println(new DynamicSQL(executor).addSql(" insert into student1(id,student_id,name,age,sex,create_time) :arg1")
                 .setParameter("arg1", SQL.SELECT("student")
                         .column("id,student_id,name,age,sex,create_time")
                         .eq("name", "李四")));
@@ -139,12 +139,12 @@ public class SetValueSubSql {
         System.out.println(
                 new DynamicSQL(executor)
 
-                        .append(SQL.SELECT("student").column("name,age").eq("name","张三"))
-                        .append(" union all")
-                        .append( SQL.SELECT("student").column("name,age").eq("name","张三"))
-                        .append(" union all")
-                        .append(SQL.SELECT("student").column("name,age").eq("name","李四"))
-                        .append(" order by age")
+                        .addSql(SQL.SELECT("student").column("name,age").eq("name","张三"))
+                        .addSql(" union all")
+                        .addSql( SQL.SELECT("student").column("name,age").eq("name","张三"))
+                        .addSql(" union all")
+                        .addSql(SQL.SELECT("student").column("name,age").eq("name","李四"))
+                        .addSql(" order by age")
                         .getMaps()
         );
     }
