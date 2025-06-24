@@ -2,110 +2,118 @@ package io.github.ldhai99.easyOrm;
 
 
 
+import io.github.ldhai99.easyOrm.base.DataType;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Objects;
 
 
 public class DbParameter {
-    private String name;
+    // 使用枚举替代字符串类型，提高类型安全性
 
+
+    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
+
+    private final String name;
     private Object value;
+    private DataType dataType;
+    private boolean allowNull;
 
-
-
-    private String datatype = "string";
-
-    private boolean allowNull = false;
-
+    // 主构造函数，其他构造函数通过this()调用它
     public DbParameter(String name, Object value) {
-        this.name = name;
-        this.value = value;
+        this(name, value, DataType.STRING, true);
     }
 
-    public DbParameter(String name, Object value, String datatype) {
-        this.name = name;
-        this.value = value;
-        this.datatype = datatype;
+    public DbParameter(String name, Object value, DataType dataType) {
+        this(name, value, dataType, true);
     }
 
-    public DbParameter(String name, Object value, String datatype,
-                       boolean AllowNull) {
-        this.name = name;
-        this.value = value;
-        this.datatype = datatype;
-        this.allowNull = AllowNull;
+    public DbParameter(String name, Object value, DataType dataType, boolean allowNull) {
+        this.name = Objects.requireNonNull(name, "Parameter name cannot be null");
+        this.dataType = dataType != null ? dataType : DataType.STRING;
+        this.allowNull = allowNull;
+        setValue(value); // 使用setter确保值被正确处理
+    }
+    public void setValue(Object value) {
+        if (value == null) {
+            handleNullValue();
+        }else
+            this.value = value;
+    }
 
-
-        //数字型处理
-        if (datatype.equalsIgnoreCase("double")) {
-
-            if (value == null || value.toString().trim().length() == 0) {
-                if (!allowNull)
-                    this.value = 0;
-                else
-                    this.value = null;
-            } else {
-                try {
-                    this.value = Double.parseDouble(value.toString());
-                } catch (Exception e) {
-                    this.value = 0;
-                }
-            }
-        }
-
-        //日期型处理
-        else if (datatype.equalsIgnoreCase("date")) {
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-
-            if (value == null || value.toString().trim().length() == 0) {
-                if (!allowNull)
-                    this.value = new java.util.Date();
-                else
-                    this.value = null;
-            } else {
-                this.value = value.toString().trim();
-                try {
-                    this.value = sdf.parse(this.value.toString());
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
-            }
-        } else if (value == null ){
-            if (!allowNull)
-                this.value = " ";
-            else
-                this.value = null;
+    private void handleNullValue() {
+        if (allowNull) {
+            this.value = null;
+        } else {
+            this.value = getDefaultValue();
         }
     }
-    public String getName() {
-        return name;
+    private Object getDefaultValue() {
+        switch (dataType) {
+            case NUMBER: return 0;
+            case DATE: return new Date();
+            default: return "";
+        }
+    }
+    private void convertValue(Object value) {
+        try {
+            switch (dataType) {
+                case NUMBER:
+                    this.value = parseDouble(value);
+                    break;
+                case DATE:
+                    this.value = parseDate(value);
+                    break;
+                default:
+                    this.value = value.toString().trim();
+            }
+        } catch (Exception e) {
+            // 转换失败时使用默认值
+            this.value = getDefaultValue();
+        }
     }
 
-    public void setName(String name) {
-        this.name = name;
+    private double parseDouble(Object value) {
+        if (value instanceof Number) {
+            return ((Number) value).doubleValue();
+        }
+        return Double.parseDouble(value.toString().trim());
     }
 
+    private Date parseDate(Object value) throws ParseException {
+        if (value instanceof Date) {
+            return (Date) value;
+        }
+        return DATE_FORMAT.parse(value.toString().trim());
+    }
     public Object getValue() {
         return value;
     }
-
-    public void setValue(Object value) {
-        this.value = value;
-    }
-
-    public String getDatatype() {
-        return datatype;
-    }
-
-    public void setDatatype(String datatype) {
-        this.datatype = datatype;
-    }
-
     public boolean isAllowNull() {
         return allowNull;
     }
 
     public void setAllowNull(boolean allowNull) {
         this.allowNull = allowNull;
+        // 允许空值改变后重新处理值
+        if (this.value == null) {
+            handleNullValue();
+        }
+    }
+    public DataType getDataType() {
+        return dataType;
+    }
+
+    public void setDataType(DataType dataType) {
+        this.dataType = dataType != null ? dataType : DataType.STRING;
+        // 数据类型改变后重新转换值
+        if (this.value != null) {
+            convertValue(this.value);
+        }
+    }
+    public String getName() {
+        return name;
     }
 }

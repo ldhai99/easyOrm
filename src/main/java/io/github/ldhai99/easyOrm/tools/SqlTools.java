@@ -1,7 +1,11 @@
 package io.github.ldhai99.easyOrm.tools;
 
+import java.lang.reflect.Array;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -31,21 +35,22 @@ public class SqlTools {
     }
 
     public static void main(String[] args) {
+        System.out.println(SqlTools.isEmpty(0));
         // 测试驼峰转下划线
-        System.out.println(SqlTools.camelToSnakeCase("userId"));       // 输出: user_id
-        System.out.println(SqlTools.camelToSnakeCase("userName"));     // 输出: user_name
-        System.out.println(SqlTools.camelToSnakeCase("isActiveUser")); // 输出: is_active_user
+//        System.out.println(SqlTools.camelToSnakeCase("userId"));       // 输出: user_id
+//        System.out.println(SqlTools.camelToSnakeCase("userName"));     // 输出: user_name
+//        System.out.println(SqlTools.camelToSnakeCase("isActiveUser")); // 输出: is_active_user
 
         // 测试下划线转驼峰
-        System.out.println(SqlTools.snakeToCamelCase("user_id"));       // 输出: userId
-        System.out.println(SqlTools.snakeToCamelCase("user_name"));     // 输出: userName
-        System.out.println(SqlTools.snakeToCamelCase("is_active_user")); // 输出: isActiveUser
+//        System.out.println(SqlTools.snakeToCamelCase("user_id"));       // 输出: userId
+//        System.out.println(SqlTools.snakeToCamelCase("user_name"));     // 输出: userName
+//        System.out.println(SqlTools.snakeToCamelCase("is_active_user")); // 输出: isActiveUser
 
         // 边界情况
-        System.out.println(SqlTools.camelToSnakeCase(""));              // 输出: ""
-        System.out.println(SqlTools.snakeToCamelCase(""));              // 输出: ""
-        System.out.println(SqlTools.camelToSnakeCase(null));            // 输出: null
-        System.out.println(SqlTools.snakeToCamelCase(null));            // 输出: null
+//        System.out.println(SqlTools.camelToSnakeCase(""));              // 输出: ""
+//        System.out.println(SqlTools.snakeToCamelCase(""));              // 输出: ""
+//        System.out.println(SqlTools.camelToSnakeCase(null));            // 输出: null
+//        System.out.println(SqlTools.snakeToCamelCase(null));            // 输出: null
     }
 
     /**
@@ -101,77 +106,113 @@ public class SqlTools {
         }
         return sb.toString();
     }
+
     public static boolean isNotEmpty(Object object) {
         return !isEmpty(object);
     }
     /**
      * 检查字符串是否为空
      */
-    /**
-     * 判断对象是否为空
+    /***
+     * 检查对象是否为空或零值
+     *
+     * <p>支持以下情况的判断：
+     * <ul>
+     *   <li>null 值</li>
+     *   <li>空字符串、空白字符串（可选）</li>
+     *   <li>空集合、空Map</li>
+     *   <li>空数组</li>
+     *   <li>数值类型的零值（0, 0.0, 0L等）</li>
+     *   <li>空的Optional</li>
+     *   <li>自定义空对象（通过isEmpty()方法）</li>
+     * </ul>
      *
      * @param object 待检查的对象
-     * @return true 如果对象为空，false 否则
+     * @param trimStrings 是否修剪字符串并检查空白（true：将空白视为空，false：仅检查空字符串）
+     * @return true 如果对象为空或零值，false 否则
      */
-    public static boolean isEmpty(Object object) {
+    public static boolean isEmpty(Object object, boolean trimStrings) {
         if (object == null) {
-            return true; // null 值直接返回 true
+            return true;
         }
 
-        // 检查字符串是否为空
+        // 处理字符串
         if (object instanceof String) {
-            return ((String) object).isEmpty();
+            String str = (String) object;
+            return trimStrings ? str.trim().isEmpty() : str.isEmpty();
         }
 
-        // 检查数组是否为空
-        if (object instanceof Object[]) {
-            Object[] objectArray = (Object[]) object;
-            return objectArray.length == 0;
-        }
-
-        // 检查集合（List、Set 等）是否为空
-        if (object instanceof Collection) {
-            Collection<?> collection = (Collection<?>) object;
-            return collection.isEmpty();
-        }
-
-        // 检查映射（Map）是否为空
-        if (object instanceof Map) {
-            Map<?, ?> map = (Map<?, ?>) object;
-            return map.isEmpty();
-        }
-
-        // 检查原始数据类型数组是否为空
-        if (object.getClass().isArray()) {
-            if (object instanceof int[]) {
-                return ((int[]) object).length == 0;
-            } else if (object instanceof long[]) {
-                return ((long[]) object).length == 0;
-            } else if (object instanceof double[]) {
-                return ((double[]) object).length == 0;
-            } else if (object instanceof float[]) {
-                return ((float[]) object).length == 0;
-            } else if (object instanceof boolean[]) {
-                return ((boolean[]) object).length == 0;
-            } else if (object instanceof char[]) {
-                return ((char[]) object).length == 0;
-            } else if (object instanceof byte[]) {
-                return ((byte[]) object).length == 0;
-            } else if (object instanceof short[]) {
-                return ((short[]) object).length == 0;
+        // 处理数值类型
+        if (object instanceof Number) {
+            if (object instanceof Integer) {
+                return (Integer) object == 0;
+            } else if (object instanceof Long) {
+                return (Long) object == 0L;
+            } else if (object instanceof Double) {
+                return (Double) object == 0.0d;
+            } else if (object instanceof Float) {
+                return (Float) object == 0.0f;
+            } else if (object instanceof BigDecimal) {
+                return BigDecimal.ZERO.compareTo((BigDecimal) object) == 0;
+            } else if (object instanceof BigInteger) {
+                return BigInteger.ZERO.equals(object);
+            } else if (object instanceof Short) {
+                return (Short) object == 0;
+            } else if (object instanceof Byte) {
+                return (Byte) object == 0;
             }
+            // 其他数值类型
+            return ((Number) object).doubleValue() == 0.0;
         }
 
-        // 默认情况下，非空对象返回 false
+        // 处理集合
+        if (object instanceof Collection) {
+            return ((Collection<?>) object).isEmpty();
+        }
+
+        // 处理Map
+        if (object instanceof Map) {
+            return ((Map<?, ?>) object).isEmpty();
+        }
+
+        // 处理数组
+        if (object.getClass().isArray()) {
+            return Array.getLength(object) == 0;
+        }
+
+        // 处理Optional
+        if (object instanceof Optional) {
+            return !((Optional<?>) object).isPresent();
+        }
+
+        // 处理布尔值（可选）
+        if (object instanceof Boolean) {
+            return !(Boolean) object;
+        }
+
+        // 处理自定义空对象（如果对象实现了isEmpty方法）
+        try {
+            java.lang.reflect.Method method = object.getClass().getMethod("isEmpty");
+            if (method.getReturnType() == boolean.class) {
+                return (boolean) method.invoke(object);
+            }
+        } catch (Exception ignored) {
+            // 忽略反射异常
+        }
+
+        // 默认情况：非空对象
         return false;
     }
-    public static boolean isEmpty(String value ) {
-        if (value == null || value.trim().length() == 0) {
-            return true;
-        } else {
-            return false;
-        }
+    /**
+     * 检查对象是否为空或零值（默认不修剪字符串）
+     *
+     * @param object 待检查的对象
+     * @return true 如果对象为空或零值，false 否则
+     */
+    public static boolean isEmpty(Object object) {
+        return isEmpty(object, true);
     }
+
 
     /**
      * 将字符串首字母大写
