@@ -9,6 +9,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
+import java.util.function.Predicate;
 
 public abstract class SetHandler <T extends SetHandler<T>> extends ColumnHandler<T> {
 
@@ -46,6 +47,13 @@ public abstract class SetHandler <T extends SetHandler<T>> extends ColumnHandler
     }
 
     //设置字段---值---------------------------------------------
+    public T setNull(String name) {
+        return set(name, null);
+    }
+
+    public <E> T setNull(PropertyGetter<E> getter, Object value) {
+        return setNull(FieldResolver.fullField(getter));
+    }
     /**
      * 无条件设置值（包括空值）
      */
@@ -123,18 +131,82 @@ public abstract class SetHandler <T extends SetHandler<T>> extends ColumnHandler
         return setWithDefault(FieldResolver.fullField(getter), value, defaultValue);
     }
 
+    //-------------------------------条件设置方法（条件参数在后）----------------------------------------
+    /**
+     * 条件设置值
+     *
+     * @param condition 条件为 true 时设置值
+     */
+    public T setIf(String name, Object value, boolean condition) {
+        if (condition) {
+            return set(name, value); // 调用公共的set方法
+        }
+        return self();
+    }
 
+    public <E> T setIf(PropertyGetter<E> getter, Object value, boolean condition) {
+        return setIf(FieldResolver.fullField(getter), value, condition);
+    }
+
+    /**
+     * 条件设置 NULL
+     *
+     * @param condition 条件为 true 时设置 NULL
+     */
+    public T setNullIf(String name, boolean condition) {
+        if (condition) {
+            return setNull(name); // 调用公共的setNull方法
+        }
+        return self();
+    }
+
+    public <E> T setNullIf(PropertyGetter<E> getter, boolean condition) {
+        return setNullIf(FieldResolver.fullField(getter), condition);
+    }
+
+    /**
+     * 带条件的设置（使用谓词函数）
+     *
+     * @param predicate 值判断函数，返回 true 时设置值
+     */
+    public T setIf(String name, Object value, Predicate<Object> predicate) {
+        if (predicate.test(value)) {
+            return set(name, value); // 调用公共的set方法
+        }
+        return self();
+    }
+
+    public <E> T setIf(PropertyGetter<E> getter, Object value, Predicate<Object> predicate) {
+        return setIf(FieldResolver.fullField(getter), value, predicate);
+    }
+
+    /**
+     * 带条件的默认值设置
+     *
+     * @param condition 条件为 true 时设置值，false 时设置默认值
+     */
+    public T setWithDefaultIf(String name, Object value, Object defaultValue, boolean condition) {
+        if (condition) {
+            return set(name, value);
+        } else {
+            return set(name, defaultValue);
+        }
+    }
+
+    public <E> T setWithDefaultIf(PropertyGetter<E> getter, Object value, Object defaultValue, boolean condition) {
+        return setWithDefaultIf(FieldResolver.fullField(getter), value, defaultValue, condition);
+    }
 //-------------------------------内部实现-------------------------------------------
 
     /**
      * 核心值处理方法
      */
-    protected T setValue(String name, Object value) {
-        //设置占位符号
-        setPlaceholder(name, jdbcModel.processSqlValue(value));
-
-        return self();
-    }
+//    protected T setValue(String name, Object value) {
+//        //设置占位符号
+//        setPlaceholder(name, jdbcModel.processSqlValue(value));
+//
+//        return self();
+//    }
     private T setValue(String name, Object value, DataType dataType, boolean allowNull) {
         Object processedValue = processValue(value, dataType, allowNull);
         setPlaceholder(name, jdbcModel.processSqlValue(processedValue));
