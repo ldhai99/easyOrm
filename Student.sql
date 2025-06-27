@@ -1,4 +1,5 @@
 CREATE DATABASE `test` DEFAULT CHARACTER SET utf8mb4 ;
+    drop table student;
 CREATE TABLE student (
   id BIGINT(20) NOT NULL  COMMENT '主键',
   student_id varchar(255) DEFAULT NULL COMMENT '学号',

@@ -2,10 +2,12 @@ package io.github.ldhai99.easyOrm.builder;
 
 import io.github.ldhai99.easyOrm.Lambda.PropertyGetter;
 import io.github.ldhai99.easyOrm.dao.core.TableNameResolver;
-import io.github.ldhai99.easyOrm.SQL;
 import io.github.ldhai99.easyOrm.tools.SqlTools;
 
 import java.util.*;
+import java.util.function.BooleanSupplier;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 public abstract class WhereHandler<T extends WhereHandler<T>> extends SetHandler<T> {
 //0、通用查询-----------age=18----------------------------------------------------
@@ -487,6 +489,8 @@ public abstract class WhereHandler<T extends WhereHandler<T>> extends SetHandler
         this.where(" and ");
         return self();
     }
+    //in() / notIn()------------------------------------------------
+    //支持列表、数组、子查询：
     public T in(Object name, List<?> values) {
         return nameOperatorValue(name, "in", values);
 
@@ -540,6 +544,95 @@ public abstract class WhereHandler<T extends WhereHandler<T>> extends SetHandler
         return notIn(resolveColumn(getter), values);
     }
 
+    //---------------------------------------
+    public T in(Object name, Object values) {
+        // 新增字符串处理逻辑
+        if (values instanceof String) {
+            String str = ((String) values).trim();
+            if (str.isEmpty()) return self();
+
+            // 处理逗号分隔的字符串
+            if (str.contains(",")) {
+                String[] parts = str.split(",");
+                List<String> list = new ArrayList<>();
+                for (String part : parts) {
+                    String trimmed = part.trim();
+                    if (!trimmed.isEmpty()) {
+                        list.add(trimmed);
+                    }
+                }
+                return in(name, list);
+            }
+            // 单个值直接处理
+            else {
+                return eq(name, str);
+            }
+        }
+        // 原有逻辑保持不变
+        else if (values instanceof List) {
+            return in(name, (List<?>) values);
+        }
+        else if (values instanceof BaseSQL) {
+            return in(name, (BaseSQL) values);
+        }
+        // 处理数组类型
+        else if (values != null && values.getClass().isArray()) {
+            return in(name, Arrays.asList((Object[]) values));
+        }
+        // 单个值直接处理
+        else if (values != null) {
+            return eq(name, values);
+        }
+        return self();
+    }
+
+    public <E> T in(PropertyGetter<E> getter, Object values) {
+        return in(resolveColumn(getter), values);
+    }
+
+    public T notIn(Object name, Object values) {
+        // 新增字符串处理逻辑
+        if (values instanceof String) {
+            String str = ((String) values).trim();
+            if (str.isEmpty()) return self();
+
+            if (str.contains(",")) {
+                String[] parts = str.split(",");
+                List<String> list = new ArrayList<>();
+                for (String part : parts) {
+                    String trimmed = part.trim();
+                    if (!trimmed.isEmpty()) {
+                        list.add(trimmed);
+                    }
+                }
+                return notIn(name, list);
+            }
+            // 单个值直接处理
+            else {
+                return neq(name, str);
+            }
+        }
+        // 原有逻辑保持不变
+        else if (values instanceof List) {
+            return notIn(name, (List<?>) values);
+        }
+        else if (values instanceof BaseSQL) {
+            return notIn(name, (BaseSQL) values);
+        }
+        // 处理数组类型
+        else if (values != null && values.getClass().isArray()) {
+            return notIn(name, Arrays.asList((Object[]) values));
+        }
+        // 单个值直接处理
+        else if (values != null) {
+            return neq(name, values);
+        }
+        return self();
+    }
+
+    public <E> T notIn(PropertyGetter<E> getter, Object values) {
+        return notIn(resolveColumn(getter), values);
+    }
     //七、EXIST 谓词
     //
     public T exists(BaseSQL subSQL) {
@@ -569,5 +662,46 @@ public abstract class WhereHandler<T extends WhereHandler<T>> extends SetHandler
         return self();
     }
 
+    // 通用条件方法
+    public T when(boolean apply, Consumer<T> conditionBuilder) {
+        if (apply) {
+            conditionBuilder.accept(self());
+        }
+        return self();
+    }
+    public ConditionalBuilder<T> when(boolean condition) {
+        return new ConditionalBuilder<>(self(), condition);
+    }
+    // 增强1：支持 Lambda 条件表达式
+    public T when(BooleanSupplier condition, Consumer<T> action) {
+        return when(condition.getAsBoolean(), action);
+    }
+    // 增强3：链式构建器支持 Lambda 条件
+    public ConditionalBuilder<T> when(BooleanSupplier condition) {
+        return new ConditionalBuilder<>(self(), condition.getAsBoolean());
+    }
+    // 增强2：支持带上下文的 Lambda 条件
+    /**
+     * 增强的上下文感知条件方法
+     *
+     * @param condition 条件函数
+     * @param context 上下文对象
+     * @param action 条件成立时执行的操作
+     * @return 当前构建器
+     */
+    public <C> T when(Function<C, Boolean> condition, C context, Consumer<T> action) {
+        return when(condition.apply(context), action);
+    }
+    // 增强4：支持上下文，链式构建器支持 Lambda 条件
+    /**
+     * 上下文感知的条件构建器入口
+     *
+     * @param condition 条件函数，接受上下文参数
+     * @param context 上下文对象
+     * @return 条件构建器
+     */
+    public <C> ConditionalBuilder<T> when(Function<C, Boolean> condition, C context) {
+        return new ConditionalBuilder<>(self(), condition.apply(context));
+    }
 
 }
