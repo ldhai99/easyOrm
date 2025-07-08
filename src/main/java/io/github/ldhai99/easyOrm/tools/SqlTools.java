@@ -3,9 +3,7 @@ package io.github.ldhai99.easyOrm.tools;
 import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.Collection;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -249,5 +247,27 @@ public class SqlTools {
         } else {
             return str.replaceAll("[　 ]+$", "");
         }
+    }
+    // 判断是否为基本/可映射类型
+    public static boolean isBasicType(Class<?> type) {
+        // 基本类型和包装类
+        if (type.isPrimitive() ||
+                Number.class.isAssignableFrom(type) ||
+                type == Boolean.class ||
+                type == Character.class) {
+            return true;
+        }
+
+        // 常用JDK类型
+        return type == String.class ||
+                type == Date.class ||
+                type == java.sql.Date.class ||
+                type == java.sql.Timestamp.class ||
+                type == java.time.LocalDate.class ||
+                type == java.time.LocalDateTime.class ||
+                type == BigDecimal.class ||
+                type == byte[].class ||
+                type == UUID.class ||
+                type.isEnum();
     }
 }

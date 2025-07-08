@@ -214,18 +214,18 @@ public class BaseDao<T extends BaseDm> {
 
     //通过map条件修改，用配置的修改字段
 
-    public int updateByMap(Map<String, Object> data, Map<String, Object> columnMap) {
+    public int updateByMap(Map<String, Object> data, Map<String, Object> whereMap) {
         return SQL.UPDATE(dm.updateTable).
                 setMap(data).
-                eqMap(columnMap).
+                eqMap(whereMap).
                 update();
     }
 
     //通过map条件修改，传入修改字段
-    public int updateByMap(String fields, Map<String, Object> data, Map<String, Object> columnMap) {
+    public int updateByMap(String fields, Map<String, Object> data, Map<String, Object> whereMap) {
         return SQL.UPDATE(dm.updateTable).
                 setMap(fields, data).
-                eqMap(columnMap).
+                eqMap(whereMap).
                 update();
     }
 

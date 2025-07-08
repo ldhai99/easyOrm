@@ -1,5 +1,6 @@
 package io.github.ldhai99.easyOrm.builder;
 
+import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -18,6 +19,51 @@ public class ConditionalBuilder<T> {
         }
         return builder;
     }
+
+    // =============== 基础组合方法 ===============
+
+    /**
+     * AND 组合：基本布尔条件
+     *
+     * @param condition 布尔条件
+     * @return 新条件构建器
+     */
+    public ConditionalBuilder<T> and(boolean condition) {
+        return new ConditionalBuilder<>(builder, this.condition && condition);
+    }
+
+    /**
+     * OR 组合：基本布尔条件
+     *
+     * @param condition 布尔条件
+     * @return 新条件构建器
+     */
+    public ConditionalBuilder<T> or(boolean condition) {
+        return new ConditionalBuilder<>(builder, this.condition || condition);
+    }
+
+    // =============== Lambda 组合方法 ===============
+
+    /**
+     * AND 组合：Lambda 条件
+     *
+     * @param condition 无参数布尔表达式
+     * @return 新条件构建器
+     */
+    public ConditionalBuilder<T> and(BooleanSupplier condition) {
+        return new ConditionalBuilder<>(builder, this.condition && condition.getAsBoolean());
+    }
+
+    /**
+     * OR 组合：Lambda 条件
+     *
+     * @param condition 无参数布尔表达式
+     * @return 新条件构建器
+     */
+    public ConditionalBuilder<T> or(BooleanSupplier condition) {
+        return new ConditionalBuilder<>(builder, this.condition || condition.getAsBoolean());
+    }
+
     /**
      * 上下文感知的 AND 组合条件
      *

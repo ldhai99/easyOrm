@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class InTest {
+    //in支持多个参数
     @Test
     public void in() throws SQLException {
 
@@ -16,6 +17,7 @@ public class InTest {
                         .in("age",17,18,19).getMaps()
         );
     }
+    //in支持数组
     @Test
     public void in2() throws SQLException {
 
@@ -25,7 +27,7 @@ public class InTest {
                         .in("age",objects).getMaps()
         );
     }
-
+    //in支持list
     @Test
     public void in3() throws SQLException {
 
@@ -42,6 +44,7 @@ public class InTest {
                         .in("age",objects).getMaps()
         );
     }
+    //in支持字符串
     @Test
     public void in4() throws SQLException {
 

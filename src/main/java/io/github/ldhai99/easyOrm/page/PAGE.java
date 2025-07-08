@@ -157,13 +157,12 @@ public class PAGE {
     }
 
     //获取记录--------------输出部分---------------------
+    //----maps
     public List<Map<String, Object>> pageMaps() {
         buildPage();
         pageModel.setRecordsMaps(pagedSql.getMaps());
         return pageModel.getRecordsMaps();
     }
-
-
 
     public PAGE pageMapsAnd() {
         buildPage();
@@ -175,7 +174,7 @@ public class PAGE {
         pageModel.setRecordsMaps(pagedSql.getMaps());
         return pageModel;
     }
-
+    //----beans
     public <T> List<T> pageBeans(Class<T> T) {
         buildPage();
         pageModel.setRecords(pagedSql.getBeans(T));
@@ -192,10 +191,15 @@ public class PAGE {
         pageModel.setRecords(pagedSql.getBeans(T));
         return pageModel;
     }
+
+    //----other
+    public SQL pageSQL() {
+        buildPage();
+        return pagedSql;
+
+    }
+
     // 获取数据
-
-
-
 
     public SQL getSql() {
         return sql;

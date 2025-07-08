@@ -1,9 +1,12 @@
 package io.github.ldhai99.easyOrm.model;
 
 import io.github.ldhai99.easyOrm.SQL;
+
 import io.github.ldhai99.easyOrm.builder.BaseSQL;
+import io.github.ldhai99.easyOrm.dbenum.DbEnum;
 
 import java.io.Serializable;
+import java.lang.reflect.Method;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -169,18 +172,73 @@ public class JdbcModel implements  Serializable {
             //占位-替换
             return "(" + sql.toString() + ")";
         }
-        //处理list类型
+        // 2. 处理列表类型
         else if (value instanceof List){
             return  processSqlValueList("(",",",")",(List<?>) value);
         }
-        else {
-            //获取参数名
-            String param = this.allocateParametername();
-            //保存参数值
-            this.addParameter(param, value);
-
-            return  " :" + param;
+        // 3. 新增：处理枚举类型
+        else if (value instanceof DbEnum) {
+            return processDbEnumValue((DbEnum) value);
         }
+        // 4. 新增：处理枚举类型
+        else if (value instanceof Enum) {
+            return processEnumValue((Enum) value);
+        }
+        else {
+            return appendValue( value);
+        }
+    }
+    private String appendValue(Object value) {
+        //获取参数名
+        String param = this.allocateParametername();
+        //保存参数值
+        this.addParameter(param, value);
+
+        return  " :" + param;
+    }
+    /**
+     * 专门处理枚举值的转换逻辑
+     */
+    private String processDbEnumValue(DbEnum enumValue) {
+        // 3.1 检查是否是 DbEnum 接口的实现（推荐方式）
+        if (enumValue instanceof DbEnum) {
+            Object dbValue = ((DbEnum) enumValue).getValue();
+            return processSqlValue(dbValue); // 递归处理实际值
+        }
+
+        // 3.2 检查是否有 getValue() 方法（兼容模式）
+        try {
+            Method getValueMethod = enumValue.getClass().getMethod("getValue");
+            if (getValueMethod != null && getValueMethod.getReturnType() != void.class) {
+                Object dbValue = getValueMethod.invoke(enumValue);
+                return processSqlValue(dbValue); // 递归处理
+            }
+        } catch (Exception e) {
+            // 方法不存在或调用失败，继续后续处理
+        }
+
+        // 3.3 默认处理：使用枚举名称
+        return appendValue( enumValue.name());
+
+    }
+    /**
+     * 专门处理枚举值的转换逻辑
+     */
+    private String processEnumValue(Enum enumValue) {
+
+        // 1 检查是否有 getValue() 方法（兼容模式）
+        try {
+            Method getValueMethod = enumValue.getClass().getMethod("getValue");
+            if (getValueMethod != null && getValueMethod.getReturnType() != void.class) {
+                Object dbValue = getValueMethod.invoke(enumValue);
+                return processSqlValue(dbValue); // 递归处理
+            }
+        } catch (Exception e) {
+            // 方法不存在或调用失败，继续后续处理
+        }
+
+        // 2 默认处理：使用枚举名称
+        return appendValue( enumValue.name());
     }
     private String processSqlNameList( String open,String separator,String close,List<?> values) {
         StringBuilder sb = new StringBuilder();
