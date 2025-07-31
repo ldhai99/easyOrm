@@ -47,6 +47,10 @@ public class DataTransformer {
                 return convertToBoolean(value);
             }
 
+            // 3. 如果目标类型是 String，且源是数字（Long、Integer等），直接转字符串
+            if (targetType == String.class && value instanceof Number) {
+                return value.toString();
+            }
             // 3. 按数据类型分发处理
             if (value instanceof Number) {
                 return handleNumber(targetType, (Number) value);
@@ -183,20 +187,48 @@ public class DataTransformer {
     private static Object handleTemporal(Class<?> targetType, Temporal temporal) {
         if (temporal instanceof LocalDateTime) {
             LocalDateTime ldt = (LocalDateTime) temporal;
-            if (LocalDateTime.class.equals(targetType)) return ldt;
-            if (Timestamp.class.equals(targetType)) return Timestamp.valueOf(ldt);
+
+            if (LocalDateTime.class.equals(targetType)) {
+                return ldt;
+            }
+            if (Timestamp.class.equals(targetType)) {
+                return Timestamp.valueOf(ldt);
+            }
+            // ✅ 新增：支持 LocalDateTime -> java.util.Date
+            if (java.util.Date.class.equals(targetType)) {
+                return java.util.Date.from(ldt.atZone(zoneId).toInstant());
+            }
         }
-        return temporal;
+        // ✅ 可选：支持其他 Temporal 类型（如 LocalDate）
+        if (temporal instanceof LocalDate && java.util.Date.class.equals(targetType)) {
+            return java.util.Date.from(((LocalDate) temporal).atStartOfDay(zoneId).toInstant());
+        }
+
+        // ❌ 原逻辑 return temporal 不安全，应抛异常或转换
+        // 改为：如果无法转换，抛出异常或返回 null 让后续处理
+        throw new TypeConvertException("不支持的 Temporal 转换: " + temporal.getClass() + " -> " + targetType);
     }
 
     private static Object handleUtilDate(Class<?> targetType, java.util.Date date) {
         Instant instant = date.toInstant();
+
         if (LocalDateTime.class.equals(targetType)) {
             return LocalDateTime.ofInstant(instant, zoneId);
         } else if (LocalDate.class.equals(targetType)) {
             return instant.atZone(zoneId).toLocalDate();
+        } else if (LocalTime.class.equals(targetType)) {
+            return instant.atZone(zoneId).toLocalTime().withNano(0);
+        } else if (Timestamp.class.equals(targetType)) {
+            return new Timestamp(date.getTime());
         }
-        return date;
+
+        // ✅ 新增：如果目标就是 java.util.Date，原样返回
+        if (java.util.Date.class.equals(targetType)) {
+            return date;
+        }
+
+        // ❌ 如果不支持，不要默默返回 date，容易出错
+        throw new TypeConvertException("不支持的 Date 转换: java.util.Date -> " + targetType.getName());
     }
 
     private static Object handleByteArray(Class<?> targetType, byte[] bytes) {

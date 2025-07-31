@@ -12,6 +12,8 @@ import java.util.Properties;
 
 public class DbTools {
 
+
+
     private static DataSource dataSource;
 
     private static NamedParameterJdbcTemplate template;
@@ -94,7 +96,9 @@ public class DbTools {
     public static void close(Connection conn, DataSource dataSource) {
         DataSourceUtils.releaseConnection(conn, dataSource);
     }
-
+    public static void setDataSource(DataSource dataSource) {
+        DbTools.dataSource = dataSource;
+    }
     //获取数据源
     public static DataSource getDataSource() {
         if (dataSource != null)

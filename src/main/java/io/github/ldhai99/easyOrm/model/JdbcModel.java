@@ -4,6 +4,7 @@ import io.github.ldhai99.easyOrm.SQL;
 
 import io.github.ldhai99.easyOrm.builder.BaseSQL;
 import io.github.ldhai99.easyOrm.dbenum.DbEnum;
+import io.github.ldhai99.easyOrm.tools.SqlTools;
 
 import java.io.Serializable;
 import java.lang.reflect.Method;
@@ -11,7 +12,7 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class JdbcModel implements  Serializable {
+public class JdbcModel implements Serializable {
     private static final long serialVersionUID = 1L;
 
 
@@ -19,14 +20,14 @@ public class JdbcModel implements  Serializable {
     private Map<String, Object> parameterMap = new HashMap();
 
     //构建完成--传过来的sql
-    private String sql=null;
+    private String sql = null;
 
     //jdbc执行前--需要的SQL和参数数组
-    private String jdbcSql=null;
-    private List<Object> paramsList=new ArrayList<>();
+    private String jdbcSql = null;
+    private List<Object> paramsList = new ArrayList<>();
 
     //分配参数名
-    private String prefixParaName="";
+    private String prefixParaName = "";
     private int paramIndex;
 
     private static final String NAME_REGEX = "[a-z][_a-z0-9]*";
@@ -37,7 +38,7 @@ public class JdbcModel implements  Serializable {
 
 
     public JdbcModel() {
-        prefixParaName="p"+Integer.toHexString(System.identityHashCode(this));
+        prefixParaName = "p" + Integer.toHexString(System.identityHashCode(this));
     }
 
     //分配参数名称
@@ -64,15 +65,16 @@ public class JdbcModel implements  Serializable {
         this.sql = sql;
         return this;
     }
+
     public Map<String, Object> getParameterMap() {
 
         return this.parameterMap;
     }
 
-    public void createJdbcSqlFromNameSql(String sql1){
+    public void createJdbcSqlFromNameSql(String sql1) {
         this.setSql(sql1);
 
-        SqlAndParams sqlAndParams=createSqlAndParams();
+        SqlAndParams sqlAndParams = createSqlAndParams();
         this.setJdbcSql(sqlAndParams.getSql());
         this.setParamsList(sqlAndParams.getParams());
 
@@ -80,14 +82,14 @@ public class JdbcModel implements  Serializable {
 
 
     //把占位符？替换为自动分配的:名称
-    public String createSqlNameParams( String sqlPara, Object ... valuesPara){
+    public String createSqlNameParams(String sqlPara, Object... valuesPara) {
 
         Matcher m = PLACEHOLDER_PATTERN.matcher(sqlPara);
         StringBuilder psSql = new StringBuilder();
         int indexPlace = 0;
-        int index=-1;
+        int index = -1;
 
-        while(m.find(indexPlace)) {
+        while (m.find(indexPlace)) {
 
             psSql.append(sqlPara.substring(indexPlace, m.start()));
 
@@ -96,14 +98,15 @@ public class JdbcModel implements  Serializable {
 
             psSql.append(" :" + param);
 
-            index=index+1;
-            this.parameterMap.put(param,valuesPara[index]);
+            index = index + 1;
+            this.parameterMap.put(param, valuesPara[index]);
         }
 
         psSql.append(sqlPara.substring(indexPlace));
         return psSql.toString();
 
     }
+
     //把:名字参数，替换为？，并形成参数数组[]。
     SqlAndParams createSqlAndParams() {
         StringBuilder psSql = new StringBuilder();
@@ -111,7 +114,7 @@ public class JdbcModel implements  Serializable {
         Matcher m = PARAM_PATTERN.matcher(this.sql);
         int indexPlace = 0;
 
-        while(m.find(indexPlace)) {
+        while (m.find(indexPlace)) {
             psSql.append(this.sql.substring(indexPlace, m.start()));
             String name = m.group(1);
             indexPlace = m.end();
@@ -144,37 +147,49 @@ public class JdbcModel implements  Serializable {
             return this.sql;
         }
     }
+
     public String processSqlName(Object value) {
         if (value instanceof BaseSQL) {
             BaseSQL sql = (BaseSQL) value;
             //合并参数值
             mergeParameterMap(sql);
-            //占位-替换
-            return " (" + sql.toString() + ") ";
-        }else if (value instanceof List){
-            return  processSqlNameList(" (",",",") ",(List<?>) value);
-        }
-        else if (value instanceof Number){
 
-            return  value.toString();
-        }
-        else {
+            String sqls = sql.toString();
+            if (SqlTools.isEmpty(sqls))
+                return "";
+            else
+                //占位-替换
+                return " (" + sqls + ") ";
 
-            return  (String) value;
+        } else if (value instanceof List) {
+            return processSqlNameList(" (", ",", ") ", (List<?>) value);
+        } else if (value instanceof Number) {
+
+            return value.toString();
+        } else {
+
+            return (String) value;
         }
     }
+
     public String processSqlValue(Object value) {
         //处理Sql类型
         if (value instanceof BaseSQL) {
             BaseSQL sql = (BaseSQL) value;
             //合并参数值
             mergeParameterMap(sql);
-            //占位-替换
-            return "(" + sql.toString() + ")";
+
+            String sqls = sql.toString();
+            if (SqlTools.isEmpty(sqls))
+                return "";
+            else
+                //占位-替换
+                return " (" + sqls + ") ";
+
         }
         // 2. 处理列表类型
-        else if (value instanceof List){
-            return  processSqlValueList("(",",",")",(List<?>) value);
+        else if (value instanceof List) {
+            return processSqlValueList("(", ",", ")", (List<?>) value);
         }
         // 3. 新增：处理枚举类型
         else if (value instanceof DbEnum) {
@@ -183,19 +198,20 @@ public class JdbcModel implements  Serializable {
         // 4. 新增：处理枚举类型
         else if (value instanceof Enum) {
             return processEnumValue((Enum) value);
-        }
-        else {
-            return appendValue( value);
+        } else {
+            return appendValue(value);
         }
     }
+
     private String appendValue(Object value) {
         //获取参数名
         String param = this.allocateParametername();
         //保存参数值
         this.addParameter(param, value);
 
-        return  " :" + param;
+        return " :" + param;
     }
+
     /**
      * 专门处理枚举值的转换逻辑
      */
@@ -218,9 +234,10 @@ public class JdbcModel implements  Serializable {
         }
 
         // 3.3 默认处理：使用枚举名称
-        return appendValue( enumValue.name());
+        return appendValue(enumValue.name());
 
     }
+
     /**
      * 专门处理枚举值的转换逻辑
      */
@@ -238,9 +255,10 @@ public class JdbcModel implements  Serializable {
         }
 
         // 2 默认处理：使用枚举名称
-        return appendValue( enumValue.name());
+        return appendValue(enumValue.name());
     }
-    private String processSqlNameList( String open,String separator,String close,List<?> values) {
+
+    private String processSqlNameList(String open, String separator, String close, List<?> values) {
         StringBuilder sb = new StringBuilder();
 
         sb.append(open);
@@ -257,7 +275,8 @@ public class JdbcModel implements  Serializable {
         sb.append(close);
         return sb.toString();
     }
-    private String processSqlValueList( String open,String separator,String close,List<?> values) {
+
+    private String processSqlValueList(String open, String separator, String close, List<?> values) {
         StringBuilder sb = new StringBuilder();
 
         sb.append(open);
@@ -276,6 +295,7 @@ public class JdbcModel implements  Serializable {
         sb.append(close);
         return sb.toString();
     }
+
     public void mergeParameterMap(BaseSQL subSQL) {
         //合并参数Map
         // Map<String, Object> map = new HashMap<>(this.getParameterMap());
@@ -283,6 +303,7 @@ public class JdbcModel implements  Serializable {
         subSQL.getJdbcDataModel().getParameterMap().forEach((key, value) -> this.getParameterMap().merge(key, value, (v1, v2) -> v1));
 
     }
+
     public String getJdbcSql() {
         return jdbcSql;
     }

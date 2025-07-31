@@ -284,7 +284,9 @@ public abstract class BaseService<T> {
     public Optional<T> getBeanOptById(Serializable id) {
         return Optional.ofNullable(getBeanById(id));
     }
-
+    public T getById(Serializable id) {
+        return this.getBeanById(id);
+    }
     public T getBeanById(Serializable id) {
         return (T) getBaseDao().getBeanById(id, entityClass);
     }
