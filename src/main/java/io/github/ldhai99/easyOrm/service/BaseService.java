@@ -339,17 +339,23 @@ public abstract class BaseService<T> {
     public boolean existsBySql(SQL sqlWhere) {
         return getBaseDao().existsBySql(sqlWhere);
     }
-
+    public Long count(Map<String, Object> columnMap) {
+        return this.countByMap(columnMap);
+    }
     //---计数---------
     public Long countByMap(Map<String, Object> columnMap) {
         return getBaseDao().getCountByMap(columnMap);
     }
 
-
+    public Long count(SQL sqlWhere) {
+        return this.countBySql(sqlWhere);
+    }
     public Long countBySql(SQL sqlWhere) {
         return getBaseDao().getCountBySql(sqlWhere);
     }
-
+    public Long count(String fieldName, Object value) {
+        return this.countByField(fieldName, value);
+    }
     // 通过字段查询数量
     public Long countByField(String fieldName, Object value) {
         return getBaseDao().getCountByField(fieldName, value);
