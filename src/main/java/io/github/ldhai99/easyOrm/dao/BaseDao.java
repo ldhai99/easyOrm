@@ -155,6 +155,9 @@ public class BaseDao<T extends BaseDm> {
     }
 
     //通过条件组删除
+    public int delete(Map<String, Object> columnMap) {
+        return this.deleteByMap(columnMap);
+    }
     public int deleteByMap(Map<String, Object> columnMap) {
         return SQL.DELETE(dm.updateTable).
                 eqMap(columnMap).
@@ -162,6 +165,9 @@ public class BaseDao<T extends BaseDm> {
     }
 
     //通过条件构造器删除
+    public int delete(SQL sql) {
+        return this.deleteBySql(sql);
+    }
     public int deleteBySql(SQL sql) {
         return SQL.DELETE(dm.updateTable).
                 where(sql).
