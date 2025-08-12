@@ -546,6 +546,9 @@ public abstract class WhereHandler<T extends WhereHandler<T>> extends SetHandler
 
     //---------------------------------------
     public T in(Object name, Object values) {
+        if(SqlTools.isEmpty( values))
+            return self();
+
         // 新增字符串处理逻辑
         if (values instanceof String) {
             String str = ((String) values).trim();
