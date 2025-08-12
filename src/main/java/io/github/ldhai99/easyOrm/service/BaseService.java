@@ -263,10 +263,15 @@ public abstract class BaseService<T> {
 
 
     //-----查询多个记录----通过sql where-----
+    public List<T> list(SQL sql){
+        return this.getBeansBySql( sql);
+    }
     public List<T> getBeansBySql(SQL sql) {
         return this.getBaseDao().getBeansBySql(sql, entityClass);
     }
-
+    public List<T> list(){
+        return this.getBeans( );
+    }
     public List<T> getBeans() {
         return this.getBeansBySql(SQL.WHERE());
     }
@@ -296,6 +301,9 @@ public abstract class BaseService<T> {
     }
 
     //-----查询多个记录----通过id-----
+    public List<T> listByIds(Collection<? extends Serializable> idList) {
+        return this.getBeansByIds(idList);
+    }
     public List<T> getBeansByIds(Collection<? extends Serializable> idList) {
         return this.getBaseDao().getBeansByIdList(convertToArrayList(idList), entityClass);
     }
@@ -322,6 +330,9 @@ public abstract class BaseService<T> {
     }
 
     // 通过Map条件查询列表
+    public List<T> list(Map<String, Object> columnMap) {
+        return this.getBeansByMap(columnMap);
+    }
     public List<T> getBeansByMap(Map<String, Object> columnMap) {
         return getBaseDao().getBeansByMap(columnMap, entityClass);
     }
