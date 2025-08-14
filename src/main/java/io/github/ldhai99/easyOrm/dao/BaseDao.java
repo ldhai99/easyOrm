@@ -349,6 +349,10 @@ public class BaseDao<T extends BaseDm> {
     }
 
     //通过条件构造器，获取多条记录为beans
+    public <E> List<E> selectList(SQL sql, Class<E> E) {
+        return getBeansBySql(sql, E);
+
+    }
     public <E> List<E> getBeansBySql(SQL sql, Class<E> E) {
         return upgradeToSelect(sql).getBeans(E);
 
