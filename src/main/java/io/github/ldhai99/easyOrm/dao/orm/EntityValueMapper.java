@@ -1,5 +1,6 @@
 package io.github.ldhai99.easyOrm.dao.orm;
 import io.github.ldhai99.easyOrm.annotation.Embeddable;
+import io.github.ldhai99.easyOrm.dao.core.FieldResolver;
 import io.github.ldhai99.easyOrm.dbenum.DbEnum;
 import io.github.ldhai99.easyOrm.tools.SqlTools;
 
@@ -99,7 +100,7 @@ public class EntityValueMapper {
                 processFields(value, newPrefix, propToColumnMap, resultMap, ignoreNull, depth + 1);
             }
             // 如果是基本类型或值对象，直接添加到结果
-            else if (SqlTools.isBasicType(fieldType)) {
+            else if (FieldResolver.isBasicType(fieldType)) {
                 resultMap.put(columnName, value);
             }
             // 其他类型（如集合、关联实体）不做处理

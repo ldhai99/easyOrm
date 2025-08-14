@@ -1,4 +1,4 @@
-package io.github.ldhai99.easyOrm.dao;
+package io.github.ldhai99.easyOrm.dao.core;
 
 import io.github.ldhai99.easyOrm.annotation.TableId;
 import io.github.ldhai99.easyOrm.dao.core.FieldResolver;

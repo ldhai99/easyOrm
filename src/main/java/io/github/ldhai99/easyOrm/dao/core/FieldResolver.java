@@ -2,13 +2,18 @@ package io.github.ldhai99.easyOrm.dao.core;
 
 
 import io.github.ldhai99.easyOrm.Lambda.PropertyGetter;
+import io.github.ldhai99.easyOrm.annotation.Embeddable;
 import io.github.ldhai99.easyOrm.annotation.TableField;
 import io.github.ldhai99.easyOrm.dao.LambdaResolver;
 import io.github.ldhai99.easyOrm.dao.orm.ClassFieldExplorer;
+import io.github.ldhai99.easyOrm.dbenum.DbEnum;
 import io.github.ldhai99.easyOrm.tools.SqlTools;
 
 import java.lang.invoke.SerializedLambda;
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.math.BigDecimal;
+import java.util.*;
 
 
 public class FieldResolver {
@@ -62,6 +67,111 @@ public class FieldResolver {
         String tableName = TableNameResolver.getTableName(entityClass);
         return SqlTools.camelToSnakeCase(tableName) + "." + resolveColumnName(field);
 
+    }
+
+    /**
+     * 判断字段是否应在持久化/反射处理中被忽略。
+     * <p>
+     * 满足以下任一条件即返回 {@code true}（应忽略）：
+     * <ul>
+     *     <li>字段是 {@code static} 或 {@code transient}</li>
+     *     <li>字段类型是 {@link Collection} 或 {@link Map}</li>
+     *     <li>字段被 {@link TableField} 标记为 {@code exist = false}</li>
+     *     <li>字段类型不是基础类型（见 {@link FieldResolver#isBasicType}），且：
+     *         <ul>
+     *             <li>不是 JPA {@code @Embeddable} 类</li>
+     *             <li>不是数据库枚举类型（如 {@code DbEnum} 及其子类）</li>
+     *         </ul>
+     *     </li>
+     * </ul>
+     * </p>
+     *
+     * @param field 字段对象，不允许为 null
+     * @return 是否应被忽略
+     */
+    public static boolean shouldIgnoreField(Field field) {
+        Objects.requireNonNull(field, "field 不能为空");
+
+        int modifiers = field.getModifiers();
+
+        // 1. static 或 transient 字段
+        if (Modifier.isStatic(modifiers) || Modifier.isTransient(modifiers)) {
+            return true;
+        }
+
+        Class<?> fieldType = field.getType();
+
+        // 2. 集合或映射类型（不直接映射到数据库列）
+        if (Collection.class.isAssignableFrom(fieldType) ||
+                Map.class.isAssignableFrom(fieldType)) {
+            return true;
+        }
+
+        // 3. 被 @TableField(exist = false) 标记
+        TableField tableField = field.getAnnotation(TableField.class);
+        if (tableField != null && !tableField.exist()) {
+            return true;
+        }
+
+        // 4. 基础类型（String、Number、Date、Enum 等）不忽略
+        if (FieldResolver.isBasicType(fieldType)) {
+            return false;
+        }
+
+        // 5. JPA @Embeddable 类（嵌入式对象），不忽略（可序列化为 JSON 等）
+        if (fieldType.isAnnotationPresent(Embeddable.class)) {
+            return false;
+        }
+
+        // 6. 数据库枚举类型（假设 DbEnum 是所有枚举的基类）
+        if (DbEnum.class.isAssignableFrom(fieldType)) {
+            return false;
+        }
+
+        // 默认：复杂自定义对象，应忽略
+        return true;
+    }
+    /**
+     * 判断类是否为“基础可序列化/可持久化类型”
+     * <p>
+     * 包括：
+     * <ul>
+     *     <li>基本类型及其包装类</li>
+     *     <li>String、Date、Time、BigDecimal、UUID、byte[]</li>
+     *     <li>枚举类型</li>
+     * </ul>
+     * </p>
+     *
+     * @param type 类型
+     * @return 是否为基础类型
+     */
+    public static boolean isBasicType(Class<?> type) {
+        if (type == null) {
+            return false;
+        }
+
+        // 1. 基本类型及其包装类
+        if (type.isPrimitive() ||
+                Number.class.isAssignableFrom(type) ||
+                type == Boolean.class ||
+                type == Character.class) {
+            return true;
+        }
+
+        // 2. 常见 JDK 时间与字符串类型
+        return type == String.class ||
+                type == Date.class ||
+                type == java.sql.Date.class ||
+                type == java.sql.Timestamp.class ||
+                type == java.time.LocalDate.class ||
+                type == java.time.LocalDateTime.class ||
+                type == java.time.LocalTime.class ||
+                type == java.time.Instant.class ||
+                type == java.time.ZonedDateTime.class ||
+                type == BigDecimal.class ||
+                type == byte[].class ||
+                type == UUID.class ||
+                type.isEnum();
     }
     // ------------------------ 注解与字段解析 ------------------------
 
