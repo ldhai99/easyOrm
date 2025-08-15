@@ -15,7 +15,7 @@ import java.sql.Connection;
 import java.util.Arrays;
 import java.util.Map;
 
-public abstract class BaseSQL <T extends BaseSQL<T>>{
+public abstract class BaseSQL <T extends BaseSQL<T>> implements Cloneable{
 
     protected SqlModel builder = new SqlModel();
     protected JdbcModel jdbcModel = new JdbcModel();

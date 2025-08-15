@@ -16,10 +16,14 @@ import java.sql.Connection;
 import java.util.*;
 
 
-public class SQL  extends OrderHandler<SQL> {
+public class SQL  extends OrderHandler<SQL> implements Cloneable{
     private static final long serialVersionUID = 1L;
 
-
+    // 可选：重写 clone 以更明确
+    @Override
+    public SQL clone() {
+        return (SQL) super.clone();
+    }
 
     public static void main(String[] args) {
         SQL read = new SQL().column("*")
