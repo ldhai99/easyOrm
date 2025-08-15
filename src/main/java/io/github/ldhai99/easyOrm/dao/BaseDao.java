@@ -3,7 +3,7 @@ package io.github.ldhai99.easyOrm.dao;
 import io.github.ldhai99.easyOrm.dao.orm.EntityValueMapper;
 import io.github.ldhai99.easyOrm.page.PageSQLGenerator.mysql.MysqlPageSqlByStartId;
 import io.github.ldhai99.easyOrm.page.PAGE;
-import io.github.ldhai99.easyOrm.tools.SnowflakeId;
+import io.github.ldhai99.easyOrm.idgen.SnowflakeId;
 import io.github.ldhai99.easyOrm.datamodel.BaseDm;
 import io.github.ldhai99.easyOrm.SQL;
 import io.github.ldhai99.easyOrm.page.PageModel;
