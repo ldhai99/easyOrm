@@ -240,6 +240,10 @@ public class SQL  extends OrderHandler<SQL> implements Cloneable{
         last("for update nowait");
         return this;
     }
+    public SQL limit(int limit) {
+        last(" limit "+ limit);
+        return this;
+    }
 
 
 

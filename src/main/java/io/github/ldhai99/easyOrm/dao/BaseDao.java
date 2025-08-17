@@ -324,13 +324,26 @@ public class BaseDao<T extends BaseDm> {
     public SQL upgradeToSelect(SQL sql) {
         if (sql.isSelect())
             return sql;
-        if (sql.isNotOnlyWhere()) {
-            sql.whereToSelect().select(dm.selectTable).column(dm.selectFields);
-            return sql;
+        SQL newSql = sql.clone();
+
+        // 只有未设置表名时才添加
+        if (!newSql.hasTables()) {
+            newSql.from(dm.selectTable);
         }
-        return SQL.SELECT(dm.selectTable)
-                .column(dm.selectFields)
-                .where(sql);
+
+        // 只有未设置字段时才添加默认字段
+        if (!newSql.hasCloumns()) {
+            newSql.column(dm.selectFields);
+        }
+
+        return newSql;
+//        if (sql.isNotOnlyWhere()) {
+//            sql.whereToSelect().select(dm.selectTable).column(dm.selectFields);
+//            return sql;
+//        }
+//        return SQL.SELECT(dm.selectTable)
+//                .column(dm.selectFields)
+//                .where(sql);
     }
 
     //通过条件构造器，获取多条记录为maps

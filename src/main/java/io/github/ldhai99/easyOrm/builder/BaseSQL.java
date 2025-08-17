@@ -89,6 +89,13 @@ public abstract class BaseSQL <T extends BaseSQL<T>> implements Cloneable{
         this.toString();
         return jdbcModel.getJdbcSql();
     }
+    //------
+    public boolean hasCloumns() {
+        return builder.hasCloumns();
+    }
+    public boolean hasTables() {
+        return builder.hasTables();
+    }
 
     //开始任务-----------------------------------------------------------
     public T select(String table) {

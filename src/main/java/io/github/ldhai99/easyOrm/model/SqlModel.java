@@ -63,6 +63,7 @@ public class SqlModel implements  Cloneable ,Serializable {
         this.groupBys.addAll(other.groupBys);
         this.havings.addAll(other.havings);
         this.orderBys.addAll(other.orderBys);
+        this.lasts.addAll(other.lasts);
 
         this.sets.addAll(other.sets);
         this.values.addAll(other.values);
@@ -74,12 +75,20 @@ public class SqlModel implements  Cloneable ,Serializable {
         return  new SqlModel(this);
     }
     public boolean hasGroup(){
-        if(groupBys.size() == 0)
-            return false;
-        else
-            return  true;
+        return !groupBys.isEmpty();
+    }
+    public boolean hasCloumns(){
+        return !columns.isEmpty();
+    }
+    public boolean  hasTables(){
+        return !tables.isEmpty();
     }
     //指定任务------------------------------------------------------
+    public SqlModel from(String table) {
+        this.taskType = TaskType.SELECT;
+        this.tables.add(table);
+        return this;
+    }
     public SqlModel update(String table) {
         this.updateTable = table;
         this.taskType = TaskType.UPDATE;
@@ -226,10 +235,7 @@ public class SqlModel implements  Cloneable ,Serializable {
     }
 
 
-    public SqlModel from(String table) {
-        this.tables.add(table);
-        return this;
-    }
+
 
     public SqlModel groupBy(String expr) {
         this.groupBys.add(expr);
@@ -381,6 +387,7 @@ public class SqlModel implements  Cloneable ,Serializable {
             return true;
         return false;
     }
+
     public SqlModel whereToSelect(){
         return this.setTaskType(TaskType.SELECT);
     }
