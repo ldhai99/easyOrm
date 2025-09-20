@@ -158,9 +158,16 @@ public abstract class ExecutorHandler<T extends ExecutorHandler<T>> extends Base
 
 
     //返回Bean实体
+    public <T> T one(Class<T> T) {
+        return getBean(T);
+
+    }
     public <T> T getBean(Class<T> T) {
         ensureSelectTaskType(); // 校验任务类型为 SELECT
         return getExecutor().getBean(self(), T);
+    }
+    public <T> List<T> list(Class<T> T) {
+        return getBeans(T);
     }
 
 

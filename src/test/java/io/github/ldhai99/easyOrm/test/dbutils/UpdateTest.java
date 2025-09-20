@@ -1,7 +1,7 @@
 package io.github.ldhai99.easyOrm.test.dbutils;
 
 import io.github.ldhai99.easyOrm.SQL;
-import io.github.ldhai99.easyOrm.tools.DbTools;
+import io.github.ldhai99.easyOrm.datasource.DataSourceManager;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,7 +18,7 @@ public class UpdateTest {
 
     @BeforeEach
     public void beforeTest() throws SQLException {
-        connection = DbTools.getConnection();
+        connection = DataSourceManager.getConnection();
     }
 
     @AfterEach

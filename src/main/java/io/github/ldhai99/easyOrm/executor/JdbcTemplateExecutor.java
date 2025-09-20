@@ -2,7 +2,8 @@ package io.github.ldhai99.easyOrm.executor;
 
 import io.github.ldhai99.easyOrm.builder.ExecutorHandler;
 import io.github.ldhai99.easyOrm.dao.orm.DatabaseResultMapper;
-import io.github.ldhai99.easyOrm.tools.DbTools;
+import io.github.ldhai99.easyOrm.datasource.DataSourceManager;
+import io.github.ldhai99.easyOrm.datasource.DataSourceManager;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -15,19 +16,18 @@ public class JdbcTemplateExecutor extends AbstractExecutor {
 
     private NamedParameterJdbcTemplate template;
 
-    public JdbcTemplateExecutor(){
 
-        template=new NamedParameterJdbcTemplate(DbTools.getDataSource());
-
+    // 移除无参构造方法，或者改为从 DataSourceManager 获取默认数据源
+    public JdbcTemplateExecutor() {
+        this(DataSourceManager.getDefaultDataSource());
     }
-    public JdbcTemplateExecutor(DataSource dataSource){
 
-        template=new NamedParameterJdbcTemplate(dataSource);
-
+    public JdbcTemplateExecutor(DataSource dataSource) {
+        this.template = new NamedParameterJdbcTemplate(dataSource);
     }
-    public JdbcTemplateExecutor(NamedParameterJdbcTemplate template){
-        this.template=template;
 
+    public JdbcTemplateExecutor(NamedParameterJdbcTemplate template) {
+        this.template = template;
     }
 
     //执行Sql----------------------------------------------
@@ -115,5 +115,11 @@ public class JdbcTemplateExecutor extends AbstractExecutor {
         // ✅ 通过工具方法转换为 Java Bean 列表，内部使用 MappingResolver
         return DatabaseResultMapper.mapRowsToBeans(mapList, clazz);
     }
+    public NamedParameterJdbcTemplate getTemplate() {
+        return template;
+    }
 
+    public void setTemplate(NamedParameterJdbcTemplate template) {
+        this.template = template;
+    }
 }

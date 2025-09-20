@@ -18,7 +18,7 @@ public class MysqlPageSqlByStartId implements PageSQLGenerator {
         SQL paginationSql = sql.clone();
 
         // 获取排序方向（默认升序）
-        boolean isAsc = isCountIdAscOrder(pageModel, sql);
+        boolean isAsc = getAnchorFieldSortDirection(pageModel, sql);
 
         // 根据排序方向选择比较操作符
         String countId = pageModel.getCountId();

@@ -4,7 +4,7 @@ package io.github.ldhai99.easyOrm.test.dbutils;
 import io.github.ldhai99.easyOrm.SQL;
 import io.github.ldhai99.easyOrm.test.Student;
 
-import io.github.ldhai99.easyOrm.tools.DbTools;
+import io.github.ldhai99.easyOrm.datasource.DataSourceManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,8 +24,8 @@ public class QueryTest {
 
     @BeforeEach
     public void beforeTest() throws SQLException {
-        con = DbTools.getConnection();
-        ds = DbTools.getDataSource();
+        con = DataSourceManager.getConnection();
+        ds = DataSourceManager.getDataSource();
     }
 
     @AfterEach

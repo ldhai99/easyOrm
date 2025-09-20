@@ -1,7 +1,7 @@
 package io.github.ldhai99.easyOrm.test.tools;
 
 import io.github.ldhai99.easyOrm.tools.DbInfo;
-import io.github.ldhai99.easyOrm.tools.DbTools;
+import io.github.ldhai99.easyOrm.datasource.DataSourceManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,7 +16,7 @@ public class MetaTest {
 
     @BeforeEach
     public void beforeTest() throws SQLException {
-        con = DbTools.getConnection();
+        con = DataSourceManager.getConnection();
     }
     @AfterEach
     public void afterTest() throws SQLException {

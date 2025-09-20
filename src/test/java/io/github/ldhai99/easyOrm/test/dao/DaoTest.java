@@ -3,7 +3,7 @@ package io.github.ldhai99.easyOrm.test.dao;
 import io.github.ldhai99.easyOrm.page.PageModel;
 import io.github.ldhai99.easyOrm.test.studentDao.dao2.StudentDao;
 import io.github.ldhai99.easyOrm.tools.ChainMap;
-import io.github.ldhai99.easyOrm.tools.DbTools;
+import io.github.ldhai99.easyOrm.datasource.DataSourceManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -18,7 +18,7 @@ public class DaoTest {
 
     @BeforeAll
     public void getTemplate() {
-        DbTools.getExecutor();
+        DataSourceManager.getExecutor();
 
         dao = new StudentDao();
     }

@@ -1,7 +1,7 @@
  package io.github.ldhai99.easyOrm.test;
 
  import io.github.ldhai99.easyOrm.annotation.TableField;
- import io.github.ldhai99.easyOrm.annotation.TableName;
+ import io.github.ldhai99.easyOrm.annotation.Table;
 
  import java.util.Date;
 
@@ -9,7 +9,7 @@
 
 //开启链式调用，即Student user = new Student().setId(1).setName("张三").setAge(88);
  //@Accessors(chain = true)
- @TableName("student")
+ @Table("student")
  public class Student implements  Cloneable{
 
 

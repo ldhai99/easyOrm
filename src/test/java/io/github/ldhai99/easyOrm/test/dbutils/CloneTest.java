@@ -4,7 +4,7 @@ package io.github.ldhai99.easyOrm.test.dbutils;
 import io.github.ldhai99.easyOrm.SQL;
 import io.github.ldhai99.easyOrm.page.PAGE;
 import io.github.ldhai99.easyOrm.page.PageModel;
-import io.github.ldhai99.easyOrm.tools.DbTools;
+import io.github.ldhai99.easyOrm.datasource.DataSourceManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,7 +20,7 @@ public class CloneTest {
 
     @BeforeEach
     public void beforeTest() throws SQLException {
-        con = DbTools.getConnection();
+        con = DataSourceManager.getConnection();
     }
 
     @AfterEach
@@ -45,7 +45,7 @@ public class CloneTest {
     public void getCountGroup() throws SQLException {
 
         SQL sql = new SQL(con).select("student").column("sex")
-                .count("count")//计数
+                .count("*","count")//计数
                 .min("age", "min")//最小
                 .max("age", "max")//最大
                 .avg("age", "avg")//平均

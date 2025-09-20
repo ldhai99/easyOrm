@@ -77,7 +77,10 @@ public class EntityMetaMapper {
             if (Modifier.isStatic(field.getModifiers())) {
                 continue;
             }
-            map.put(FieldResolver.resolveColumnName(field), field.getName());
+            // 🔥 关键：列名转大写作为 key
+            String columnName = FieldResolver.resolveColumnName(field).toUpperCase();
+            map.put(columnName, field.getName());
+
         }
         return map;
     }

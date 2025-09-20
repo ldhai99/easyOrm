@@ -7,7 +7,7 @@ import io.github.ldhai99.easyOrm.test.Student;
 
 
 import io.github.ldhai99.easyOrm.executor.Executor;
-import io.github.ldhai99.easyOrm.tools.DbTools;
+import io.github.ldhai99.easyOrm.datasource.DataSourceManager;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -28,7 +28,7 @@ public class ExecutorTest {
 
     @BeforeAll
     public void getTemplate() {
-        executor = DbTools.getExecutor();
+        executor = DataSourceManager.getExecutor();
 
     }
 
@@ -46,10 +46,10 @@ public class ExecutorTest {
                 SQL.ofExecutor(executor)
                         .select("student").eq("age", 18).getMaps());
         System.out.println(
-                SQL.ofExecutor(DbTools.getDataSource())
+                SQL.ofExecutor(DataSourceManager.getDataSource())
                         .select("student").eq("age", 18).getMaps());
         System.out.println(
-                SQL.ofExecutor(DbTools.getConnection())
+                SQL.ofExecutor(DataSourceManager.getConnection())
                         .select("student").eq("age", 18).getMaps());
 
 
@@ -58,10 +58,10 @@ public class ExecutorTest {
                 new SQL(executor)
                         .select("student").eq("age", 18).getMaps());
         System.out.println(
-                new SQL(DbTools.getDataSource())
+                new SQL(DataSourceManager.getDataSource())
                         .select("student").eq("age", 18).getMaps());
         System.out.println(
-                new SQL(DbTools.getConnection())
+                new SQL(DataSourceManager.getConnection())
                         .select("student").eq("age", 18).getMaps());
 
 
@@ -69,9 +69,9 @@ public class ExecutorTest {
         System.out.println(
                 SQL.SELECT("student").eq("age", 18).executor(executor).getMaps());
         System.out.println(
-                SQL.SELECT("student").eq("age", 18).executor(DbTools.getDataSource()).getMaps());
+                SQL.SELECT("student").eq("age", 18).executor(DataSourceManager.getDataSource()).getMaps());
         System.out.println(
-                SQL.SELECT("student").eq("age", 18).executor(DbTools.getConnection()).getMaps());
+                SQL.SELECT("student").eq("age", 18).executor(DataSourceManager.getConnection()).getMaps());
 
 
         //使用全局默认执行器

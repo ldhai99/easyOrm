@@ -243,7 +243,7 @@ public abstract class ColumnHandler<T extends ColumnHandler<T>> extends Executor
      * @return 当前对象（链式调用）
      */
     public T count(String column) {
-        return aggregate("count", column, null);
+        return aggregate("count", "*", column);
     }
 
     /**

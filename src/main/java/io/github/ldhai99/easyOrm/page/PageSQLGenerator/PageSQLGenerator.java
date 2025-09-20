@@ -17,7 +17,7 @@ public interface PageSQLGenerator {
             * @param originalSql 原始 SQL 对象
  * @return 是否为升序（true=ASC, false=DESC）
             */
-    default boolean isCountIdAscOrder(PageModel pageModel, SQL originalSql) {
+    default boolean getAnchorFieldSortDirection(PageModel pageModel, SQL originalSql) {
         final String countId = pageModel.getCountId();
         Objects.requireNonNull(countId, "PageModel.countId 不能为空");
 

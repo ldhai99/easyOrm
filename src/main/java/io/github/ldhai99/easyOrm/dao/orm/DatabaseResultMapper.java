@@ -27,7 +27,7 @@ public class DatabaseResultMapper {
 
             for (Map.Entry<String, Object> entry : data.entrySet()) {
                 String columnName = entry.getKey();
-                String propertyName = columnToPropMap.get(columnName);
+                String propertyName = columnToPropMap.get(columnName.toUpperCase());
 
                 if (propertyName == null) {
                     log.debug("未找到列 [{}] 的字段映射，目标类: {}", columnName, targetClass.getSimpleName());

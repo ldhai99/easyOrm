@@ -4,7 +4,7 @@ import io.github.ldhai99.easyOrm.SQL;
 
 import io.github.ldhai99.easyOrm.executor.Executor;
 
-import io.github.ldhai99.easyOrm.tools.DbTools;
+import io.github.ldhai99.easyOrm.datasource.DataSourceManager;
 import org.junit.jupiter.api.*;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
@@ -18,7 +18,7 @@ public class UpdateTest {
 
     @BeforeAll
     public void getTemplate() {
-        executor = DbTools.getExecutor();
+        executor = DataSourceManager.getExecutor();
 
     }
 
