@@ -2,7 +2,7 @@ package io.github.ldhai99.easyOrm.datasource;
 
 import com.alibaba.druid.pool.DruidDataSourceFactory;
 import io.github.ldhai99.easyOrm.executor.JdbcTemplateExecutor;
-import io.github.ldhai99.easyOrm.tools.ConfigDatabase;
+import io.github.ldhai99.easyOrm.config.ConfigDatabase;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.util.Assert;

@@ -5,8 +5,6 @@ import io.github.ldhai99.easyOrm.SQL;
 import io.github.ldhai99.easyOrm.datasource.DataSourceManager;
 import io.github.ldhai99.easyOrm.executor.Executor;
 import io.github.ldhai99.easyOrm.page.PAGE;
-import io.github.ldhai99.easyOrm.tools.ConfigPageSql;
-import io.github.ldhai99.easyOrm.datasource.DataSourceManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;

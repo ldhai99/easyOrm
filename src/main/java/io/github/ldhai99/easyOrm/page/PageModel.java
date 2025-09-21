@@ -3,7 +3,7 @@ package io.github.ldhai99.easyOrm.page;
 
 import io.github.ldhai99.easyOrm.SQL;
 import io.github.ldhai99.easyOrm.page.PageSQLGenerator.PageSQLGenerator;
-import io.github.ldhai99.easyOrm.tools.ConfigPageSql;
+import io.github.ldhai99.easyOrm.config.ConfigPageSql;
 
 import java.util.Collections;
 import java.util.List;

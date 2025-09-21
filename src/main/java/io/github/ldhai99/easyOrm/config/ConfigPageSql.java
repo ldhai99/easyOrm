@@ -1,4 +1,4 @@
-package io.github.ldhai99.easyOrm.tools;
+package io.github.ldhai99.easyOrm.config;
 
 import io.github.ldhai99.easyOrm.page.PageSQLGenerator.mysql.MysqlPageSql;
 import io.github.ldhai99.easyOrm.page.PageSQLGenerator.mysql.MysqlPageSqlById;
