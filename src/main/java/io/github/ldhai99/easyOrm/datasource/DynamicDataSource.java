@@ -1,6 +1,6 @@
 package io.github.ldhai99.easyOrm.datasource;
 
-import io.github.ldhai99.easyOrm.executor.JdbcTemplateExecutor;
+
 import org.springframework.jdbc.datasource.lookup.AbstractRoutingDataSource;
 import org.springframework.util.Assert;
 
@@ -8,7 +8,6 @@ import javax.sql.DataSource;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 动态数据源路由类（基于Spring的AbstractRoutingDataSource）
@@ -17,6 +16,8 @@ public class DynamicDataSource extends AbstractRoutingDataSource {
 
 
     public DynamicDataSource(DataSource defaultDataSource, Map<String, DataSource> targetDataSources) {
+        Assert.notNull(defaultDataSource, "Default DataSource must not be null");
+
         super.setDefaultTargetDataSource(defaultDataSource);
         super.setTargetDataSources(new HashMap<>(targetDataSources));
         super.afterPropertiesSet(); // 初始化 resolvedDataSources
@@ -34,29 +35,38 @@ public class DynamicDataSource extends AbstractRoutingDataSource {
         Assert.notNull(dataSourceName, "DataSource name must not be null");
         Assert.notNull(dataSource, "DataSource must not be null");
 
-        // 获取当前所有目标数据源（从父类的 resolvedDataSources 构造新的 targetDataSources）
-        Map<Object, Object> newTargetDataSources = new HashMap<>();
-        Map<Object, DataSource> currentResolved = super.getResolvedDataSources();
-        currentResolved.forEach((key, ds) -> newTargetDataSources.put(key, ds));
-        newTargetDataSources.put(dataSourceName, dataSource);
-
-        // 更新并重新初始化
-        super.setTargetDataSources(newTargetDataSources);
-        super.afterPropertiesSet();
+        // ✅ 直接添加到 resolvedDataSources（运行时实际使用的映射）
+        Map<Object, DataSource> resolvedDataSources = super.getResolvedDataSources();
+        resolvedDataSources.put(dataSourceName, dataSource);
     }
+    public synchronized void removeDataSource(String dataSourceName) {
+        Assert.hasText(dataSourceName, "DataSource name must not be empty");
 
-    // -------- 查询方法：使用 getResolvedDataSources() --------
+        Map<Object, DataSource> resolvedDataSources = super.getResolvedDataSources();
+        if (!resolvedDataSources.containsKey(dataSourceName)) {
+            return; // 或抛异常
+        }
+        resolvedDataSources.remove(dataSourceName);
+        // 注意：不会从 targetDataSources 移除（也无法访问）
+    }
+    /**
+     * 获取所有已注册的数据源（包含动态添加的）
+     * 注意：返回的是 resolvedDataSources 的快照
+     */
     public Map<String, DataSource> getTargetDataSources() {
         Map<Object, DataSource> resolved = super.getResolvedDataSources();
         Map<String, DataSource> result = new HashMap<>();
-        resolved.forEach((key, dataSource) -> {
+        resolved.forEach((key, ds) -> {
             if (key instanceof String) {
-                result.put((String) key, dataSource);
+                result.put((String) key, ds);
             }
         });
         return Collections.unmodifiableMap(result);
     }
 
+    /**
+     * 获取默认数据源
+     */
     public DataSource getDefaultDataSource() {
         return super.getResolvedDefaultDataSource();
     }
