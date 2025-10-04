@@ -148,14 +148,18 @@ public abstract class ExecutorHandler<T extends ExecutorHandler<T>> extends Base
         ensureSelectTaskType(); // 校验任务类型为 SELECT
         return getExecutor().getMap(self());
     }
-
+    public Map<String, Object> one() {
+      return getMap();
+    }
 
     //返回多行数据
     public List<Map<String, Object>> getMaps() {
         ensureSelectTaskType(); // 校验任务类型为 SELECT
         return getExecutor().getMaps(self());
     }
-
+    public List<Map<String, Object>> list() {
+        return getMaps();
+    }
 
     //返回Bean实体
     public <T> T one(Class<T> T) {

@@ -177,7 +177,7 @@ public class SQLDataSourceUsageTest {
 
         } finally {
             // 清理上下文，防止影响其他测试
-            DataSourceManager.clearCurrentDataSource();
+            DataSourceManager.clearCurrentDataSourceName();
         }
     }
 
@@ -227,7 +227,7 @@ public class SQLDataSourceUsageTest {
             new SQL(dataSource1).delete("users").eq("email", email).execute(); // 确保干净
 
             // === 3️⃣ 阶段三：验证【全局默认】在无上下文、无传参时生效 ===
-            DataSourceManager.clearCurrentDataSource(); // 清除上下文
+            DataSourceManager.clearCurrentDataSourceName(); // 清除上下文
 
             // 无上下文、无传参 → 应使用 default (testdb1)
             SQL.DELETE("users").eq("email", email).execute();
@@ -246,7 +246,7 @@ public class SQLDataSourceUsageTest {
             assertNull(fromSlave3);
             new SQL(dataSource1).delete("users").eq("email", email).execute(); // 确保干净
         } finally {
-            DataSourceManager.clearCurrentDataSource();
+            DataSourceManager.clearCurrentDataSourceName();
         }
     }
 }

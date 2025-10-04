@@ -173,7 +173,7 @@ public class DataSourceManager {
     /**
      * 清除当前线程的数据源设置
      */
-    public static void clearCurrentDataSource() {
+    public static void clearCurrentDataSourceName() {
         DataSourceContextHolder.clear();
     }
 
