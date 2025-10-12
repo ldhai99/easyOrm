@@ -65,7 +65,7 @@ public class FieldResolver {
         Class<?> entityClass = LambdaResolver.getEntityClass(lambda);
         Field field = ClassFieldExplorer.findField(entityClass, propertyName);
         String tableName = TableNameResolver.getTableName(entityClass);
-        return SqlTools.camelToSnakeCase(tableName) + "." + resolveColumnName(field);
+        return SqlTools.toSnakeCase(tableName) + "." + resolveColumnName(field);
 
     }
 
@@ -183,7 +183,7 @@ public class FieldResolver {
         if (tableField != null && !tableField.value().isEmpty()) {
             return tableField.value(); // 注解优先
         } else {
-            return SqlTools.camelToSnakeCase(field.getName()); // 默认驼峰转下划线
+            return SqlTools.toSnakeCase(field.getName()); // 默认驼峰转下划线
         }
     }
 
@@ -200,7 +200,7 @@ public class FieldResolver {
             }
         }
         // 若未找到，尝试默认下划线转驼峰
-        return SqlTools.snakeToCamelCase(columnName);
+        return SqlTools.toCamelCase(columnName);
     }
 
 

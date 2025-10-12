@@ -12,7 +12,7 @@ public class TableNameResolver {
         } else {
             // If no annotation, convert class name to snake_case as a fallback
             String className = clazz.getSimpleName();
-            return SqlTools.camelToSnakeCase(className);
+            return SqlTools.toSnakeCase(className);
        }
     }
 

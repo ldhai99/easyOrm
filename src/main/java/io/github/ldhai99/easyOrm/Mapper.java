@@ -21,12 +21,12 @@ public class Mapper {
     public int insert(Object bean) throws IllegalAccessException, SQLException {
         Class clazz=bean.getClass();
         Field[] fields=clazz.getDeclaredFields();
-        sql.insert(SqlTools.camelToSnakeCase(clazz.getSimpleName()));
+        sql.insert(SqlTools.toSnakeCase(clazz.getSimpleName()));
         for (int i=0;i<fields.length;i++){
             Field field=fields[i];
             field.setAccessible(true);
             Object value=field.get(bean);
-            String name=SqlTools.camelToSnakeCase(field.getName());
+            String name=SqlTools.toSnakeCase(field.getName());
             if(value!=null)
             sql.set(name,value);
         }

@@ -57,7 +57,7 @@ public class SqlTools {
      * @param camelCaseString 驼峰格式的字符串
      * @return 下划线格式的字符串
      */
-    public static String camelToSnakeCase(String camelCaseString) {
+    public static String toSnakeCase(String camelCaseString) {
         if (camelCaseString == null || camelCaseString.isEmpty()) {
             return camelCaseString;
         }
@@ -70,7 +70,7 @@ public class SqlTools {
      * 功能：下划线命名转驼峰命名
      * 将下划线替换为空格,将字符串根据空格分割成数组,再将每个单词首字母大写
      */
-    public static String snakeToCamelCase(String snakeCaseString) {
+    public static String toCamelCase(String snakeCaseString) {
 
         if (snakeCaseString == null || snakeCaseString.isEmpty()) {
             return snakeCaseString;
