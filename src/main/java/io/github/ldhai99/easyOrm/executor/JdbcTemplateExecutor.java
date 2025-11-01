@@ -2,8 +2,7 @@ package io.github.ldhai99.easyOrm.executor;
 
 import io.github.ldhai99.easyOrm.builder.ExecutorHandler;
 import io.github.ldhai99.easyOrm.dao.orm.DatabaseResultMapper;
-import io.github.ldhai99.easyOrm.datasource.DataSourceManager;
-import io.github.ldhai99.easyOrm.datasource.DataSourceManager;
+
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -18,14 +17,6 @@ public class JdbcTemplateExecutor extends AbstractExecutor {
 
 
     // 移除无参构造方法，或者改为从 DataSourceManager 获取默认数据源
-    public JdbcTemplateExecutor() {
-        this(DataSourceManager.getDefaultDataSource());
-    }
-
-    public JdbcTemplateExecutor(DataSource dataSource) {
-        this.template = new NamedParameterJdbcTemplate(dataSource);
-    }
-
     public JdbcTemplateExecutor(NamedParameterJdbcTemplate template) {
         this.template = template;
     }

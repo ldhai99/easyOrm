@@ -3,7 +3,8 @@ package io.github.ldhai99.easyOrm.test.where;
 
 import io.github.ldhai99.easyOrm.SQL;
 
-import io.github.ldhai99.easyOrm.datasource.DataSourceManager;
+
+import io.github.ldhai99.easyOrm.config.EasyOrmConfig;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,8 +13,7 @@ import org.junit.jupiter.api.Test;
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
+
 
 
 public class WhereTest {
@@ -22,7 +22,7 @@ public class WhereTest {
 
     @BeforeEach
     public void beforeTest() throws SQLException {
-        con = DataSourceManager.getConnection();
+        con = EasyOrmConfig.getConnection();
     }
 
     @AfterEach

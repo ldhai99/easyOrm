@@ -1,7 +1,7 @@
 package io.github.ldhai99.easyOrm.test.dbutils;
 
 import io.github.ldhai99.easyOrm.SQL;
-import io.github.ldhai99.easyOrm.datasource.DataSourceManager;
+import io.github.ldhai99.easyOrm.config.EasyOrmConfig;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,8 +17,8 @@ public class TaskTest {
 
     @BeforeEach
     public void beforeTest() throws SQLException {
-        con = DataSourceManager.getConnection();
-        ds = DataSourceManager.getDataSource();
+        con = EasyOrmConfig.getConnection();
+        ds = EasyOrmConfig.getDataSource();
     }
 
     @AfterEach

@@ -4,7 +4,7 @@ import io.github.ldhai99.easyOrm.SQL;
 import io.github.ldhai99.easyOrm.executor.Executor;
 import io.github.ldhai99.easyOrm.page.PAGE;
 import io.github.ldhai99.easyOrm.test.Student;
-import io.github.ldhai99.easyOrm.datasource.DataSourceManager;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -13,6 +13,8 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import java.sql.SQLException;
 import java.util.List;
+
+import static io.github.ldhai99.easyOrm.executor.ExecutorManager.getExecutor;
 
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -23,7 +25,7 @@ public class PageGetDataTest {
 
     @BeforeAll
     public void getTemplate() {
-        executor = DataSourceManager.getExecutor();
+        executor = getExecutor();
 
     }
 

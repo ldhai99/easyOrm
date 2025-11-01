@@ -2,7 +2,8 @@ package io.github.ldhai99.easyOrm.test.subSql;
 
 
 import io.github.ldhai99.easyOrm.SQL;
-import io.github.ldhai99.easyOrm.datasource.DataSourceManager;
+
+import io.github.ldhai99.easyOrm.config.EasyOrmConfig;
 import org.junit.jupiter.api.Test;
 
 import org.junit.jupiter.api.AfterEach;
@@ -20,7 +21,7 @@ public class SetValueSubSql {
 
     @BeforeEach
     public void beforeTest() throws SQLException {
-        con = DataSourceManager.getConnection();
+        con = EasyOrmConfig.getConnection();
     }
 
     @AfterEach

@@ -4,11 +4,14 @@ import io.github.ldhai99.easyOrm.SQL;
 
 import io.github.ldhai99.easyOrm.executor.Executor;
 
-import io.github.ldhai99.easyOrm.datasource.DataSourceManager;
+
 import org.junit.jupiter.api.*;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import java.sql.SQLException;
+
+import static io.github.ldhai99.easyOrm.executor.ExecutorManager.getExecutor;
+
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class IntroductionTest {
 
@@ -18,7 +21,7 @@ public class IntroductionTest {
 
     @BeforeAll
     public void getTemplate() {
-        executor = DataSourceManager.getExecutor();
+        executor = getExecutor();
 
     }
 

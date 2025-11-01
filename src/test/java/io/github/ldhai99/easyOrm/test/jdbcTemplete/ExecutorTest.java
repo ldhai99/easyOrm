@@ -7,7 +7,7 @@ import io.github.ldhai99.easyOrm.test.Student;
 
 
 import io.github.ldhai99.easyOrm.executor.Executor;
-import io.github.ldhai99.easyOrm.datasource.DataSourceManager;
+
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -17,6 +17,9 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import java.sql.SQLException;
 import java.util.Date;
+
+import static io.github.ldhai99.easyOrm.executor.ExecutorManager.getExecutor;
+import io.github.ldhai99.easyOrm.config.EasyOrmConfig;
 
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -28,7 +31,7 @@ public class ExecutorTest {
 
     @BeforeAll
     public void getTemplate() {
-        executor = DataSourceManager.getExecutor();
+        executor = getExecutor();
 
     }
 
@@ -46,10 +49,10 @@ public class ExecutorTest {
                 SQL.ofExecutor(executor)
                         .select("student").eq("age", 18).getMaps());
         System.out.println(
-                SQL.ofExecutor(DataSourceManager.getDataSource())
+                SQL.ofExecutor(EasyOrmConfig.getDataSource())
                         .select("student").eq("age", 18).getMaps());
         System.out.println(
-                SQL.ofExecutor(DataSourceManager.getConnection())
+                SQL.ofExecutor(EasyOrmConfig.getConnection())
                         .select("student").eq("age", 18).getMaps());
 
 
@@ -58,10 +61,10 @@ public class ExecutorTest {
                 new SQL(executor)
                         .select("student").eq("age", 18).getMaps());
         System.out.println(
-                new SQL(DataSourceManager.getDataSource())
+                new SQL(EasyOrmConfig.getDataSource())
                         .select("student").eq("age", 18).getMaps());
         System.out.println(
-                new SQL(DataSourceManager.getConnection())
+                new SQL(EasyOrmConfig.getConnection())
                         .select("student").eq("age", 18).getMaps());
 
 
@@ -69,9 +72,9 @@ public class ExecutorTest {
         System.out.println(
                 SQL.SELECT("student").eq("age", 18).executor(executor).getMaps());
         System.out.println(
-                SQL.SELECT("student").eq("age", 18).executor(DataSourceManager.getDataSource()).getMaps());
+                SQL.SELECT("student").eq("age", 18).executor(EasyOrmConfig.getDataSource()).getMaps());
         System.out.println(
-                SQL.SELECT("student").eq("age", 18).executor(DataSourceManager.getConnection()).getMaps());
+                SQL.SELECT("student").eq("age", 18).executor(EasyOrmConfig.getConnection()).getMaps());
 
 
         //使用全局默认执行器

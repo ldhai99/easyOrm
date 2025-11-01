@@ -4,15 +4,11 @@ import io.github.ldhai99.easyOrm.Lambda.PropertyGetter;
 import io.github.ldhai99.easyOrm.dao.core.FieldResolver;
 import io.github.ldhai99.easyOrm.dao.core.TableNameResolver;
 import io.github.ldhai99.easyOrm.base.TaskType;
-import io.github.ldhai99.easyOrm.datasource.DataSourceManager;
 
 import io.github.ldhai99.easyOrm.executor.Executor;
-import io.github.ldhai99.easyOrm.executor.JdbcTemplateExecutor;
+import io.github.ldhai99.easyOrm.executor.ExecutorManager;
 import io.github.ldhai99.easyOrm.model.JdbcModel;
 import io.github.ldhai99.easyOrm.model.SqlModel;
-import io.github.ldhai99.easyOrm.datasource.DataSourceManager;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -330,25 +326,23 @@ public abstract class BaseSQL <T extends BaseSQL<T>> implements Cloneable{
     protected Executor executor;
     //默认执行器为JdbcTemplateMapper
 // 修改后
+    // 只修改这4个方法
     public T createExecutor() {
-        this.executor = DataSourceManager.getExecutor();
+        this.executor = ExecutorManager.getExecutor();
         return self();
     }
 
     public T createExecutor(Connection connection) {
-        // 包装 Connection 为 DataSource
-        this.executor = new JdbcTemplateExecutor(
-                new NamedParameterJdbcTemplate(new SingleConnectionDataSource(connection, true))
-        );
+        this.executor = ExecutorManager.createExecutor(connection);
         return self();
     }
 
     public T createExecutor(DataSource dataSource) {
-        this.executor = new JdbcTemplateExecutor(
-                new NamedParameterJdbcTemplate(dataSource)
-        );
+        this.executor = ExecutorManager.createExecutor(dataSource);
         return self();
     }
+
+
 
     public T createExecutor(Executor executor) {
         this.executor = executor;

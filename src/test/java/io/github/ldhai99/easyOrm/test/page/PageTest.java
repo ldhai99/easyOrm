@@ -1,12 +1,12 @@
 package io.github.ldhai99.easyOrm.test.page;
 
 import io.github.ldhai99.easyOrm.SQL;
-import io.github.ldhai99.easyOrm.datasource.DataSourceManager;
+
 import io.github.ldhai99.easyOrm.executor.Executor;
 import io.github.ldhai99.easyOrm.page.PageSQLGenerator.mysql.MysqlPageSqlById;
 import io.github.ldhai99.easyOrm.page.PageSQLGenerator.mysql.MysqlPageSqlByStartId;
 import io.github.ldhai99.easyOrm.page.PAGE;
-import io.github.ldhai99.easyOrm.datasource.DataSourceManager;
+;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -14,6 +14,9 @@ import org.junit.jupiter.api.TestInstance;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import java.sql.SQLException;
+
+import static io.github.ldhai99.easyOrm.executor.ExecutorManager.getExecutor;
+
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class PageTest {
     private Executor executor;
@@ -22,7 +25,7 @@ public class PageTest {
 
     @BeforeAll
     public void getTemplate() {
-        executor = DataSourceManager.getExecutor();
+        executor = getExecutor();
 
     }
 

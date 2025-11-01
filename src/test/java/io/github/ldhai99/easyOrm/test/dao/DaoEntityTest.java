@@ -1,10 +1,10 @@
 package io.github.ldhai99.easyOrm.test.dao;
 
-import io.github.ldhai99.easyOrm.datasource.DataSourceManager;
+
 import io.github.ldhai99.easyOrm.test.Student;
 import io.github.ldhai99.easyOrm.test.studentDao.dao2.StudentDao;
 import io.github.ldhai99.easyOrm.tools.ChainMap;
-import io.github.ldhai99.easyOrm.datasource.DataSourceManager;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -12,13 +12,16 @@ import org.junit.jupiter.api.TestInstance;
 
 import java.sql.SQLException;
 import java.util.Date;
+
+import static io.github.ldhai99.easyOrm.executor.ExecutorManager.getExecutor;
+
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class DaoEntityTest {
     StudentDao dao;
 
     @BeforeAll
     public void getTemplate() {
-        DataSourceManager.getExecutor();
+        getExecutor();
 
         dao = new StudentDao();
     }
