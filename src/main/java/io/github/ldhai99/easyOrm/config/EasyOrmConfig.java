@@ -1,6 +1,7 @@
 package io.github.ldhai99.easyOrm.config;
 
 import io.github.ldhai99.easyOrm.executor.DataSourceProvider;
+import io.github.ldhai99.easyOrm.executor.ExecutorManager;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
@@ -18,7 +19,7 @@ public class EasyOrmConfig implements DataSourceProvider {
     private static DataSource defaultDataSource;
     private static boolean initialized = false;
 
-    private static final EasyOrmConfig instance = new EasyOrmConfig();
+    public static final EasyOrmConfig instance = new EasyOrmConfig();
 
     /**
      * 设置默认数据源
@@ -26,7 +27,7 @@ public class EasyOrmConfig implements DataSourceProvider {
     public static void setDefaultDataSource(DataSource dataSource) {
         defaultDataSource = dataSource;
         initialized = true;
-        io.github.ldhai99.easyOrm.executor.ExecutorManager.setDataSourceProvider(instance);
+        ExecutorManager.setDataSourceProvider(instance);
     }
 
     /**
@@ -60,15 +61,6 @@ public class EasyOrmConfig implements DataSourceProvider {
         DataSource dataSource = getDataSource();
         return DataSourceUtils.getConnection(dataSource);
     }
-
-    /**
-     * 获取数据库连接（不使用事务管理）
-     */
-    public static Connection getConnectionWithoutTransaction() throws SQLException {
-        DataSource dataSource = getDataSource();
-        return dataSource.getConnection();
-    }
-
     /**
      * 释放连接（自动处理事务）
      */
@@ -77,6 +69,15 @@ public class EasyOrmConfig implements DataSourceProvider {
             DataSourceUtils.releaseConnection(connection, getDataSource());
         }
     }
+    /**
+     * 获取数据库连接（不使用事务管理）
+     */
+    public static Connection getConnectionWithoutTransaction() throws SQLException {
+        DataSource dataSource = getDataSource();
+        return dataSource.getConnection();
+    }
+
+
 
     /**
      * 直接关闭连接（不处理事务）

@@ -14,7 +14,7 @@ import java.sql.Connection;
 public class ExecutorManager {
 
     private static DataSourceProvider dataSourceProvider;
-    private static final DataSourceProvider defaultProvider = new EasyOrmConfig();
+    private static final DataSourceProvider defaultProvider = EasyOrmConfig.instance;;
 
     /**
      * 设置数据源提供者
