@@ -1,7 +1,7 @@
 package io.github.ldhai99.easyOrm.test.dbutils;
 
 import io.github.ldhai99.easyOrm.SQL;
-import io.github.ldhai99.easyOrm.config.EasyOrmConfig;
+import io.github.ldhai99.easyOrm.datasource.DefaultDataSourceProvider;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,7 +19,7 @@ public class InsertTest {
 
     @BeforeEach
     public void beforeTest() throws SQLException {
-        connection = EasyOrmConfig.getConnection();
+        connection = DefaultDataSourceProvider.getConnection();
     }
 
     @AfterEach

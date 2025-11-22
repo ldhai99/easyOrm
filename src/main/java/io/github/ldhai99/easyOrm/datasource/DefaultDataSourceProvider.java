@@ -1,6 +1,5 @@
-package io.github.ldhai99.easyOrm.config;
+package io.github.ldhai99.easyOrm.datasource;
 
-import io.github.ldhai99.easyOrm.executor.DataSourceProvider;
 import io.github.ldhai99.easyOrm.executor.ExecutorManager;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
@@ -14,12 +13,12 @@ import java.io.InputStream;
 /**
  * EasyORM 内置简单配置
  */
-public class EasyOrmConfig implements DataSourceProvider {
+public class DefaultDataSourceProvider implements DataSourceProvider {
 
     private static DataSource defaultDataSource;
     private static boolean initialized = false;
 
-    public static final EasyOrmConfig instance = new EasyOrmConfig();
+    public static final DefaultDataSourceProvider instance = new DefaultDataSourceProvider();
 
     /**
      * 设置默认数据源
@@ -49,7 +48,7 @@ public class EasyOrmConfig implements DataSourceProvider {
 
     // DataSourceProvider 接口实现
     @Override
-    public DataSource getCurrentDataSource() {
+    public DataSource provide() {
         return getDataSource();
     }
     // ------------------------ 连接获取方法 ------------------------
@@ -127,7 +126,7 @@ public class EasyOrmConfig implements DataSourceProvider {
      * 从 druid.properties 创建数据源
      */
     private static DataSource createDataSourceFromDruidConfig() {
-        try (InputStream in = EasyOrmConfig.class.getClassLoader().getResourceAsStream("druid.properties")) {
+        try (InputStream in = DefaultDataSourceProvider.class.getClassLoader().getResourceAsStream("druid.properties")) {
             if (in == null) return null;
 
             Properties pro = new Properties();
@@ -232,7 +231,7 @@ public class EasyOrmConfig implements DataSourceProvider {
      * 加载属性文件
      */
     private static Properties loadProperties(String filename) {
-        try (InputStream in = EasyOrmConfig.class.getClassLoader().getResourceAsStream(filename)) {
+        try (InputStream in = DefaultDataSourceProvider.class.getClassLoader().getResourceAsStream(filename)) {
             if (in == null) return null;
             Properties pro = new Properties();
             pro.load(in);

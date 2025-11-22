@@ -1,4 +1,4 @@
-package io.github.ldhai99.easyOrm.executor;
+package io.github.ldhai99.easyOrm.datasource;
 
 import javax.sql.DataSource;
 
@@ -9,5 +9,5 @@ public interface DataSourceProvider {
     /**
      * 获取数据源
      */
-    DataSource getCurrentDataSource();
+    DataSource provide();
 }

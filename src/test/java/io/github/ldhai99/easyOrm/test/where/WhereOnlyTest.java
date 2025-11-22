@@ -2,7 +2,7 @@ package io.github.ldhai99.easyOrm.test.where;
 
 
 import io.github.ldhai99.easyOrm.SQL;
-import io.github.ldhai99.easyOrm.config.EasyOrmConfig;
+import io.github.ldhai99.easyOrm.datasource.DefaultDataSourceProvider;
 import io.github.ldhai99.easyOrm.dynamic.DynamicSQL;
 
 import org.junit.jupiter.api.AfterEach;
@@ -20,7 +20,7 @@ public class WhereOnlyTest {
 
     @BeforeEach
     public void beforeTest() throws SQLException {
-        con = EasyOrmConfig.getConnection();
+        con = DefaultDataSourceProvider.getConnection();
     }
 
     @AfterEach

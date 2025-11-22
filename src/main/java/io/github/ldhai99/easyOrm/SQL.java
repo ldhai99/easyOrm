@@ -3,11 +3,14 @@ package io.github.ldhai99.easyOrm;
 
 import io.github.ldhai99.easyOrm.builder.BaseSQL;
 import io.github.ldhai99.easyOrm.builder.OrderHandler;
+import io.github.ldhai99.easyOrm.datasource.DefaultDataSourceProvider;
 import io.github.ldhai99.easyOrm.dynamic.DynamicSQL;
 import io.github.ldhai99.easyOrm.Lambda.PropertyGetter;
 import io.github.ldhai99.easyOrm.dao.core.TableNameResolver;
 
+import io.github.ldhai99.easyOrm.datasource.DataSourceProvider;
 import io.github.ldhai99.easyOrm.executor.Executor;
+import io.github.ldhai99.easyOrm.executor.ExecutorManager;
 import io.github.ldhai99.easyOrm.executor.JdbcTemplateExecutor;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
@@ -109,7 +112,25 @@ public class SQL  extends OrderHandler<SQL> implements Cloneable{
 
         return this;
     }
-
+    //=======================配置数据源提供者==================================
+    /**
+     * 配置数据源提供者
+     */
+    public static void configDataSourceProvider(DataSourceProvider provider) {
+        ExecutorManager.setDataSourceProvider(provider);
+    }
+    /**
+     * 配置默认数据源
+     */
+    public static void configDefaultDataSource(DataSource dataSource) {
+        DefaultDataSourceProvider.setDefaultDataSource(dataSource);
+    }
+    /**
+     * 重置为默认配置
+     */
+    public static void resetConfig() {
+        ExecutorManager.setDataSourceProvider(null);
+    }
     //静态工厂方法-----------------------------------------------------------------------------------
     public static SQL SELECT(String table) {
         return new SQL().select(table);

@@ -19,7 +19,7 @@ import java.sql.SQLException;
 import java.util.Date;
 
 import static io.github.ldhai99.easyOrm.executor.ExecutorManager.getExecutor;
-import io.github.ldhai99.easyOrm.config.EasyOrmConfig;
+import io.github.ldhai99.easyOrm.datasource.DefaultDataSourceProvider;
 
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -49,10 +49,10 @@ public class ExecutorTest {
                 SQL.ofExecutor(executor)
                         .select("student").eq("age", 18).getMaps());
         System.out.println(
-                SQL.ofExecutor(EasyOrmConfig.getDataSource())
+                SQL.ofExecutor(DefaultDataSourceProvider.getDataSource())
                         .select("student").eq("age", 18).getMaps());
         System.out.println(
-                SQL.ofExecutor(EasyOrmConfig.getConnection())
+                SQL.ofExecutor(DefaultDataSourceProvider.getConnection())
                         .select("student").eq("age", 18).getMaps());
 
 
@@ -61,10 +61,10 @@ public class ExecutorTest {
                 new SQL(executor)
                         .select("student").eq("age", 18).getMaps());
         System.out.println(
-                new SQL(EasyOrmConfig.getDataSource())
+                new SQL(DefaultDataSourceProvider.getDataSource())
                         .select("student").eq("age", 18).getMaps());
         System.out.println(
-                new SQL(EasyOrmConfig.getConnection())
+                new SQL(DefaultDataSourceProvider.getConnection())
                         .select("student").eq("age", 18).getMaps());
 
 
@@ -72,9 +72,9 @@ public class ExecutorTest {
         System.out.println(
                 SQL.SELECT("student").eq("age", 18).executor(executor).getMaps());
         System.out.println(
-                SQL.SELECT("student").eq("age", 18).executor(EasyOrmConfig.getDataSource()).getMaps());
+                SQL.SELECT("student").eq("age", 18).executor(DefaultDataSourceProvider.getDataSource()).getMaps());
         System.out.println(
-                SQL.SELECT("student").eq("age", 18).executor(EasyOrmConfig.getConnection()).getMaps());
+                SQL.SELECT("student").eq("age", 18).executor(DefaultDataSourceProvider.getConnection()).getMaps());
 
 
         //使用全局默认执行器

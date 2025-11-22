@@ -1,7 +1,7 @@
 package io.github.ldhai99.easyOrm.test.lamda;
 
 import io.github.ldhai99.easyOrm.SQL;
-import io.github.ldhai99.easyOrm.config.EasyOrmConfig;
+import io.github.ldhai99.easyOrm.datasource.DefaultDataSourceProvider;
 import io.github.ldhai99.easyOrm.test.Student;
 
 import org.junit.jupiter.api.AfterEach;
@@ -19,8 +19,8 @@ public class LamdaTest {
 
     @BeforeEach
     public void beforeTest() throws SQLException {
-        con = EasyOrmConfig.getConnection();
-        ds = EasyOrmConfig.getDataSource();
+        con = DefaultDataSourceProvider.getConnection();
+        ds = DefaultDataSourceProvider.getDataSource();
     }
 
     @AfterEach

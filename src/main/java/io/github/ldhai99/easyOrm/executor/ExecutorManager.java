@@ -1,6 +1,7 @@
 package io.github.ldhai99.easyOrm.executor;
 
-import io.github.ldhai99.easyOrm.config.EasyOrmConfig;
+import io.github.ldhai99.easyOrm.datasource.DefaultDataSourceProvider;
+import io.github.ldhai99.easyOrm.datasource.DataSourceProvider;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 import org.springframework.util.Assert;
@@ -14,7 +15,7 @@ import java.sql.Connection;
 public class ExecutorManager {
 
     private static DataSourceProvider dataSourceProvider;
-    private static final DataSourceProvider defaultProvider = EasyOrmConfig.instance;;
+    private static final DataSourceProvider defaultProvider = DefaultDataSourceProvider.instance;;
 
     /**
      * 设置数据源提供者
@@ -29,7 +30,7 @@ public class ExecutorManager {
     public static JdbcTemplateExecutor getExecutor() {
         // 如果没有设置数据源提供者，使用默认的 EasyOrmConfig
         DataSourceProvider provider = dataSourceProvider != null ? dataSourceProvider : defaultProvider;
-        DataSource dataSource = provider.getCurrentDataSource();
+        DataSource dataSource = provider.provide();
         return createExecutor(dataSource);
     }
 
