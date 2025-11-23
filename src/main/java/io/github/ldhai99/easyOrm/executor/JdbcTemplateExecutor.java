@@ -4,8 +4,13 @@ import io.github.ldhai99.easyOrm.builder.ExecutorHandler;
 import io.github.ldhai99.easyOrm.dao.orm.DatabaseResultMapper;
 
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 
 import javax.sql.DataSource;
 import java.util.List;
@@ -32,8 +37,59 @@ public class JdbcTemplateExecutor extends AbstractExecutor {
         return   template.update( sql.toString(),sql.getParameterMap());
     }
     public Number insert(ExecutorHandler sql) {
-        return   template.update( sql.toString(),sql.getParameterMap());
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+           template.update( sql.toString(), (SqlParameterSource)(new MapSqlParameterSource(sql.getParameterMap())),keyHolder);
+        return extractPrimaryKey(keyHolder);
     }
+    /**
+     * 智能提取主键值
+     * - 单个值：直接返回 getKey()
+     * - 多个值：查找 id/ID 列的值
+     */
+    private Number extractPrimaryKey(KeyHolder keyHolder) {
+        try {
+            // 先尝试直接获取单个主键
+            return keyHolder.getKey();
+        } catch (InvalidDataAccessApiUsageException e) {
+            // 如果是多值错误，从键映射中提取
+            return extractKeyFromMultiple(keyHolder);
+        }
+    }
+
+    /**
+     * 从多个返回值中提取主键
+     */
+    private Number extractKeyFromMultiple(KeyHolder keyHolder) {
+        Map<String, Object> keys = keyHolder.getKeys();
+        if (keys == null || keys.isEmpty()) {
+            return null;
+        }
+
+        System.out.println("🔍 检测到多个返回值: " + keys);
+
+        // 优先查找 id 列（不区分大小写）
+        for (String key : keys.keySet()) {
+            if ("id".equalsIgnoreCase(key)) {
+                Object value = keys.get(key);
+                if (value instanceof Number) {
+                    System.out.println("✅ 找到主键 ID: " + value);
+                    return (Number) value;
+                }
+            }
+        }
+
+        // 如果没有找到 id 列，尝试返回第一个数值类型的值
+        for (Object value : keys.values()) {
+            if (value instanceof Number) {
+                System.out.println("⚠️  使用第一个数值作为主键: " + value);
+                return (Number) value;
+            }
+        }
+
+        System.out.println("❌ 未找到合适的主键值");
+        return null;
+    }
+
     public int delete(ExecutorHandler sql) {
         return   template.update( sql.toString(),sql.getParameterMap());
     }

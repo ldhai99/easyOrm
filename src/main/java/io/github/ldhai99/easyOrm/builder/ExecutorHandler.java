@@ -27,7 +27,9 @@ public abstract class ExecutorHandler<T extends ExecutorHandler<T>> extends Base
     public Number insert() {
         return getExecutor().insert(self());
     }
-
+    public Long getPrimaryKey() {
+        return insert().longValue() ;
+    }
     //执行存储过程
     public int execute() {
 
