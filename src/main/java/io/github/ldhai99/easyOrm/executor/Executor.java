@@ -1,14 +1,31 @@
 package io.github.ldhai99.easyOrm.executor;
 
 import io.github.ldhai99.easyOrm.builder.ExecutorHandler;
+import io.github.ldhai99.easyOrm.context.DbType;
 
+import javax.sql.DataSource;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 public interface Executor {
+    /**
+     * 获取数据库类型
+     */
+    DbType getDbType();
 
+    /**
+     * 设置数据库类型
+     */
+    void setDbType(DbType dbType);
+
+    /**
+     * 获取数据源（可选，用于重新检测等场景）
+     */
+    default DataSource getDataSource() {
+        return null;
+    }
     //代理-------------------------------------------------执行类
     //执行增加，删除，修改，返回记录个数
     public int update(ExecutorHandler sql)   ;

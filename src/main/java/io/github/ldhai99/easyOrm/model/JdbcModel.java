@@ -3,7 +3,10 @@ package io.github.ldhai99.easyOrm.model;
 import io.github.ldhai99.easyOrm.SQL;
 
 import io.github.ldhai99.easyOrm.builder.BaseSQL;
+import io.github.ldhai99.easyOrm.context.DbType;
 import io.github.ldhai99.easyOrm.dbenum.DbEnum;
+import io.github.ldhai99.easyOrm.dialect.Dialect;
+import io.github.ldhai99.easyOrm.dialect.LikeType;
 import io.github.ldhai99.easyOrm.tools.SqlTools;
 
 import java.io.Serializable;
@@ -35,7 +38,8 @@ public class JdbcModel implements Serializable {
     private static final Pattern NAME_PATTERN = Pattern.compile("[a-z][_a-z0-9]*", 2);
     private static final Pattern PARAM_PATTERN = Pattern.compile(":([a-z][_a-z0-9]*)", 2);
     private static final Pattern PLACEHOLDER_PATTERN = Pattern.compile("\\?", 2);
-
+    // 方言助手（仅一行代码）
+    private final DialectHelper dialectHelper = new DialectHelper();
 
     public JdbcModel() {
         prefixParaName = "p" + Integer.toHexString(System.identityHashCode(this));
@@ -147,6 +151,19 @@ public class JdbcModel implements Serializable {
             return this.sql;
         }
     }
+    // ============ 方言相关方法（极简代理） ============
+
+    public void setDbType(DbType dbType) {
+        dialectHelper.setDbType(dbType);
+    }
+
+    public void setDialect(Dialect dialect) {
+        dialectHelper.setDialect(dialect);
+    }
+
+    public Dialect getDialect() {
+        return dialectHelper.getDialect();
+    }
 
     public String processSqlName(Object value) {
         if (value instanceof BaseSQL) {
@@ -168,9 +185,19 @@ public class JdbcModel implements Serializable {
             return value.toString();
         } else {
 
-            return (String) value;
+            // 关键：使用方言助手包装标识符
+            return dialectHelper.wrapIdentifier(value.toString());
         }
     }
+
+    /**
+     * 应用分页
+     */
+    public String applyPagination(String sql, int offset, int limit) {
+        return dialectHelper.applyPagination(sql, offset, limit);
+    }
+
+
 
     public String processSqlValue(Object value) {
         //处理Sql类型
@@ -202,7 +229,12 @@ public class JdbcModel implements Serializable {
             return appendValue(value);
         }
     }
-
+    /**
+     * 处理LIKE值
+     */
+    public String processLikeValue(String value, LikeType likeType) {
+        return dialectHelper.processLikeValue(value, likeType);
+    }
     private String appendValue(Object value) {
         //获取参数名
         String param = this.allocateParametername();

@@ -1,6 +1,7 @@
 package io.github.ldhai99.easyOrm.executor;
 
 import io.github.ldhai99.easyOrm.builder.ExecutorHandler;
+import io.github.ldhai99.easyOrm.context.DbType;
 import io.github.ldhai99.easyOrm.dao.orm.DatabaseResultMapper;
 
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
@@ -18,14 +19,36 @@ import java.util.Map;
 
 public class JdbcTemplateExecutor extends AbstractExecutor {
 
-    private NamedParameterJdbcTemplate template;
-
+    private NamedParameterJdbcTemplate jdbcTemplate;
+    private DbType dbType;
+    private DataSource dataSource;
+    private boolean dbTypeDetected = false;
 
     // 移除无参构造方法，或者改为从 DataSourceManager 获取默认数据源
-    public JdbcTemplateExecutor(NamedParameterJdbcTemplate template) {
-        this.template = template;
+    public JdbcTemplateExecutor(NamedParameterJdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
+        this.dataSource = jdbcTemplate.getJdbcTemplate().getDataSource();
     }
 
+    @Override
+    public DbType getDbType() {
+        if (!dbTypeDetected && dataSource != null) {
+            // 懒加载检测
+            this.dbType = DbType.fromDataSource(dataSource);
+            this.dbTypeDetected = true;
+        }
+        return dbType != null ? dbType : DbType.OTHER;
+    }
+
+    @Override
+    public DataSource getDataSource() {
+        return dataSource;
+    }
+    // 设置数据库类型（可手动指定）
+    public void setDbType(DbType dbType) {
+        this.dbType = dbType;
+        this.dbTypeDetected = true;
+    }
     //执行Sql----------------------------------------------
     //写数据库
 //更新数据库----------------------------------------------------------------------------------------------------
@@ -34,11 +57,11 @@ public class JdbcTemplateExecutor extends AbstractExecutor {
     // 并通过 Map<String, Object>  来传递参数，然后调用相应的方法来获取结果：
     //更新
     public int update(ExecutorHandler sql) {
-        return   template.update( sql.toString(),sql.getParameterMap());
+        return   jdbcTemplate.update( sql.toString(),sql.getParameterMap());
     }
     public Number insert(ExecutorHandler sql) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
-           template.update( sql.toString(), (SqlParameterSource)(new MapSqlParameterSource(sql.getParameterMap())),keyHolder);
+           jdbcTemplate.update( sql.toString(), (SqlParameterSource)(new MapSqlParameterSource(sql.getParameterMap())),keyHolder);
         return extractPrimaryKey(keyHolder);
     }
     /**
@@ -91,16 +114,16 @@ public class JdbcTemplateExecutor extends AbstractExecutor {
     }
 
     public int delete(ExecutorHandler sql) {
-        return   template.update( sql.toString(),sql.getParameterMap());
+        return   jdbcTemplate.update( sql.toString(),sql.getParameterMap());
     }
     public int execute(ExecutorHandler sql) {
-        return   template.update( sql.toString(),sql.getParameterMap());
+        return   jdbcTemplate.update( sql.toString(),sql.getParameterMap());
     }
     //返回单列单行数据---------------------
 
     public < T > T getValue (ExecutorHandler sql, Class<T> requiredType) {
         try {
-            Object value = template.queryForObject(sql.toString(), sql.getParameterMap(), requiredType);
+            Object value = jdbcTemplate.queryForObject(sql.toString(), sql.getParameterMap(), requiredType);
             return (T) value;
         }catch (IncorrectResultSizeDataAccessException e){
             List mapList=getValues(sql, requiredType);
@@ -114,14 +137,14 @@ public class JdbcTemplateExecutor extends AbstractExecutor {
     //返回单列list数据
 
     public < T > List<T> getValues (ExecutorHandler sql, Class<T> requiredType) {
-        return   template.queryForList(sql.toString(), sql.getParameterMap(),requiredType);
+        return   jdbcTemplate.queryForList(sql.toString(), sql.getParameterMap(),requiredType);
     }
 
     //返回单行map数据-----------------------------
     public Map<String, Object>  getMap(ExecutorHandler sql){
 
         try {
-            return template.queryForMap(sql.toString(), sql.getParameterMap());
+            return jdbcTemplate.queryForMap(sql.toString(), sql.getParameterMap());
         }catch (IncorrectResultSizeDataAccessException e){
 
             List<Map<String,Object>> mapList=getMaps(sql);
@@ -134,13 +157,13 @@ public class JdbcTemplateExecutor extends AbstractExecutor {
 
     //返回多行map数据
     public List<Map<String,Object>> getMaps(ExecutorHandler sql) {
-        return   template.queryForList(sql.toString(), sql.getParameterMap());
+        return   jdbcTemplate.queryForList(sql.toString(), sql.getParameterMap());
     }
     //返回Bean实体
     public <T> T getBean(ExecutorHandler sql, Class<T> T)  {
 
         try {
-            Object value = template.queryForObject(sql.toString(), sql.getParameterMap(), new BeanPropertyRowMapper<T>(T));
+            Object value = jdbcTemplate.queryForObject(sql.toString(), sql.getParameterMap(), new BeanPropertyRowMapper<T>(T));
             return (T) value;
 
         }catch (IncorrectResultSizeDataAccessException e){
@@ -155,18 +178,18 @@ public class JdbcTemplateExecutor extends AbstractExecutor {
 
     public <T> List<T> getBeans(ExecutorHandler sql, Class<T> clazz)  {
 
-        //return template.query(sql.toString(), sql.getParameterMap(), new BeanPropertyRowMapper<T>(clazz));
+        //return jdbcTemplate.query(sql.toString(), sql.getParameterMap(), new BeanPropertyRowMapper<T>(clazz));
 // 先查询 Map 列表
-        List<Map<String, Object>> mapList = template.queryForList(sql.toString(), sql.getParameterMap());
+        List<Map<String, Object>> mapList = jdbcTemplate.queryForList(sql.toString(), sql.getParameterMap());
 
         // ✅ 通过工具方法转换为 Java Bean 列表，内部使用 MappingResolver
         return DatabaseResultMapper.mapRowsToBeans(mapList, clazz);
     }
     public NamedParameterJdbcTemplate getTemplate() {
-        return template;
+        return jdbcTemplate;
     }
 
-    public void setTemplate(NamedParameterJdbcTemplate template) {
-        this.template = template;
+    public void setTemplate(NamedParameterJdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
     }
 }

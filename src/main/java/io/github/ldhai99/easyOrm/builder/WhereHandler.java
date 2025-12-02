@@ -2,6 +2,7 @@ package io.github.ldhai99.easyOrm.builder;
 
 import io.github.ldhai99.easyOrm.Lambda.PropertyGetter;
 import io.github.ldhai99.easyOrm.dao.core.TableNameResolver;
+import io.github.ldhai99.easyOrm.dialect.LikeType;
 import io.github.ldhai99.easyOrm.tools.SqlTools;
 
 import java.util.*;
@@ -202,7 +203,7 @@ public abstract class WhereHandler<T extends WhereHandler<T>> extends SetHandler
         if(value==null)
             return self();
 
-        this.where(String.format(" %s %s %s ", jdbcModel.processSqlName(name), operator, jdbcModel.processSqlValue(value)));
+        this.where(String.format(" %s %s %s", jdbcModel.processSqlName(name), operator, jdbcModel.processSqlValue(value)));
         return self();
     }
 
@@ -309,40 +310,68 @@ public abstract class WhereHandler<T extends WhereHandler<T>> extends SetHandler
 
     protected T likeOperator(Object name, String operator, Object value) {
 
-        Object newvalue = value;
-
+        Object newValue = value;
+        boolean isLikeOperation = false;
         //对值预处理
         if (!(value instanceof BaseSQL)) {
-            String oldValue = (String) value;
+            String oldValue = value.toString(); // 更安全：避免强制 (String)
+            LikeType likeType = LikeType.CONTAINS; // 默认
 
-            if (operator.equalsIgnoreCase("like"))
-                newvalue = "%" + oldValue + "%";
-            else if (operator.equalsIgnoreCase("notLike")) {
-                newvalue = "%" + oldValue + "%";
-            } else if (operator.equalsIgnoreCase("likeRight")) {
-                newvalue = oldValue + "%";
-            }else if (operator.equalsIgnoreCase("notLikeRight")) {
-                newvalue =  oldValue + "%";
+            // 判断操作符类型并设置 LikeType
+            if (isLikeOperator(operator, "like", "notLike")) {
+                likeType = LikeType.CONTAINS;
+                isLikeOperation = true;
+            } else if (isLikeOperator(operator, "likeRight", "notLikeRight")) {
+                likeType = LikeType.STARTS_WITH;
+                isLikeOperation = true;
+            } else if (isLikeOperator(operator, "likeLeft", "notLikeLeft")) {
+                likeType = LikeType.ENDS_WITH;
+                isLikeOperation = true;
+            } else if (isLikeOperator(operator, "like_", "notLike_")) {
+                likeType = LikeType.CUSTOM;
+                isLikeOperation = true;
             }
-            else if (operator.equalsIgnoreCase("likeLeft")) {
-                newvalue = "%" + oldValue;
-            } else if (operator.equalsIgnoreCase("notLikeLeft")) {
-                newvalue = "  %" + oldValue;
-            } else if (operator.equalsIgnoreCase("like_")) {
-                newvalue = oldValue;
+
+            if (isLikeOperation) {
+                newValue = jdbcModel.processLikeValue(oldValue, likeType);
+            } else {
+                newValue = oldValue; // 非 LIKE 操作，直接使用原值
             }
+
         }
-        String namePlacehoder = jdbcModel.processSqlName(name);
-        String valuePlacehoder = jdbcModel.processSqlValue(newvalue);
+        String namePlaceholder = jdbcModel.processSqlName(name);
+        String valuePlaceholder = jdbcModel.processSqlValue(newValue);
 
-        if (operator.contains("notLike")) {
-            this.where(namePlacehoder + " not like " + valuePlacehoder);
+        // 构建 LIKE / NOT LIKE 条件
+        StringBuilder sqlCondition = new StringBuilder();
+        if (operator.toLowerCase().contains("notlike")) {
+            sqlCondition.append(namePlaceholder).append(" NOT LIKE ").append(valuePlaceholder);
         } else {
-            this.where(namePlacehoder + " like " + valuePlacehoder);
+            sqlCondition.append(namePlaceholder).append(" LIKE ").append(valuePlaceholder);
         }
+
+        // ✅ 关键：如果是 LIKE 操作，追加 ESCAPE 子句
+        if (isLikeOperation && !(value instanceof BaseSQL)) {
+            String escapeClause = jdbcModel.getDialect().getLikeEscapeClause();
+            if (escapeClause != null && !escapeClause.isEmpty()) {
+                sqlCondition.append(escapeClause);
+            }
+        }
+        this.where(sqlCondition.toString());
+
         return self();
     }
-
+    // 辅助方法：判断 operator 是否匹配任一目标
+    private boolean isLikeOperator(String operator, String... targets) {
+        if (operator == null) return false;
+        String opLower = operator.toLowerCase();
+        for (String target : targets) {
+            if (opLower.equals(target.toLowerCase())) {
+                return true;
+            }
+        }
+        return false;
+    }
     //三、BETWEEN 谓词——范围查询
     public T between(Object name, Object value1, Object value2) {
         this.between(name, "  between ", value1, value2);

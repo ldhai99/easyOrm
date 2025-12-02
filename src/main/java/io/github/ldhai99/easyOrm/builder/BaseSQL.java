@@ -1,6 +1,7 @@
 package io.github.ldhai99.easyOrm.builder;
 
 import io.github.ldhai99.easyOrm.Lambda.PropertyGetter;
+import io.github.ldhai99.easyOrm.context.DbType;
 import io.github.ldhai99.easyOrm.dao.core.FieldResolver;
 import io.github.ldhai99.easyOrm.dao.core.TableNameResolver;
 import io.github.ldhai99.easyOrm.base.TaskType;
@@ -329,23 +330,26 @@ public abstract class BaseSQL <T extends BaseSQL<T>> implements Cloneable{
     // 只修改这4个方法
     public T createExecutor() {
         this.executor = ExecutorManager.getExecutor();
+        jdbcModel.setDbType(executor.getDbType());
         return self();
     }
 
     public T createExecutor(Connection connection) {
         this.executor = ExecutorManager.createExecutor(connection);
+        jdbcModel.setDbType(executor.getDbType());
         return self();
     }
 
     public T createExecutor(DataSource dataSource) {
         this.executor = ExecutorManager.createExecutor(dataSource);
+        jdbcModel.setDbType(executor.getDbType());
         return self();
     }
 
 
-
     public T createExecutor(Executor executor) {
         this.executor = executor;
+        jdbcModel.setDbType(executor.getDbType());
         return self();
     }
     // 基础初始化

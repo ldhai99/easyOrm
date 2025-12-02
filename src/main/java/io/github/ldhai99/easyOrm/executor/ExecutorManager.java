@@ -23,6 +23,9 @@ public class ExecutorManager {
     public static void setDataSourceProvider(DataSourceProvider provider) {
         dataSourceProvider = provider;
     }
+    public static DataSourceProvider getDataSourceProvider() {
+        return dataSourceProvider;
+    }
 
     /**
      * 获取当前数据源的执行器
@@ -31,6 +34,15 @@ public class ExecutorManager {
         // 如果没有设置数据源提供者，使用默认的 EasyOrmConfig
         DataSourceProvider provider = dataSourceProvider != null ? dataSourceProvider : defaultProvider;
         DataSource dataSource = provider.provide();
+        return createExecutor(dataSource);
+    }
+
+
+    /**
+     * 创建执行器（基于连接）
+     */
+    public static JdbcTemplateExecutor createExecutor(Connection connection) {
+        SingleConnectionDataSource dataSource = new SingleConnectionDataSource(connection, true);
         return createExecutor(dataSource);
     }
 
@@ -43,11 +55,4 @@ public class ExecutorManager {
         return new JdbcTemplateExecutor(template);
     }
 
-    /**
-     * 创建执行器（基于连接）
-     */
-    public static JdbcTemplateExecutor createExecutor(Connection connection) {
-        SingleConnectionDataSource dataSource = new SingleConnectionDataSource(connection, true);
-        return createExecutor(dataSource);
-    }
 }
