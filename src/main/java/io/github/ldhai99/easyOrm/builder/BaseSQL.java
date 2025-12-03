@@ -20,7 +20,7 @@ public abstract class BaseSQL <T extends BaseSQL<T>> implements Cloneable{
 
     protected SqlModel builder = new SqlModel();
     protected JdbcModel jdbcModel = new JdbcModel();
-
+    protected Executor executor;
 
     //克隆
 
@@ -315,41 +315,43 @@ public abstract class BaseSQL <T extends BaseSQL<T>> implements Cloneable{
     }
     //执行器-------------------------------------------------------------------------------------
     public Executor getExecutor() {
-        if (executor == null)
-            createExecutor();
-        return executor;
+        if (this.executor != null) {
+            return this.executor;
+        }
+        // 未显式设置，则使用默认（带缓存）
+        return ExecutorManager.getExecutor();
     }
 
     public void setExecutor(Executor executor) {
         this.executor = executor;
     }
 
-    protected Executor executor;
+
     //默认执行器为JdbcTemplateMapper
 // 修改后
     // 只修改这4个方法
     public T createExecutor() {
         this.executor = ExecutorManager.getExecutor();
-        jdbcModel.setDbType(executor.getDbType());
+        jdbcModel.setDialect(executor.getDialect());
         return self();
     }
 
     public T createExecutor(Connection connection) {
         this.executor = ExecutorManager.createExecutor(connection);
-        jdbcModel.setDbType(executor.getDbType());
+        jdbcModel.setDialect(executor.getDialect());
         return self();
     }
 
     public T createExecutor(DataSource dataSource) {
         this.executor = ExecutorManager.createExecutor(dataSource);
-        jdbcModel.setDbType(executor.getDbType());
+        jdbcModel.setDialect(executor.getDialect());
         return self();
     }
 
 
     public T createExecutor(Executor executor) {
         this.executor = executor;
-        jdbcModel.setDbType(executor.getDbType());
+        jdbcModel.setDialect(executor.getDialect());
         return self();
     }
     // 基础初始化

@@ -11,6 +11,9 @@ public class MySQLDialect extends BaseDialect {
 
     @Override
     public String getPaginationSql(String sql, int offset, int limit) {
+        if ((offset <= 0 && limit <= 0) ) {
+            return sql;
+        }
         if (offset == 0) {
             return sql + " LIMIT " + limit;
         } else {

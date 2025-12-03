@@ -43,6 +43,23 @@ public interface Dialect {
      * 处理列名
      */
     String wrapColumnName(String columnName);
+    /**
+     * 包装标识符（表名/列名）
+     */
+    default String wrapIdentifier(String name) {
+        if (name == null || name.isEmpty() || !isSimpleIdentifier(name)) {
+            return name;
+        }
 
+        // 优先使用列名包装，如果没有变化则用表名包装
+        String wrapped = wrapColumnName(name);
+        return wrapped.equals(name) ? wrapTableName(name) : wrapped;
+    }
+    /**
+     * 判断是否为简单标识符
+     */
+    default boolean isSimpleIdentifier(String str) {
+        return str.matches("[a-zA-Z_][a-zA-Z0-9_]*");
+    }
 
 }

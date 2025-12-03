@@ -233,7 +233,30 @@ public class DataSourceTest {
         }
         cleanupTestData();
     }
+    // ==================== 测试执行器 ====================
+    @Test
+    public void testExecutor() {
+        System.out.println("=== 测试 testExecutor ===");
 
+        // 创建给定的测试数据源
+        DataSource givenDataSource = createTestDataSource();
+
+        // 使用 SQL 类的配置方法
+        SQL.configDefaultDataSource(givenDataSource);
+
+        // 测试数据操作
+       SQL sql1= SQL.SELECT(TEST_TABLE)
+                .column("*")
+                .eq("id", 1)
+              ;
+        SQL sql2= SQL.SELECT(TEST_TABLE)
+                .column("*")
+                .eq("id", 1)
+                ;
+// sql1 和 sql2 共享同一个 JdbcTemplateExecutor（来自缓存）
+        assert sql1.getExecutor() == sql2.getExecutor();
+        System.out.println("✅ testExecutor测试成功");
+    }
     // ==================== 辅助方法 ====================
 
     /**

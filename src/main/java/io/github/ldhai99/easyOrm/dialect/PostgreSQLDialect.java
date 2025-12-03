@@ -21,6 +21,9 @@ public class PostgreSQLDialect extends BaseDialect {
 
     @Override
     public String getPaginationSql(String sql, int offset, int limit) {
+        if ((offset <= 0 && limit <= 0) ) {
+            return sql;
+        }
         StringBuilder sb = new StringBuilder(sql);
         if (limit > 0) {
             sb.append(" LIMIT ").append(limit);

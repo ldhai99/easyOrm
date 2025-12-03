@@ -2,6 +2,7 @@ package io.github.ldhai99.easyOrm.executor;
 
 import io.github.ldhai99.easyOrm.builder.ExecutorHandler;
 import io.github.ldhai99.easyOrm.context.DbType;
+import io.github.ldhai99.easyOrm.dialect.Dialect;
 
 import javax.sql.DataSource;
 import java.math.BigDecimal;
@@ -13,12 +14,20 @@ public interface Executor {
     /**
      * 获取数据库类型
      */
-    DbType getDbType();
+    public DbType getDbType();
+
 
     /**
      * 设置数据库类型
      */
-    void setDbType(DbType dbType);
+    public void setDbType(DbType dbType);
+    /**
+     * 获取方言
+     */
+    public Dialect getDialect();
+
+    public void setDialect(Dialect dialect);
+
 
     /**
      * 获取数据源（可选，用于重新检测等场景）

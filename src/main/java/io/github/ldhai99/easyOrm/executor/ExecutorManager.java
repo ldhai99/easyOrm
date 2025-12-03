@@ -8,51 +8,55 @@ import org.springframework.util.Assert;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
-/**
- * 执行器管理器
- */
 public class ExecutorManager {
 
     private static DataSourceProvider dataSourceProvider;
-    private static final DataSourceProvider defaultProvider = DefaultDataSourceProvider.instance;;
+    private static final DataSourceProvider defaultProvider = DefaultDataSourceProvider.instance;
 
-    /**
-     * 设置数据源提供者
-     */
+    // ✅ 添加缓存：DataSource -> JdbcTemplateExecutor
+    private static final Map<DataSource, JdbcTemplateExecutor> executorCache = new ConcurrentHashMap<>();
+
     public static void setDataSourceProvider(DataSourceProvider provider) {
         dataSourceProvider = provider;
     }
+
     public static DataSourceProvider getDataSourceProvider() {
         return dataSourceProvider;
     }
 
-    /**
-     * 获取当前数据源的执行器
-     */
     public static JdbcTemplateExecutor getExecutor() {
-        // 如果没有设置数据源提供者，使用默认的 EasyOrmConfig
         DataSourceProvider provider = dataSourceProvider != null ? dataSourceProvider : defaultProvider;
         DataSource dataSource = provider.provide();
-        return createExecutor(dataSource);
+        return getOrCreateExecutor(dataSource);
     }
 
-
-    /**
-     * 创建执行器（基于连接）
-     */
     public static JdbcTemplateExecutor createExecutor(Connection connection) {
-        SingleConnectionDataSource dataSource = new SingleConnectionDataSource(connection, true);
-        return createExecutor(dataSource);
+        SingleConnectionDataSource ds = new SingleConnectionDataSource(connection, true);
+        // ⚠️ 注意：SingleConnectionDataSource 不适合缓存（每次连接不同）
+        // 所以这里不缓存，直接新建
+        return new JdbcTemplateExecutor(new NamedParameterJdbcTemplate(ds));
     }
 
-    /**
-     * 创建执行器（基于数据源）
-     */
     public static JdbcTemplateExecutor createExecutor(DataSource dataSource) {
-        Assert.notNull(dataSource, "DataSource must not be null");
-        NamedParameterJdbcTemplate template = new NamedParameterJdbcTemplate(dataSource);
-        return new JdbcTemplateExecutor(template);
+        return getOrCreateExecutor(dataSource);
     }
 
+    // ✅ 核心：带缓存的创建逻辑
+    private static JdbcTemplateExecutor getOrCreateExecutor(DataSource dataSource) {
+        if (dataSource == null) {
+            throw new IllegalArgumentException("DataSource must not be null");
+        }
+        return executorCache.computeIfAbsent(dataSource, ds -> {
+            NamedParameterJdbcTemplate template = new NamedParameterJdbcTemplate(ds);
+            return new JdbcTemplateExecutor(template);
+        });
+    }
+
+    // 可选：提供清除缓存的方法（用于测试或动态数据源切换）
+    public static void clearCache() {
+        executorCache.clear();
+    }
 }

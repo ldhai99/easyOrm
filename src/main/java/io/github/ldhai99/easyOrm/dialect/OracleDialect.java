@@ -21,6 +21,9 @@ public class OracleDialect extends BaseDialect {
 
     @Override
     public String getPaginationSql(String sql, int offset, int limit) {
+        if ((offset <= 0 && limit <= 0) ) {
+            return sql;
+        }
         // Oracle使用ROWNUM分页
         StringBuilder sb = new StringBuilder();
         sb.append("SELECT * FROM (");

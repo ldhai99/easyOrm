@@ -203,7 +203,7 @@ public abstract class WhereHandler<T extends WhereHandler<T>> extends SetHandler
         if(value==null)
             return self();
 
-        this.where(String.format(" %s %s %s", jdbcModel.processSqlName(name), operator, jdbcModel.processSqlValue(value)));
+        this.where(String.format(" %s %s %s ", jdbcModel.processSqlName(name), operator, jdbcModel.processSqlValue(value)));
         return self();
     }
 

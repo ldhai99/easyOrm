@@ -39,7 +39,7 @@ public class JdbcModel implements Serializable {
     private static final Pattern PARAM_PATTERN = Pattern.compile(":([a-z][_a-z0-9]*)", 2);
     private static final Pattern PLACEHOLDER_PATTERN = Pattern.compile("\\?", 2);
     // 方言助手（仅一行代码）
-    private final DialectHelper dialectHelper = new DialectHelper();
+    private  Dialect dialect; // 👈 不再自己 new，而是外部注入
 
     public JdbcModel() {
         prefixParaName = "p" + Integer.toHexString(System.identityHashCode(this));
@@ -153,16 +153,14 @@ public class JdbcModel implements Serializable {
     }
     // ============ 方言相关方法（极简代理） ============
 
-    public void setDbType(DbType dbType) {
-        dialectHelper.setDbType(dbType);
-    }
+
 
     public void setDialect(Dialect dialect) {
-        dialectHelper.setDialect(dialect);
+        this.dialect = dialect;
     }
 
     public Dialect getDialect() {
-        return dialectHelper.getDialect();
+        return this.dialect;
     }
 
     public String processSqlName(Object value) {
@@ -186,7 +184,7 @@ public class JdbcModel implements Serializable {
         } else {
 
             // 关键：使用方言助手包装标识符
-            return dialectHelper.wrapIdentifier(value.toString());
+            return dialect.wrapIdentifier(value.toString());
         }
     }
 
@@ -194,7 +192,7 @@ public class JdbcModel implements Serializable {
      * 应用分页
      */
     public String applyPagination(String sql, int offset, int limit) {
-        return dialectHelper.applyPagination(sql, offset, limit);
+        return dialect.getPaginationSql(sql, offset, limit);
     }
 
 
@@ -233,7 +231,7 @@ public class JdbcModel implements Serializable {
      * 处理LIKE值
      */
     public String processLikeValue(String value, LikeType likeType) {
-        return dialectHelper.processLikeValue(value, likeType);
+        return dialect.processLikeValue(value, likeType);
     }
     private String appendValue(Object value) {
         //获取参数名

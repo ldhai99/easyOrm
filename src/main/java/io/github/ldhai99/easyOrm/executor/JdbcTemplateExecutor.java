@@ -4,6 +4,8 @@ import io.github.ldhai99.easyOrm.builder.ExecutorHandler;
 import io.github.ldhai99.easyOrm.context.DbType;
 import io.github.ldhai99.easyOrm.dao.orm.DatabaseResultMapper;
 
+import io.github.ldhai99.easyOrm.dialect.Dialect;
+import io.github.ldhai99.easyOrm.dialect.DialectManager;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -21,8 +23,10 @@ public class JdbcTemplateExecutor extends AbstractExecutor {
 
     private NamedParameterJdbcTemplate jdbcTemplate;
     private DbType dbType;
-    private DataSource dataSource;
     private boolean dbTypeDetected = false;
+    private DataSource dataSource;
+    private Dialect dialect; // 👈 关键：每个 Executor 自带方言
+
 
     // 移除无参构造方法，或者改为从 DataSourceManager 获取默认数据源
     public JdbcTemplateExecutor(NamedParameterJdbcTemplate jdbcTemplate) {
@@ -39,16 +43,26 @@ public class JdbcTemplateExecutor extends AbstractExecutor {
         }
         return dbType != null ? dbType : DbType.OTHER;
     }
-
-    @Override
-    public DataSource getDataSource() {
-        return dataSource;
-    }
     // 设置数据库类型（可手动指定）
     public void setDbType(DbType dbType) {
         this.dbType = dbType;
         this.dbTypeDetected = true;
     }
+    public Dialect getDialect() {
+        if (this.dialect == null) {
+            DbType type = getDbType();
+            this.dialect = DialectManager.getDialect(type);
+        }
+        return this.dialect;
+    }
+    public void setDialect(Dialect dialect) {
+        this.dialect = dialect;
+    }
+    @Override
+    public DataSource getDataSource() {
+        return dataSource;
+    }
+
     //执行Sql----------------------------------------------
     //写数据库
 //更新数据库----------------------------------------------------------------------------------------------------
