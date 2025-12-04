@@ -1,11 +1,13 @@
 package io.github.ldhai99.easyOrm.test.addsql;
 
 import io.github.ldhai99.easyOrm.SQL;
-import io.github.ldhai99.easyOrm.base.SqlKey;
+
 import io.github.ldhai99.easyOrm.dynamic.DynamicSQL;
 import org.junit.jupiter.api.Test;
 
 import java.sql.SQLException;
+
+import static io.github.ldhai99.easyOrm.constant.SqlKeywords.*;
 
 public  class FRAGMENTTest {
 
@@ -100,9 +102,9 @@ public  class FRAGMENTTest {
 
         System.out.println(
                 SQL.ADDSQL(SQL.SELECT("student").column("name,age").eq("name","张三"))
-                        .addSql(SqlKey.UNION_ALL)
+                        .addSql(UNION_ALL)
                         .addSql( SQL.SELECT("student").column("name,age").eq("name","张三"))
-                        .addSql(SqlKey.UNION_ALL)
+                        .addSql(UNION_ALL)
                         .addSql(SQL.SELECT("student").column("name,age").eq("name","李四"))
                         .addSql(" order by age")
                         .getMaps()
@@ -113,26 +115,26 @@ public  class FRAGMENTTest {
     public void sqlkey() throws SQLException {
 
         System.out.println(
-                SQL.ADDSQL(SqlKey.SELECT)
+                SQL.ADDSQL(SELECT)
                         .addSql(" name,age")
-                        .addSql(SqlKey.FROM)
+                        .addSql(FROM)
                         .addSql(" student")
-                        .addSql(SqlKey.WHERE)
+                        .addSql(WHERE)
                         .addSql("age")
-                        .addSql(SqlKey.EQ)
+                        .addSql(EQ)
                         .addSql("18")
                         .getMaps()
 
         );
         System.out.println(
-                SQL.ADDSQL(SqlKey.SELECT)
+                SQL.ADDSQL(SELECT)
                         .addSql(" name,age")
-                        .addSql(SqlKey.FROM)
+                        .addSql(FROM)
                         .addSql(" student")
-                        .addSql(SqlKey.WHERE)
-                        .addSql(SqlKey.WHERE)
+                        .addSql(WHERE)
+
                         .addSql("age")
-                        .addSql(SqlKey.EQ)
+                        .addSql(EQ)
                         .addSql("18")
 
 

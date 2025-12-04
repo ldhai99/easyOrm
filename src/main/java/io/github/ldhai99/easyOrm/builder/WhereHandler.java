@@ -10,6 +10,8 @@ import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+import static io.github.ldhai99.easyOrm.constant.SqlKeywords.*;
+
 public abstract class WhereHandler<T extends WhereHandler<T>> extends SetHandler<T> {
 //0、通用查询-----------age=18----------------------------------------------------
 
@@ -21,7 +23,7 @@ public abstract class WhereHandler<T extends WhereHandler<T>> extends SetHandler
     //inner join---
 
     public T join(String table, String on) {
-        this.join("inner join", table, on);
+        this.join(INNER_JOIN, table, on);
         return self();
     }
 
@@ -39,7 +41,7 @@ public abstract class WhereHandler<T extends WhereHandler<T>> extends SetHandler
     }
     //leftJoin---
     public T leftJoin(String table, String on) {
-        this.join("left join", table, on);
+        this.join(LEFT_JOIN, table, on);
         return self();
     }
 
@@ -59,7 +61,7 @@ public abstract class WhereHandler<T extends WhereHandler<T>> extends SetHandler
 
     //rightJoin---
     public T rightJoin(String table, String on) {
-        this.join("right join", table, on);
+        this.join(RIGHT_JOIN, table, on);
         return self();
     }
 
@@ -78,12 +80,12 @@ public abstract class WhereHandler<T extends WhereHandler<T>> extends SetHandler
     }
     //fullJoin---
     public T fullJoin(String table, String on) {
-        this.join("full join", table, on);
+        this.join(FULL_JOIN, table, on);
         return self();
     }
 
     public T fullJoin(Class<?> clazz, String on) {
-        return rightJoin(TableNameResolver.getTableName(clazz), on);
+        return fullJoin(TableNameResolver.getTableName(clazz), on);
     }
 
 
@@ -99,20 +101,20 @@ public abstract class WhereHandler<T extends WhereHandler<T>> extends SetHandler
 //------
     public T join(String join, String table, String on) {
         if (on != null && on.trim().length() != 0) {
-            this.builder.join(join + " " + table + " on " + on);
+            this.builder.join(join + SPACE + table + SPACE + ON + SPACE + on);
         } else
-            this.builder.join(join + " " + table);
+            this.builder.join(join + SPACE + table);
         return self();
     }
 
     //一、比较谓词----------------------------------------------------
     public T func(Object name, Object value) {
-        return nameOperatorValue(name, "=", value);
+        return nameOperatorValue(name, EQ, value);
     }
 
     //一、比较谓词----------------------------------------------------
     public T where(Object name, Object value) {
-        return nameOperatorValue(name, "=", value);
+        return nameOperatorValue(name, EQ, value);
     }
 
     public <E> T where(PropertyGetter<E> getter, Object value) {
@@ -130,7 +132,7 @@ public abstract class WhereHandler<T extends WhereHandler<T>> extends SetHandler
     }
 
     public T eq(Object name, Object value) {
-        return nameOperatorValue(name, "=", value);
+        return nameOperatorValue(name, EQ, value);
     }
 
     // 新增支持Lambda的eq方法
@@ -142,7 +144,7 @@ public abstract class WhereHandler<T extends WhereHandler<T>> extends SetHandler
     public T eqIfNotNull(Object name, Object value) {
         if(value==null)
             return self();
-        return nameOperatorValue(name, "=", value);
+        return nameOperatorValue(name, EQ, value);
     }
 
     public <E> T eqIfNotNull(PropertyGetter<E> getter, Object value) {
@@ -151,7 +153,7 @@ public abstract class WhereHandler<T extends WhereHandler<T>> extends SetHandler
     public T eqIfNotEmpty(Object name, Object value) {
         if(SqlTools.isEmpty(value))
             return self();
-        return nameOperatorValue(name, "=", value);
+        return nameOperatorValue(name,  EQ, value);
     }
 
     public <E> T eqIfNotEmpty(PropertyGetter<E> getter, Object value) {
@@ -159,7 +161,7 @@ public abstract class WhereHandler<T extends WhereHandler<T>> extends SetHandler
     }
 
     public T neq(Object name, Object value) {
-        return nameOperatorValue(name, "<>", value);
+        return nameOperatorValue(name, NEQ, value);
     }
 
     public <E> T neq(PropertyGetter<E> getter, Object value) {
@@ -167,7 +169,7 @@ public abstract class WhereHandler<T extends WhereHandler<T>> extends SetHandler
     }
 
     public T gt(Object name, Object value) {
-        return nameOperatorValue(name, ">", value);
+        return nameOperatorValue(name, GT, value);
     }
 
     public <E> T gt(PropertyGetter<E> getter, Object value) {
@@ -175,7 +177,7 @@ public abstract class WhereHandler<T extends WhereHandler<T>> extends SetHandler
     }
 
     public T gte(Object name, Object value) {
-        return nameOperatorValue(name, ">=", value);
+        return nameOperatorValue(name, GTE, value);
     }
 
     public <E> T gte(PropertyGetter<E> getter, Object value) {
@@ -183,7 +185,7 @@ public abstract class WhereHandler<T extends WhereHandler<T>> extends SetHandler
     }
 
     public T lt(Object name, Object value) {
-        return nameOperatorValue(name, "<", value);
+        return nameOperatorValue(name, LT, value);
     }
 
     public <E> T lt(PropertyGetter<E> getter, Object value) {
@@ -191,7 +193,7 @@ public abstract class WhereHandler<T extends WhereHandler<T>> extends SetHandler
     }
 
     public T lte(Object name, Object value) {
-        return nameOperatorValue(name, "<=", value);
+        return nameOperatorValue(name, LTE, value);
     }
 
     public <E> T lte(PropertyGetter<E> getter, Object value) {
@@ -210,14 +212,14 @@ public abstract class WhereHandler<T extends WhereHandler<T>> extends SetHandler
     //二、LIKE 谓词——字符串的部分一致查询
     //-----like------
     public T like(Object name, Object value) {
-        return likeOperator(name, "like", value);
+        return likeOperator(name, LIKE, value);
     }
     public T contains(Object name, Object value) {
         return like(name, value);
 
     }
     public T notLike(Object name, Object value) {
-        return likeOperator(name, "notLike", value);
+        return likeOperator(name, NOT_LIKE, value);
     }
     public T notContains(Object name, Object value) {
         return notLike(name, value);
@@ -239,23 +241,30 @@ public abstract class WhereHandler<T extends WhereHandler<T>> extends SetHandler
     }
     //-----like_------
     public T like_(Object name, Object value) {
-        return likeOperator(name, "like_", value);
+        return likeOperator(name, LIKE_, value);
     }
 
     public <E> T like_(PropertyGetter<E> getter, Object value) {
         return like_(resolveColumn(getter), value);
     }
 
+    public T notLike_(Object name, Object value) {
+        return likeOperator(name, NOT_LIKE_, value);
+    }
+
+    public <E> T notLike_(PropertyGetter<E> getter, Object value) {
+        return notLike_(resolveColumn(getter), value);
+    }
 
     //-----likeLeft------
     public T likeLeft(Object name, Object value) {
-        return likeOperator(name, "likeLeft", value);
+        return likeOperator(name, LIKE_LEFT, value);
     }
     public T endsWith(Object name, Object value) {
         return likeLeft(name, value);
     }
     public T notLikeLeft(Object name, Object value) {
-        return likeOperator(name, "notLikeLeft", value);
+        return likeOperator(name, NOT_LIKE_LEFT, value);
     }
     public T notEndsWith(Object name, Object value) {
         return notLikeLeft(name, value);
@@ -277,14 +286,14 @@ public abstract class WhereHandler<T extends WhereHandler<T>> extends SetHandler
 
     //-----likeRight------
     public T likeRight(Object name, Object value) {
-        return likeOperator(name, "likeRight", value);
+        return likeOperator(name, LIKE_RIGHT, value);
     }
     public T startsWith(Object name, Object value) {
         return likeRight(name, value);
     }
 
     public T notLikeRight(Object name, Object value) {
-        return likeOperator(name, "notLikeRight", value);
+        return likeOperator(name, NOT_LIKE_RIGHT, value);
     }
     public T notStartsWith(Object name, Object value) {
         return notLikeRight(name, value);
@@ -318,16 +327,16 @@ public abstract class WhereHandler<T extends WhereHandler<T>> extends SetHandler
             LikeType likeType = LikeType.CONTAINS; // 默认
 
             // 判断操作符类型并设置 LikeType
-            if (isLikeOperator(operator, "like", "notLike")) {
+            if (isLikeOperator(operator, LIKE, NOT_LIKE)) {
                 likeType = LikeType.CONTAINS;
                 isLikeOperation = true;
-            } else if (isLikeOperator(operator, "likeRight", "notLikeRight")) {
+            } else if (isLikeOperator(operator, LIKE_RIGHT, NOT_LIKE_RIGHT)) {
                 likeType = LikeType.STARTS_WITH;
                 isLikeOperation = true;
-            } else if (isLikeOperator(operator, "likeLeft", "notLikeLeft")) {
+            } else if (isLikeOperator(operator, LIKE_LEFT, NOT_LIKE_LEFT)) {
                 likeType = LikeType.ENDS_WITH;
                 isLikeOperation = true;
-            } else if (isLikeOperator(operator, "like_", "notLike_")) {
+            } else if (isLikeOperator(operator, LIKE_, NOT_LIKE_)) {
                 likeType = LikeType.CUSTOM;
                 isLikeOperation = true;
             }
@@ -344,10 +353,10 @@ public abstract class WhereHandler<T extends WhereHandler<T>> extends SetHandler
 
         // 构建 LIKE / NOT LIKE 条件
         StringBuilder sqlCondition = new StringBuilder();
-        if (operator.toLowerCase().contains("notlike")) {
-            sqlCondition.append(namePlaceholder).append(" NOT LIKE ").append(valuePlaceholder);
+        if (operator.startsWith(NOT_LIKE)) {
+            sqlCondition.append(namePlaceholder).append(SPACE).append(NOT_LIKE).append(SPACE).append(valuePlaceholder);
         } else {
-            sqlCondition.append(namePlaceholder).append(" LIKE ").append(valuePlaceholder);
+            sqlCondition.append(namePlaceholder).append(SPACE).append(LIKE).append(SPACE).append(valuePlaceholder);
         }
 
         // ✅ 关键：如果是 LIKE 操作，追加 ESCAPE 子句
@@ -374,7 +383,7 @@ public abstract class WhereHandler<T extends WhereHandler<T>> extends SetHandler
     }
     //三、BETWEEN 谓词——范围查询
     public T between(Object name, Object value1, Object value2) {
-        this.between(name, "  between ", value1, value2);
+        this.between(name, BETWEEN, value1, value2);
 
         return self();
     }
@@ -385,7 +394,7 @@ public abstract class WhereHandler<T extends WhereHandler<T>> extends SetHandler
 
     public T notBetween(Object name, Object value1, Object value2) {
 
-        this.between(name, "  not between ", value1, value2);
+        this.between(name, NOT_BETWEEN, value1, value2);
 
         return self();
     }
@@ -398,7 +407,7 @@ public abstract class WhereHandler<T extends WhereHandler<T>> extends SetHandler
         String placehoder1 = jdbcModel.processSqlValue(value1);
         String placehoder2 = jdbcModel.processSqlValue(value2);
         String namePlacehoder = jdbcModel.processSqlName(name);
-        this.where(namePlacehoder + between + placehoder1 + " and " + placehoder2);
+        this.where(namePlacehoder +SPACE+ between +SPACE+ placehoder1 +SPACE+ AND +SPACE+ placehoder2);
 
         return self();
     }
@@ -425,7 +434,7 @@ public abstract class WhereHandler<T extends WhereHandler<T>> extends SetHandler
     }
     public T isNull(Object name) {
 
-        this.isNull(name, "is  null");
+        this.isNull(name, IS_NULL);
         return self();
     }
 
@@ -444,7 +453,7 @@ public abstract class WhereHandler<T extends WhereHandler<T>> extends SetHandler
     }
     public T isNotNull(Object name) {
 
-        this.isNull(name, "is not null");
+        this.isNull(name, IS_NOT_NULL);
         return self();
     }
 
@@ -454,7 +463,7 @@ public abstract class WhereHandler<T extends WhereHandler<T>> extends SetHandler
     //-------4.0 IS  NULL
     protected T isNull(Object name, String isNull) {
         String namePlacehoder = jdbcModel.processSqlName(name);
-        this.where(namePlacehoder + " " + isNull);
+        this.where(namePlacehoder + SPACE + isNull);
         return self();
     }
     //-------4.3 IS  empty
@@ -510,18 +519,18 @@ public abstract class WhereHandler<T extends WhereHandler<T>> extends SetHandler
     //五、IN 谓词——OR 的简便用法
     public T or() {
 
-        this.where(" or ");
+        this.where(SPACE+OR+SPACE);
         return self();
     }
     public T and() {
 
-        this.where(" and ");
+        this.where(SPACE+AND+SPACE);
         return self();
     }
     //in() / notIn()------------------------------------------------
     //支持列表、数组、子查询：
     public T in(Object name, List<?> values) {
-        return nameOperatorValue(name, "in", values);
+        return nameOperatorValue(name, IN, values);
 
     }
 
@@ -531,7 +540,7 @@ public abstract class WhereHandler<T extends WhereHandler<T>> extends SetHandler
 
     public T in(Object name, Object... values) {
 
-        return nameOperatorValue(name, "in", new ArrayList<>(Arrays.asList(values)));
+        return nameOperatorValue(name, IN, new ArrayList<>(Arrays.asList(values)));
     }
 
     public <E> T in(PropertyGetter<E> getter, Object... values) {
@@ -540,7 +549,7 @@ public abstract class WhereHandler<T extends WhereHandler<T>> extends SetHandler
 
     public T in(Object name, BaseSQL subSql) {
 
-        return nameOperatorValue(name, "in", subSql);
+        return nameOperatorValue(name, IN, subSql);
     }
 
     public <E> T in(PropertyGetter<E> getter, BaseSQL subSql) {
@@ -548,7 +557,7 @@ public abstract class WhereHandler<T extends WhereHandler<T>> extends SetHandler
     }
 
     public T notIn(Object name, List<?> values) {
-        return nameOperatorValue(name, "not in", values);
+        return nameOperatorValue(name, NOT_IN, values);
     }
 
     public <E> T notIn(PropertyGetter<E> getter, List<?> values) {
@@ -557,7 +566,7 @@ public abstract class WhereHandler<T extends WhereHandler<T>> extends SetHandler
 
     public T notIn(Object name, BaseSQL subSql) {
 
-        return nameOperatorValue(name, "not in", subSql);
+        return nameOperatorValue(name, NOT_IN, subSql);
     }
 
     public <E> T notIn(PropertyGetter<E> getter, BaseSQL subSql) {
@@ -565,7 +574,7 @@ public abstract class WhereHandler<T extends WhereHandler<T>> extends SetHandler
     }
 
     public T notIn(Object name, Object... values) {
-        return nameOperatorValue(name, "not in", new ArrayList<>(Arrays.asList(values)));
+        return nameOperatorValue(name, NOT_IN, new ArrayList<>(Arrays.asList(values)));
 
     }
 
@@ -668,11 +677,11 @@ public abstract class WhereHandler<T extends WhereHandler<T>> extends SetHandler
     //七、EXIST 谓词
     //
     public T exists(BaseSQL subSQL) {
-        return operatorValue("exists", subSQL);
+        return operatorValue(EXISTS, subSQL);
     }
 
     public T notExists(BaseSQL subSQL) {
-        return operatorValue("not exists", subSQL);
+        return operatorValue(NOT_EXISTS, subSQL);
     }
 
     //operator+value------exists（value）-------
