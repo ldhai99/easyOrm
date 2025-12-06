@@ -5,40 +5,31 @@ import io.github.ldhai99.easyOrm.context.DbType;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ServiceLoader;
+import java.util.Set;
 
 /**
  * 方言管理器（支持SPI扩展）
  */
 public class DialectManager {
 
+    public static final Dialect MYSQL_DIALECT = new MySQLDialect();
+    public static final Dialect ORACLE_DIALECT = new OracleDialect();
+    public static final Dialect POSTGRESQL_DIALECT = new PostgreSQLDialect();
+    public static final Dialect FALLBACK_DIALECT = new DefaultDialect();
+
     private static final Map<DbType, Dialect> dialectMap = new HashMap<>();
-    private static final Dialect DEFAULT_DIALECT = new BaseDialect() {
-        @Override
-        public DbType[] supportedTypes() {
-            return new DbType[0];
-        }
-
-        @Override
-        public String getPaginationSql(String sql, int offset, int limit) {
-            return sql;
-        }
-
-        @Override
-        public String getCurrentTimeFunction() {
-            return "CURRENT_TIMESTAMP";
-        }
-    };
 
     static {
-        // 注册内置方言
-        registerDialect(new MySQLDialect());
-        registerDialect(new OracleDialect());
-        registerDialect(new PostgreSQLDialect());
-//        registerDialect(new SQLServerDialect());
-//        registerDialect(new SQLiteDialect());
+        // 显式注册：DbType ←→ Dialect，清晰无歧义
+        registerDbType(DbType.MYSQL, MYSQL_DIALECT);
+        registerDbType(DbType.MARIADB, MYSQL_DIALECT);
+        registerDbType(DbType.ORACLE, ORACLE_DIALECT);
+        registerDbType(DbType.POSTGRE_SQL, POSTGRESQL_DIALECT);
 
-        // SPI加载用户扩展的方言
-        loadExtensions();
+        // 兜底方言：可选注册一些通用类型，或留空（查不到就 fallback）
+        // 这里不注册任何类型，所有未命中都走 fallback
+
+        loadExtensions(); // SPI 扩展仍需支持，见下文说明
     }
 
     /**
@@ -59,32 +50,47 @@ public class DialectManager {
             }
         }
 
-        return DEFAULT_DIALECT;
+        // 最终兜底：返回 DefaultDialect
+        return FALLBACK_DIALECT;
     }
 
     /**
-     * 注册方言
+     * 显式绑定：用于内置注册 + 用户动态扩展
      */
-    public static void registerDialect(Dialect dialect) {
-        for (DbType dbType : dialect.supportedTypes()) {
-            dialectMap.put(dbType, dialect);
+    public static void registerDbType(DbType dbType, Dialect dialect) {
+        if (dbType == null || dialect == null) {
+            throw new IllegalArgumentException("DbType and Dialect must not be null");
+        }
+        dialectMap.put(dbType, dialect);
+    }
+
+
+    public static void unregisterDbType(DbType dbType) {
+        if (dbType != null) {
+            dialectMap.remove(dbType);
         }
     }
-
-    /**
-     * 移除方言
-     */
-    public static void unregisterDialect(DbType dbType) {
-        dialectMap.remove(dbType);
-    }
-
     /**
      * SPI加载扩展方言
      */
     private static void loadExtensions() {
         ServiceLoader<Dialect> loader = ServiceLoader.load(Dialect.class);
         for (Dialect dialect : loader) {
-            registerDialect(dialect);
+            registerDialectForSpi(dialect); // 仅此处使用 supportedTypes
         }
     }
+    /**
+     * 批量注册：仅用于 SPI 加载（内部使用）
+     */
+    private static void registerDialectForSpi(Dialect dialect) {
+        DbType[] types = dialect.supportedTypes();
+        if (types != null) {
+            for (DbType type : types) {
+                if (type != null) {
+                    dialectMap.put(type, dialect);
+                }
+            }
+        }
+    }
+
 }

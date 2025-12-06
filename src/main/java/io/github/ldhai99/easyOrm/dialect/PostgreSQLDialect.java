@@ -8,7 +8,15 @@ public class PostgreSQLDialect extends BaseDialect {
     public DbType[] supportedTypes() {
         return new DbType[] {DbType.POSTGRE_SQL, DbType.OPENGAUSS, DbType.KINGBASE_ES};
     }
+    @Override
+    public String wrapTableName(String tableName) {
+        return "\"" + tableName + "\"";
+    }
 
+    @Override
+    public String wrapColumnName(String columnName) {
+        return "\"" + columnName + "\"";
+    }
     @Override
     public String escapeLikeValue(String value) {
         if (value == null) return null;
@@ -39,13 +47,5 @@ public class PostgreSQLDialect extends BaseDialect {
         return "NOW()";
     }
 
-    @Override
-    public String wrapTableName(String tableName) {
-        return "\"" + tableName + "\"";
-    }
 
-    @Override
-    public String wrapColumnName(String columnName) {
-        return "\"" + columnName + "\"";
-    }
 }

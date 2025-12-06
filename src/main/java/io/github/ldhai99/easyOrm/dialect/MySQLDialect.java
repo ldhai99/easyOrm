@@ -8,7 +8,15 @@ public class MySQLDialect extends BaseDialect {
     public DbType[] supportedTypes() {
         return new DbType[] {DbType.MYSQL, DbType.MARIADB};
     }
+    @Override
+    public String wrapTableName(String tableName) {
+        return "`" + tableName + "`";
+    }
 
+    @Override
+    public String wrapColumnName(String columnName) {
+        return "`" + columnName + "`";
+    }
     @Override
     public String getPaginationSql(String sql, int offset, int limit) {
         if ((offset <= 0 && limit <= 0) ) {
@@ -26,15 +34,7 @@ public class MySQLDialect extends BaseDialect {
         return "NOW()";
     }
 
-    @Override
-    public String wrapTableName(String tableName) {
-        return "`" + tableName + "`";
-    }
 
-    @Override
-    public String wrapColumnName(String columnName) {
-        return "`" + columnName + "`";
-    }
     @Override
     public String getLikeEscapeClause() {
         // MySQL 需要 ESCAPE '\\'，Java 字符串需写成 "\\\\"

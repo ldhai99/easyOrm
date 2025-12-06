@@ -309,14 +309,13 @@ public class SqlModel implements Cloneable, Serializable {
         // 判断前一个条件是否以连接符或左括号结尾
         boolean prevEndsWithConnector = clauses.isEmpty() ||
                 lastClause.endsWith(LPAREN) ||
-                lastClause.endsWith(" or") ||
-                lastClause.endsWith(" and");
+                lastClause.endsWith(" OR") ||
+                lastClause.endsWith(" AND");
 
         // 当前表达式是否以连接词开头
         String trimmedExpr = expr.trim();
         boolean currentStartsWithConnector =
-                trimmedExpr.startsWith("or ") ||
-                        trimmedExpr.startsWith("and ") ||
+                startsWithLogicalOperator(trimmedExpr) ||
                         trimmedExpr.equals(RPAREN);
 
         if (prevEndsWithConnector) {
@@ -336,7 +335,20 @@ public class SqlModel implements Cloneable, Serializable {
         }
         return this;
     }
+    private static boolean startsWithLogicalOperator(String s) {
+        s = s.trim();
+        if (s.length() < 2) return false;
 
+        String upper = s.toUpperCase();
+        if (upper.startsWith("OR")) {
+            // 检查 "OR" 后是否是分隔符（空格、(、\t、\n 等）或字符串结束
+            return s.length() == 2 || !Character.isLetterOrDigit(s.charAt(2));
+        }
+        if (upper.startsWith("AND")) {
+            return s.length() == 3 || !Character.isLetterOrDigit(s.charAt(3));
+        }
+        return false;
+    }
     // 生成构建结果 ----------------------------------------------
     @Override
     public String toString() {
