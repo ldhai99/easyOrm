@@ -126,6 +126,25 @@ public class SQL  extends OrderHandler<SQL> implements Cloneable{
         DefaultDataSourceProvider.setDefaultDataSource(dataSource);
     }
     /**
+     * 获取当前生效的数据源。
+     * <p>
+     * 获取顺序：
+     * <ol>
+     *   <li>若通过 {@link #configDataSourceProvider(DataSourceProvider)} 设置了自定义提供者，则使用其 {@code provide()} 方法；</li>
+     *   <li>否则，使用默认数据源提供者（支持自动从配置文件或显式设置加载）。</li>
+     * </ol>
+     *
+     * @return 当前使用的 {@link DataSource}
+     * @throws IllegalStateException 如果未配置任何数据源且无法从配置文件加载
+     */
+    public static DataSource getDataSource() {
+        DataSourceProvider provider = ExecutorManager.getDataSourceProvider();
+        if (provider != null) {
+            return provider.provide();
+        }
+        return DefaultDataSourceProvider.getDataSource();
+    }
+    /**
      * 重置为默认配置
      */
     public static void resetConfig() {

@@ -122,29 +122,63 @@ public interface Dialect {
         // 对于整个字符串是字符串字面量的情况
         if (sqlExpr.startsWith("'") && sqlExpr.endsWith("'") && sqlExpr.length() > 1) {
             String content = sqlExpr.substring(1, sqlExpr.length() - 1);
-            return "'" + content.replace("'", "''") + "'";
+            return "'" + escapeStringContent(content) + "'";
         }
 
-        // 修复的状态机实现
+        // 使用正则表达式查找所有字符串字面量
+        // 模式：匹配以单引号开始和结束的字符串
+        // 但我们需要正确处理字符串内部的转义单引号
+
+        // 改进的方法：找到所有单引号对
         StringBuilder result = new StringBuilder();
-        boolean inString = false;
-        int stringStartInResult = -1;  // 结果字符串中的开始位置
-        int stringStartInInput = -1;   // 输入字符串中的开始位置
-        StringBuilder stringContent = new StringBuilder();
+        int lastPos = 0;
 
-        for (int i = 0; i < sqlExpr.length(); i++) {
-            char c = sqlExpr.charAt(i);
+        while (true) {
+            // 查找下一个单引号
+            int start = sqlExpr.indexOf('\'', lastPos);
+            if (start == -1) {
+                // 没有更多单引号
+                result.append(sqlExpr.substring(lastPos));
+                break;
+            }
 
-            if (c == '\'') {
-                if (!inString) {
-                    // 字符串开始
-                    inString = true;
-                    stringStartInResult = result.length(); // 记录在结果中的位置
-                    stringStartInInput = i;                // 记录在输入中的位置
-                    stringContent.setLength(0);            // 清空内容
-                    result.append(c);
+            // 添加引号前的部分
+            result.append(sqlExpr.substring(lastPos, start + 1));
+
+            // 查找结束引号
+            int end = findStringEnd(sqlExpr, start + 1);
+            if (end == -1) {
+                // 没有找到结束引号
+                result.append(sqlExpr.substring(start + 1));
+                break;
+            }
+
+            // 提取字符串内容并转义
+            String content = sqlExpr.substring(start + 1, end);
+            String escaped = escapeStringContent(content);
+            result.append(escaped);
+            result.append("'");
+
+            lastPos = end + 1;
+        }
+
+        return result.toString();
+    }
+
+    // 找到字符串的结束位置
+    // 找到字符串的结束位置
+     default int findStringEnd(String sqlExpr, int start) {
+        int i = start;
+
+        while (i < sqlExpr.length()) {
+            if (sqlExpr.charAt(i) == '\'') {
+                // 遇到单引号
+                if (i + 1 < sqlExpr.length() && sqlExpr.charAt(i + 1) == '\'') {
+                    // 转义的单引号，这两个字符属于字符串内容
+                    // 跳过这两个字符，继续查找
+                    i += 2;
                 } else {
-                    // 在字符串内部遇到单引号
+                    // 单独的单引号，可能是结束引号
                     // 检查下一个字符是否是SQL分隔符
                     boolean isEnd = false;
 
@@ -156,45 +190,75 @@ public interface Dialect {
                         // SQL分隔符
                         if (nextChar == ' ' || nextChar == ',' || nextChar == ';' ||
                                 nextChar == ')' || nextChar == ']' || nextChar == '}' ||
-                                (i + 2 < sqlExpr.length() &&
-                                        (sqlExpr.substring(i + 1, i + 3).equals("OR") ||
-                                                sqlExpr.substring(i + 1, i + 4).equals("AND") ||
-                                                sqlExpr.substring(i + 1, i + 6).equals("WHERE") ||
-                                                sqlExpr.substring(i + 1, i + 5).equals("FROM")))) {
+                                nextChar == '\n' || nextChar == '\t' || nextChar == '\r') {
                             isEnd = true;
+                        }
+                        // 检查SQL关键字
+                        if (i + 2 < sqlExpr.length()) {
+                            String nextChars = sqlExpr.substring(i + 1, Math.min(i + 7, sqlExpr.length()));
+                            if (nextChars.startsWith(" AND") || nextChars.startsWith(" OR") ||
+                                    nextChars.startsWith(" WHERE") || nextChars.startsWith(" FROM") ||
+                                    nextChars.startsWith(" SET") || nextChars.startsWith(" VALUES") ||
+                                    nextChars.startsWith(" JOIN") || nextChars.startsWith(" ON")) {
+                                isEnd = true;
+                            }
                         }
                     }
 
                     if (isEnd) {
-                        // 字符串结束
-                        inString = false;
-                        // 获取字符串内容
-                        String content = stringContent.toString();
-                        // 转义内容中的单引号
-                        content = content.replace("'", "''");
-                        // 替换结果中这个字符串的内容
-                        result.delete(stringStartInResult + 1, result.length());
-                        result.append(content).append("'");
+                        return i;
                     } else {
-                        // 继续字符串，添加这个单引号到内容中
-                        stringContent.append(c);
-                        result.append(c);
+                        // 这个单引号是字符串内部未转义的单引号
+                        i++;
                     }
                 }
             } else {
-                if (inString) {
-                    stringContent.append(c);
-                }
-                result.append(c);
+                i++;
             }
         }
 
-        // 如果字符串没有正确结束
-        if (inString) {
-            // 转义剩余内容
-            String content = stringContent.toString().replace("'", "''");
-            result.delete(stringStartInResult + 1, result.length());
-            result.append(content);
+        return -1; // 没有找到结束引号
+    }
+
+    // 智能转义字符串内容：正确处理转义的单引号
+     default String escapeStringContent(String content) {
+        if (content == null || content.isEmpty()) {
+            return content;
+        }
+
+        StringBuilder result = new StringBuilder();
+        int i = 0;
+
+        while (i < content.length()) {
+            char c = content.charAt(i);
+
+            if (c == '\'') {
+                // 检查是否是转义的单引号（两个连续单引号）
+                if (i + 1 < content.length() && content.charAt(i + 1) == '\'') {
+                    // 两个连续单引号表示一个单引号字符
+                    // 在转义时，这个单引号字符需要变成两个单引号
+                    // 所以 '' 需要变成 ''''
+                    result.append("''''");
+                    i += 2;
+                } else {
+                    // 单个单引号，需要转义
+                    result.append("''");
+                    i++;
+                }
+            } else if (c == '\\') {
+                // 处理反斜杠转义
+                if (i + 1 < content.length() && content.charAt(i + 1) == '\'') {
+                    // 反斜杠转义的单引号
+                    result.append("\\''");
+                    i += 2;
+                } else {
+                    result.append(c);
+                    i++;
+                }
+            } else {
+                result.append(c);
+                i++;
+            }
         }
 
         return result.toString();
