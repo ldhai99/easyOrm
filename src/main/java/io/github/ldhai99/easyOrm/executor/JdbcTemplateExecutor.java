@@ -73,6 +73,7 @@ public class JdbcTemplateExecutor extends AbstractExecutor {
     public int update(ExecutorHandler sql) {
         return   jdbcTemplate.update( sql.toString(),sql.getParameterMap());
     }
+
     public Number insert(ExecutorHandler sql) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
            jdbcTemplate.update( sql.toString(), (SqlParameterSource)(new MapSqlParameterSource(sql.getParameterMap())),keyHolder);

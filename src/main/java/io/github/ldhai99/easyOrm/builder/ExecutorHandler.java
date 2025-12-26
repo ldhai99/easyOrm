@@ -30,11 +30,16 @@ public abstract class ExecutorHandler<T extends ExecutorHandler<T>> extends Base
     public Long getPrimaryKey() {
         return insert().longValue() ;
     }
+
     //执行存储过程
     public int execute() {
 
         return getExecutor().execute(self());
     }
+    public Long executeGetKey() {
+        return insert().longValue() ;
+    }
+
     //查询数据库-----------------------------------------------------------------------------------
     public void ensureSelectTaskType() {
         ensureTaskType(self(), TaskType.SELECT);
