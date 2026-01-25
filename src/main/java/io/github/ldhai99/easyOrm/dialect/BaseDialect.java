@@ -1,7 +1,5 @@
 package io.github.ldhai99.easyOrm.dialect;
 
-import io.github.ldhai99.easyOrm.context.DbType;
-
 /**
  * 基础方言实现（提供默认行为）
  */

@@ -7,7 +7,8 @@ import org.junit.jupiter.api.Test;
 
 import java.sql.SQLException;
 
-import static io.github.ldhai99.easyOrm.constant.SqlKeywords.*;
+import static io.github.ldhai99.easyOrm.context.sql.constants.SqlKeywords.*;
+
 
 public  class FRAGMENTTest {
 

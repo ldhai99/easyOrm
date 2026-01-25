@@ -1,7 +1,6 @@
 package io.github.ldhai99.easyOrm.builder;
 
 import io.github.ldhai99.easyOrm.Lambda.PropertyGetter;
-import io.github.ldhai99.easyOrm.context.DbType;
 import io.github.ldhai99.easyOrm.dao.core.FieldResolver;
 import io.github.ldhai99.easyOrm.dao.core.TableNameResolver;
 import io.github.ldhai99.easyOrm.base.TaskType;

@@ -2,10 +2,6 @@ package io.github.ldhai99.easyOrm.dialect;
 
 import io.github.ldhai99.easyOrm.context.DbType;
 
-import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 /**
  * SQL方言接口
  */

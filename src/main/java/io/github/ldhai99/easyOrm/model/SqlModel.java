@@ -2,14 +2,13 @@ package io.github.ldhai99.easyOrm.model;
 
 import io.github.ldhai99.easyOrm.base.TaskType;
 import io.github.ldhai99.easyOrm.tools.SqlTools;
-import io.github.ldhai99.easyOrm.constant.SqlKeywords;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import static io.github.ldhai99.easyOrm.constant.SqlKeywords.*;
+import static io.github.ldhai99.easyOrm.context.sql.constants.SqlKeywords.*;
 
 public class SqlModel implements Cloneable, Serializable {
     private static final long serialVersionUID = 1L;

@@ -1,9 +1,7 @@
 package io.github.ldhai99.easyOrm.model;
 
-import io.github.ldhai99.easyOrm.SQL;
-
 import io.github.ldhai99.easyOrm.builder.BaseSQL;
-import io.github.ldhai99.easyOrm.context.DbType;
+import io.github.ldhai99.easyOrm.context.validation.Checker;
 import io.github.ldhai99.easyOrm.dbenum.DbEnum;
 import io.github.ldhai99.easyOrm.dialect.Dialect;
 import io.github.ldhai99.easyOrm.dialect.LikeType;
@@ -170,7 +168,7 @@ public class JdbcModel implements Serializable {
             mergeParameterMap(sql);
 
             String sqls = sql.toString();
-            if (SqlTools.isEmpty(sqls))
+            if (Checker.isEmpty(sqls))
                 return "";
             else
                 //占位-替换
@@ -205,7 +203,7 @@ public class JdbcModel implements Serializable {
             mergeParameterMap(sql);
 
             String sqls = sql.toString();
-            if (SqlTools.isEmpty(sqls))
+            if (Checker.isEmpty(sqls))
                 return "";
             else
                 //占位-替换

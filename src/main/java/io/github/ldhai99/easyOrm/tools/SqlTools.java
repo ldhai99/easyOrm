@@ -33,7 +33,7 @@ public class SqlTools {
     }
 
     public static void main(String[] args) {
-        System.out.println(SqlTools.isEmpty(0));
+
         // 测试驼峰转下划线
 //        System.out.println(SqlTools.camelToSnakeCase("userId"));       // 输出: user_id
 //        System.out.println(SqlTools.camelToSnakeCase("userName"));     // 输出: user_name
@@ -104,113 +104,6 @@ public class SqlTools {
         }
         return sb.toString();
     }
-
-    public static boolean isNotEmpty(Object object) {
-        return !isEmpty(object);
-    }
-    /**
-     * 检查字符串是否为空
-     */
-    /***
-     * 检查对象是否为空或零值
-     *
-     * <p>支持以下情况的判断：
-     * <ul>
-     *   <li>null 值</li>
-     *   <li>空字符串、空白字符串（可选）</li>
-     *   <li>空集合、空Map</li>
-     *   <li>空数组</li>
-     *   <li>数值类型的零值（0, 0.0, 0L等）</li>
-     *   <li>空的Optional</li>
-     *   <li>自定义空对象（通过isEmpty()方法）</li>
-     * </ul>
-     *
-     * @param object 待检查的对象
-     * @param trimStrings 是否修剪字符串并检查空白（true：将空白视为空，false：仅检查空字符串）
-     * @return true 如果对象为空或零值，false 否则
-     */
-    public static boolean isEmpty(Object object, boolean trimStrings) {
-        if (object == null) {
-            return true;
-        }
-
-        // 处理字符串
-        if (object instanceof String) {
-            String str = (String) object;
-            return trimStrings ? str.trim().isEmpty() : str.isEmpty();
-        }
-
-        // 处理数值类型
-        if (object instanceof Number) {
-            if (object instanceof Integer) {
-                return (Integer) object == 0;
-            } else if (object instanceof Long) {
-                return (Long) object == 0L;
-            } else if (object instanceof Double) {
-                return (Double) object == 0.0d;
-            } else if (object instanceof Float) {
-                return (Float) object == 0.0f;
-            } else if (object instanceof BigDecimal) {
-                return BigDecimal.ZERO.compareTo((BigDecimal) object) == 0;
-            } else if (object instanceof BigInteger) {
-                return BigInteger.ZERO.equals(object);
-            } else if (object instanceof Short) {
-                return (Short) object == 0;
-            } else if (object instanceof Byte) {
-                return (Byte) object == 0;
-            }
-            // 其他数值类型
-            return ((Number) object).doubleValue() == 0.0;
-        }
-
-        // 处理集合
-        if (object instanceof Collection) {
-            return ((Collection<?>) object).isEmpty();
-        }
-
-        // 处理Map
-        if (object instanceof Map) {
-            return ((Map<?, ?>) object).isEmpty();
-        }
-
-        // 处理数组
-        if (object.getClass().isArray()) {
-            return Array.getLength(object) == 0;
-        }
-
-        // 处理Optional
-        if (object instanceof Optional) {
-            return !((Optional<?>) object).isPresent();
-        }
-
-        // 处理布尔值（可选）
-        if (object instanceof Boolean) {
-            return !(Boolean) object;
-        }
-
-        // 处理自定义空对象（如果对象实现了isEmpty方法）
-        try {
-            java.lang.reflect.Method method = object.getClass().getMethod("isEmpty");
-            if (method.getReturnType() == boolean.class) {
-                return (boolean) method.invoke(object);
-            }
-        } catch (Exception ignored) {
-            // 忽略反射异常
-        }
-
-        // 默认情况：非空对象
-        return false;
-    }
-    /**
-     * 检查对象是否为空或零值（默认不修剪字符串）
-     *
-     * @param object 待检查的对象
-     * @return true 如果对象为空或零值，false 否则
-     */
-    public static boolean isEmpty(Object object) {
-        return isEmpty(object, true);
-    }
-
 
     /**
      * 将字符串首字母大写
