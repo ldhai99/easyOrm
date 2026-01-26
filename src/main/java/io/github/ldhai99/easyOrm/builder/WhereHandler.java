@@ -2,7 +2,8 @@ package io.github.ldhai99.easyOrm.builder;
 
 import io.github.ldhai99.easyOrm.Lambda.PropertyGetter;
 import io.github.ldhai99.easyOrm.context.sql.constants.SqlKeywords;
-import io.github.ldhai99.easyOrm.context.validation.Checker;
+
+import io.github.ldhai99.easyOrm.context.validation.EmptyChecker;
 import io.github.ldhai99.easyOrm.dao.core.TableNameResolver;
 import io.github.ldhai99.easyOrm.dialect.LikeType;
 
@@ -124,7 +125,7 @@ public abstract class WhereHandler<T extends WhereHandler<T>> extends SetHandler
     }
 
     public T eqMap(Map<String, Object> columnMap) {
-        if(Checker.isEmpty(columnMap))
+        if(EmptyChecker.isEmpty(columnMap))
             return self();
         for (String key : columnMap.keySet()) {
             eq(key, columnMap.get(key));
@@ -152,7 +153,7 @@ public abstract class WhereHandler<T extends WhereHandler<T>> extends SetHandler
         return eqIfNotNull(resolveColumn(getter), value);
     }
     public T eqIfNotEmpty(Object name, Object value) {
-        if(Checker.isEmpty(value))
+        if(EmptyChecker.isEmpty(value))
             return self();
         return nameOperatorValue(name,  EQ, value);
     }
@@ -469,7 +470,7 @@ public abstract class WhereHandler<T extends WhereHandler<T>> extends SetHandler
     }
     //-------4.3 IS  empty
     public T isEmptyElseEq(Object name, Object value) {
-        if(Checker.isEmpty(value))
+        if(EmptyChecker.isEmpty(value))
             return isEmpty(name);
         else
             return eq(name, value);
@@ -478,7 +479,7 @@ public abstract class WhereHandler<T extends WhereHandler<T>> extends SetHandler
         return isEmptyElseEq(resolveColumn(getter),value);
     }
     public T isEmpty(Object name, Object value) {
-        if(Checker.isEmpty(value))
+        if(EmptyChecker.isEmpty(value))
             return isEmpty(name);
         else
             return self();
@@ -496,7 +497,7 @@ public abstract class WhereHandler<T extends WhereHandler<T>> extends SetHandler
 
     //-------4.3 IS  not empty
     public T isNotEmpty(Object name, Object value   ) {
-        if(Checker.notEmpty(value))
+        if(EmptyChecker.notEmpty(value))
             return isNotEmpty(name);
         else
             return self();
@@ -585,7 +586,7 @@ public abstract class WhereHandler<T extends WhereHandler<T>> extends SetHandler
 
     //---------------------------------------
     public T in(Object name, Object values) {
-        if(Checker.isEmpty( values))
+        if(EmptyChecker.isEmpty( values))
             return self();
 
         // 新增字符串处理逻辑

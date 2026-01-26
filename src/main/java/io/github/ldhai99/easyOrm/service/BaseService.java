@@ -1,7 +1,7 @@
 package io.github.ldhai99.easyOrm.service;
 
 import io.github.ldhai99.easyOrm.SQL;
-import io.github.ldhai99.easyOrm.context.validation.Checker;
+import io.github.ldhai99.easyOrm.context.validation.EmptyChecker;
 import io.github.ldhai99.easyOrm.dao.BaseDao;
 import io.github.ldhai99.easyOrm.dao.orm.EntityValueMapper;
 import io.github.ldhai99.easyOrm.page.PageModel;
@@ -149,14 +149,14 @@ public abstract class BaseService<T> {
             rollbackFor = {Exception.class}
     )
     public boolean removeByIds(Collection<?> list) {
-        return Checker.isEmpty(list) ? false : this.getBaseDao().deleteByIds(list) > 0 ? true : false;
+        return EmptyChecker.isEmpty(list) ? false : this.getBaseDao().deleteByIds(list) > 0 ? true : false;
     }
 
     @Transactional(
             rollbackFor = {Exception.class}
     )
     public boolean removeByIds(Collection<?> list, boolean useFill) {
-        if (Checker.isEmpty(list)) {
+        if (EmptyChecker.isEmpty(list)) {
             return false;
         } else {
             return useFill ? this.removeBatchByIds(list, true) : this.getBaseDao().deleteByIds(list) > 0 ? true : false;

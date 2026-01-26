@@ -1,7 +1,8 @@
 package io.github.ldhai99.easyOrm.builder;
 
 import io.github.ldhai99.easyOrm.base.DataType;
-import io.github.ldhai99.easyOrm.context.validation.Checker;
+
+import io.github.ldhai99.easyOrm.context.validation.EmptyChecker;
 import io.github.ldhai99.easyOrm.dao.core.FieldResolver;
 import io.github.ldhai99.easyOrm.Lambda.PropertyGetter;
 import io.github.ldhai99.easyOrm.tools.SqlTools;
@@ -85,7 +86,7 @@ public abstract class SetHandler <T extends SetHandler<T>> extends ColumnHandler
      * 不为空时设置值（广义空检查：包括空字符串、空集合等）
      */
     public T setIfNotEmpty(String name, Object value) {
-        if (!Checker.isEmpty(value)) {
+        if (!EmptyChecker.isEmpty(value)) {
             return setValue(name, value, null, true);
         }
         return self();
@@ -98,7 +99,7 @@ public abstract class SetHandler <T extends SetHandler<T>> extends ColumnHandler
      * 设置值，为空时使用数据类型默认值
      */
     public T setWithDefault(String name, Object value, DataType dataType) {
-        if (Checker.isEmpty(value)) {
+        if (EmptyChecker.isEmpty(value)) {
             value = getDefaultValue(dataType);
         }
         return setValue(name, value, dataType, true);
@@ -122,7 +123,7 @@ public abstract class SetHandler <T extends SetHandler<T>> extends ColumnHandler
      * 设置值，为空时使用自定义默认值
      */
     public T setWithDefault(String name, Object value, Object defaultValue) {
-        if (Checker.isEmpty(value)) {
+        if (EmptyChecker.isEmpty(value)) {
             value = defaultValue;
         }
         return setValue(name, value, null, true);
